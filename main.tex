@@ -1,0 +1,214 @@
+\documentclass[a4paper,12pt,twoside,hidelinks,openright]{report}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[usenames, dvipsnames]{color}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage{graphics}
+\usepackage{appendix}
+\usepackage[rawfloats=true]{floatrow}
+\usepackage[nottoc,numbib]{tocbibind}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\usepackage{subcaption}
+\usepackage{amsmath,amsthm,amssymb,mathrsfs} 
+\usepackage[final]{pdfpages}
+\usepackage[]{placeins,flafter}
+\usepackage[none]{hyphenat} \sloppy
+\usepackage{xcolor}
+\usepackage{adjustbox}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=false,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={TFM RISC-V BNN}
+    }
+\urlstyle{same}
+
+\newcommand{\javier}[1]{\textcolor{red}{#1}}
+
+% Default font to SF
+\renewcommand{\familydefault}{\sfdefault}
+% SF for math
+\usepackage{sfmath}
+
+%	CONFIGURACIÓN DE PÁGINA
+
+\setlength{\paperwidth}{21cm}          % Ancho de página
+\setlength{\paperheight}{29,7cm}       % Alto de página
+\setlength{\textwidth}{15.5cm}         % Ancho de zona con texto
+\setlength{\textheight}{24.6cm}        % Ancho de zona con texto
+\setlength{\topmargin}{-1.0cm}         % Margen superior
+                                      
+\setlength{\oddsidemargin}{0.46cm}     % Margen izquierdo 
+\setlength{\evensidemargin}{0.46cm}    
+
+\usepackage{makeidx}
+\makeindex
+\index{key}
+\newcommand{\myref}[1]{\color{red}\bf(\ref{#1})}
+
+%  Custom commands
+
+\newcommand{\dario}[1]{\textcolor{blue}{#1}}
+\newcommand{\samuel}[1]{\textcolor{orange}{#1}}
+\newcommand{\todo}{\textcolor{red}{\textbf{TODO}}}
+\newcommand{\boxtext}[1]{\noindent\fbox{\parbox{\textwidth}{#1}}}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%		PORTADA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{titlepage}
+
+\vspace*{-4mm}
+\begin{figure}[!h]
+  \centering
+	\includegraphics[width=69.62mm]{Imagenes/UnizarLogo}
+\end{figure}
+
+\vspace*{17mm}
+
+\fontsize{28pt}{28pt}\selectfont
+\begin{center}
+\setlength{\fboxsep}{3.4mm}
+\adjustbox{minipage=14.4cm,cfbox=blue,center}{\begin{center} Trabajo Fin de Máster \end{center}}
+\end{center}
+
+\vspace*{5mm}
+
+
+\fontsize{20pt}{20pt}\selectfont
+\begin{center}
+Implementación de un acelerador para redes neuronales bayesianas en plataformas RISC-V
+\end{center}
+\baselineskip 20pt
+\begin{center}
+Implementation of an acceleration unit for bayesian neural networks in RISC-V platforms
+\end{center}
+
+\vspace*{1cm} 
+\baselineskip 36pt
+\begin{center}
+\fontsize{12pt}{12pt}\selectfont
+\center{Autor}
+\vspace*{3.65mm} 
+\fontsize{18pt}{18pt}\selectfont
+\center{Samuel Pérez Pedrajas}
+\vspace*{1cm}
+\baselineskip 36pt
+\fontsize{12pt}{12pt}\selectfont
+\center{Directores}
+\vspace*{3.56mm}
+\fontsize{14pt}{14pt}\selectfont
+\center{Javier Resano Ezcaray}
+\center{Darío Suárez Gracia}
+\vspace*{1cm}
+\baselineskip 36pt
+\fontsize{12pt}{12pt}\selectfont
+\center{Titulación}
+\vspace*{3.56mm}
+\fontsize{14pt}{14pt}\selectfont
+\center{Máster Universitario en Ingeniería Informática}
+
+\end{center}
+
+\setcounter{footnote}{1}
+
+\vspace*{16.45mm}
+\fontsize{12pt}{12pt}\selectfont
+\begin{center}
+ESCUELA DE INGENIERÍA Y ARQUITECTURA\\
+2024\\
+\end{center}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\pagenumbering{gobble}
+\end{titlepage}
+\newpage
+
+%\title{Título del trabajo final de máster}
+%\author{Autor Apellido Apellido}
+\pagebreak
+\cleardoublepage
+
+\baselineskip 19pt
+
+\renewcommand{\labelitemi}{$-$}
+\renewcommand{\tablename}{Tabla}
+
+\renewcommand{\appendixname}{Anexos}
+\renewcommand{\appendixtocname}{Anexos}
+\renewcommand{\appendixpagename}{Anexos}
+
+
+\pagenumbering{Roman}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%		Resumen
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\input{Otros/Agradecimientos}
+\newpage
+\cleardoublepage
+\input{Otros/Resumen}
+\newpage
+
+\cleardoublepage
+\renewcommand{\contentsname}{Índice}
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%		Capitulos
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{Capitulos/1 Introduccion}
+\input{Capitulos/2 Metodologia}
+\input{Capitulos/3 Estado del Arte}
+\input{Capitulos/4 BNN}
+\input{Capitulos/5 Acelerador}
+\input{Capitulos/6 Conclusion}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%		BIBLIOGRAFÍA Y REFERENCIAS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{unsrt} %plaindin
+\bibliography{Bibliografia_TFM}
+\nocite{*} 
+
+\newpage
+\renewcommand\listfigurename{Lista de Figuras}
+\listoffigures
+
+\newpage
+\renewcommand\listtablename{Lista de Tablas}
+\listoftables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%		ANEXOS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\appendix
+\clearpage
+\addappheadtotoc
+\appendixpage
+\input{Anexos/Anexo1.tex}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end{document}

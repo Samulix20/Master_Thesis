@@ -1,0 +1,448 @@
+
+@article{tinyML_sustainable,
+author = {Prakash, Shvetank and Stewart, Matthew and Banbury, Colby and Mazumder, Mark and Warden, Pete and Plancher, Brian and Reddi, Vijay Janapa},
+title = {Is TinyML Sustainable?},
+year = {2023},
+issue_date = {November 2023},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {66},
+number = {11},
+issn = {0001-0782},
+url = {https://doi.org/10.1145/3608473},
+doi = {10.1145/3608473},
+abstract = {Assessing the environmental impacts of machine learning on microcontrollers.},
+journal = {Commun. ACM},
+month = {oct},
+pages = {68–77},
+numpages = {10}
+}
+
+% Original BNN paper
+@misc{bnn_theory_paper,
+      title={Weight Uncertainty in Neural Networks}, 
+      author={Charles Blundell and Julien Cornebise and Koray Kavukcuoglu and Daan Wierstra},
+      year={2015},
+      eprint={1505.05424},
+      archivePrefix={arXiv},
+      primaryClass={stat.ML}
+}
+
+% Accelerator that uses a pure GRNG
+@article{bnn_grng_accel,
+  author       = {Ruizhe Cai and
+                  Ao Ren and
+                  Ning Liu and
+                  Caiwen Ding and
+                  Luhao Wang and
+                  Xuehai Qian and
+                  Massoud Pedram and
+                  Yanzhi Wang},
+  title        = {{VIBNN:} Hardware Acceleration of Bayesian Neural Networks},
+  journal      = {CoRR},
+  volume       = {abs/1802.00822},
+  year         = {2018},
+  url          = {http://arxiv.org/abs/1802.00822},
+  eprinttype    = {arXiv},
+  eprint       = {1802.00822},
+  timestamp    = {Thu, 05 Sep 2019 16:43:40 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-1802-00822.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+% Accelrator, Aproximante weights using Bernoulli sampling considering the whole network a CLT
+@Article{bnn_clt_approx,
+  author     = {Hiromitsu Awano and Masanori Hashimoto},
+  journal    = {Integration},
+  title      = {B2N2: Resource efficient Bayesian neural network accelerator using Bernoulli sampler on FPGA},
+  year       = {2023},
+  issn       = {0167-9260},
+  pages      = {1-8},
+  volume     = {89},
+  doi        = {https://doi.org/10.1016/j.vlsi.2022.11.005},
+  file       = {:1-s2.0-S0167926022001523-main.pdf:PDF},
+  groups     = {Cited_NANO},
+  keywords   = {Bayesian neural network, Uncertainty, Monte Carlo, FPGA accelerator},
+  readstatus = {read},
+  url        = {https://www.sciencedirect.com/science/article/pii/S0167926022001523},
+}
+
+% GRNG paper
+@article{grng_survey,
+author = {Malik, Jamshaid Sarwar and Hemani, Ahmed},
+title = {Gaussian Random Number Generation: A Survey on Hardware Architectures},
+year = {2016},
+issue_date = {September 2017},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {49},
+number = {3},
+issn = {0360-0300},
+url = {https://doi.org/10.1145/2980052},
+doi = {10.1145/2980052},
+journal = {ACM Comput. Surv.},
+month = {nov},
+articleno = {53},
+numpages = {37},
+keywords = {Hardware accelerators, AWGN, Gaussian, algorithms, normal, random number generator}
+}
+
+% CLT limitations
+@ARTICLE{clt_grng,
+
+  author={Malik, Jamshaid Sarwar and Hemani, Ahmed and Malik, Jameel Nawaz and Silmane, Ben and Gohar, Nasirud Din},
+
+  journal={IEEE Transactions on Very Large Scale Integration (VLSI) Systems}, 
+
+  title={Revisiting Central Limit Theorem: Accurate Gaussian Random Number Generation in VLSI}, 
+
+  year={2015},
+
+  volume={23},
+
+  number={5},
+
+  pages={842-855},
+
+  doi={10.1109/TVLSI.2014.2322573}}
+
+% Base look-ahear lfsr
+@inproceedings{look_ahead_lfsr_base,
+  title={Design techniques of FPGA based random number generator},
+  author={Chu, Pong P and Jones, Robert E},
+  booktitle={Military and Aerospace Applications of Programmable Devices and Technologies Conference},
+  volume={1},
+  number={999},
+  pages={28--30},
+  year={1999},
+  organization={Citeseer}
+}
+
+% Good table of values for LFSR
+% https://docs.xilinx.com/v/u/en-US/xapp052
+
+% General matrix formulation of Look-ahead LFSR 
+@INPROCEEDINGS{look_ahead_lfsr_design,
+
+  author={Colavito, Leonard and Silage, Dennis},
+
+  booktitle={2009 International Conference on Reconfigurable Computing and FPGAs}, 
+
+  title={Efficient PGA LFSR Implementation Whitens Pseudorandom Numbers}, 
+
+  year={2009},
+
+  volume={},
+
+  number={},
+
+  pages={308-313},
+
+  doi={10.1109/ReConFig.2009.11}}
+
+% Hyperspectral BNN
+@ARTICLE{bnn_hyper_uncertainty,
+
+  author={Alcolea, Adrián and Resano, Javier},
+
+  journal={IEEE Transactions on Geoscience and Remote Sensing}, 
+
+  title={Bayesian Neural Networks to Analyze Hyperspectral Datasets Using Uncertainty Metrics}, 
+
+  year={2022},
+
+  volume={60},
+
+  number={},
+
+  pages={1-10},
+
+  doi={10.1109/TGRS.2022.3205119}}
+
+% Uncertainty metrics
+@article{uncertainty_metrics,
+  author       = {Umang Bhatt and
+                  Yunfeng Zhang and
+                  Javier Antor{\'{a}}n and
+                  Q. Vera Liao and
+                  Prasanna Sattigeri and
+                  Riccardo Fogliato and
+                  Gabrielle Gauthier Melan{\c{c}}on and
+                  Ranganath Krishnan and
+                  Jason Stanley and
+                  Omesh Tickoo and
+                  Lama Nachman and
+                  Rumi Chunara and
+                  Adrian Weller and
+                  Alice Xiang},
+  title        = {Uncertainty as a Form of Transparency: Measuring, Communicating, and
+                  Using Uncertainty},
+  journal      = {CoRR},
+  volume       = {abs/2011.07586},
+  year         = {2020},
+  url          = {https://arxiv.org/abs/2011.07586},
+  eprinttype    = {arXiv},
+  eprint       = {2011.07586},
+  timestamp    = {Wed, 18 Nov 2020 16:48:35 +0100},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-2011-07586.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+%%%%%%%%%%
+
+% Use dropout after normal CNN using bernoulli, its supposedly the same as BNN with weight distributions
+@misc{gal2016bayesian,
+      title={Bayesian Convolutional Neural Networks with Bernoulli Approximate Variational Inference}, 
+      author={Yarin Gal and Zoubin Ghahramani},
+      year={2016},
+      eprint={1506.02158},
+      archivePrefix={arXiv},
+      primaryClass={stat.ML}
+}
+
+% Accelerator based on the dropout approximation idea
+@article{DBLP:journals/corr/abs-2105-09163,
+  author       = {Hongxiang Fan and
+                  Martin Ferianc and
+                  Miguel Rodrigues and
+                  Hongyu Zhou and
+                  Xinyu Niu and
+                  Wayne Luk},
+  title        = {High-Performance FPGA-based Accelerator for Bayesian Neural Networks},
+  journal      = {CoRR},
+  volume       = {abs/2105.09163},
+  year         = {2021},
+  url          = {https://arxiv.org/abs/2105.09163},
+  eprinttype    = {arXiv},
+  eprint       = {2105.09163},
+  timestamp    = {Fri, 01 Jul 2022 13:19:26 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-2105-09163.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@InProceedings{sampling_free_bnn_accel,
+  author    = {Hiromitsu Awano and Masanori Hashimoto},
+  booktitle = {2020 Design, Automation \& Test in Europe Conference \& Exhibition (DATE)},
+  title     = {BYNQNet: Bayesian Neural Network with Quadratic Activations for Sampling-Free Uncertainty Estimation on FPGA},
+  year      = {2020},
+  pages     = {1402-1407},
+  doi       = {10.23919/DATE48585.2020.9116302},
+  keywords  = {Neural networks;Uncertainty;Bayes methods;Gaussian distribution;Field programmable gate arrays;Random variables;Hardware},
+}
+
+@InProceedings{survey_ai22,
+  author    = {Reuther, Albert and Michaleas, Peter and Jones, Michael and Gadepally, Vijay and Samsi, Siddharth and Kepner, Jeremy},
+  booktitle = {2022 IEEE High Performance Extreme Computing Conference (HPEC)},
+  title     = {AI and ML Accelerator Survey and Trends},
+  year      = {2022},
+  pages     = {1-10},
+  doi       = {10.1109/HPEC55821.2022.9926331},
+  keywords  = {Program processors;Power demand;Neuromorphics;AI accelerators;Market research;Photonics;Machine learning;GPU;TPU;dataflow;accelerator;embedded inference;computational performance},
+}
+
+@article{riscv_tfg,
+      author        = "Pérez Pedrajas, Samuel and Resano Ezcaray, Javier and
+                       Suárez Gracia, Darío",
+      title         = "{Implementación de un procesador RISC-V con soporte para
+                       un sistema operativo de tiempo real.}",
+      year          = "2022",
+}
+
+
+@article{xorshift,
+ title={Xorshift RNGs},
+ volume={8},
+ url={https://www.jstatsoft.org/index.php/jss/article/view/v008i14},
+ doi={10.18637/jss.v008.i14},
+ abstract={Description of a class of simple, extremely fast random number generators (RNGs) with periods 2k - 1 for k = 32, 64, 96, 128, 160, 192. These RNGs seem to pass tests of randomness very well.},
+ number={14},
+ journal={Journal of Statistical Software},
+ author={Marsaglia, George},
+ year={2003},
+ pages={1–6}
+}
+
+@misc{lfsr_poly,
+    title = {Xilinx. Efficient Shift Registers, LFSR
+Counters, and Long PseudoRandom Sequence Generators},
+    url = {https://docs.xilinx.com/v/u/en-US/xapp052},
+    author = {Peter Alfke},
+    month = {July},
+    year = {1996}
+}
+
+@misc{bnn_github,
+  author = "Pérez Pedrajas, Samuel and Resano Ezcaray, Javier and Suárez Gracia, Darío",
+  title = "{BNN\_RISC-V}",
+  url = {https://github.com/Samulix20/BNN\_RISC-V},
+  year = {2024}
+}
+
+@ARTICLE{kl_divergence,
+  title     = "On Information and Sufficiency",
+  author    = "Kullback, S and Leibler, R A",
+  journal   = "Ann. Math. Stat.",
+  publisher = "Institute of Mathematical Statistics",
+  volume    =  22,
+  number    =  1,
+  pages     = "79--86",
+  month     =  mar,
+  year      =  1951
+}
+
+@misc{european_processor,
+	title = {{E}uropean {P}rocessor {I}nitiative},
+	howpublished = {\url{https://www.european-processor-initiative.eu/}},
+	note = {[Accessed 09-05-2024]},
+}
+
+@ARTICLE{riscv_survey,
+  author={Cui, Enfang and Li, Tianzheng and Wei, Qian},
+  journal={IEEE Access}, 
+  title={RISC-V Instruction Set Architecture Extensions: A Survey}, 
+  year={2023},
+  volume={11},
+  number={},
+  pages={24696-24711},
+  keywords={Instruction sets;Microprocessors;Computer architecture;Task analysis;Graphics processing units;Cloud computing;Artificial intelligence;RISC-V;instruction set architecture;extensions;survey},
+  doi={10.1109/ACCESS.2023.3246491}}
+
+@article{wallace_grng,
+author = {Wallace, C. S.},
+title = {Fast pseudorandom generators for normal and exponential variates},
+year = {1996},
+issue_date = {March 1996},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {22},
+number = {1},
+issn = {0098-3500},
+url = {https://doi.org/10.1145/225545.225554},
+doi = {10.1145/225545.225554},
+abstract = {Fast algorithms for generating pseudorandom numbers from the unit-normal and unit-exponential distributions are described. The methods are unusual in that they do not rely on a source of uniform random numbers, but generate the target distributions directly by using their maximal-entropy properties. The algorithms are fast. The normal generator is faster than the commonly used Unix library uniform generator “random” when the latter is used to yield real values. Their statistical properties seem satisfactory, but only a limited suite of tests has been conducted. They are written in C and as written assume 32-bit integer arithmetic. The code is publicly available as C source and can easily be adopted for longer word lengths and/or vector processing.},
+journal = {ACM Trans. Math. Softw.},
+month = {mar},
+pages = {119–127},
+numpages = {9},
+keywords = {Gaussian distribution, exponential distribution, normal distribution, pseudorandom numbers, random numbers}
+}
+
+@article{bnn_lut_grng,
+	author = {Yuki Hirayama and Tetsuya Asai and Masato Motomura and Shinya Takamaeda},
+	title = {A Hardware-efficient Weight Sampling Circuit for Bayesian Neural Networks},
+	journal = {International Journal of Networking and Computing},
+	volume = {10},
+	number = {2},
+	year = {2020},
+	keywords = {Bayesian Neural Network; Lookup Table; Inversion Transform Sampling},
+	abstract = {The main problems of deep learning are requiring a large amount of data for learning, and prediction with excessive confidence. A Bayesian neural network (BNN), in which a Bayesian approach is incorporated into a neural network (NN), has drawn attention as a method for solving these problems. In a BNN, the probability distribution is assumed for the weight, in contrast to a conventional NN, in which the weight is point estimated. This makes it possible to obtain the prediction as a distribution and to evaluate how uncertain the prediction is. However, a BNN has more computational complexity and a greater number of parameters than an NN. To obtain an inference result as a distribution, a BNN uses weight sampling to generate the respective weight values, and thus, a BNN accelerator requires weight sampling hardware based on a random number generator in addition to the standard components of a deep learning neural network accelerator. Therefore, the throughput of weight sampling must be sufficiently high at a low hardware resource cost. We propose a resource-efficient weight sampling method using inversion transform sampling and a lookup-table (LUT)-based function approximation for hardware implementation of a BNN. Inversion transform sampling simplifies the mechanism of generating a Gaussian random number from a uniform random number provided by a common random number generator, such as a linear feedback shift register. Employing an LUT-based low-bit precision function approximation enables inversion transform sampling to be implemented at a low hardware cost. The evaluation results indicate that this approach effectively reduces the occupied hardware resources while maintaining accuracy and prediction variance equivalent to that with a non-approximated sampling method.},
+	issn = {2185-2847},	pages = {84--93},	url = {http://www.ijnc.org/index.php/ijnc/article/view/222}
+}
+
+@misc{tfprob,
+	title = {{T}ensor{F}low {P}robability},
+	howpublished = {\url{https://www.tensorflow.org/probability}},
+	note = {[Accessed 13-05-2024]},
+}
+
+@misc{tflite,
+	title = {{T}ensor{F}low {L}ite | {M}{L} for {M}obile and {E}dge {D}evices},
+	howpublished = {\url{https://www.tensorflow.org/lite}},
+	note = {[Accessed 13-05-2024]},
+}
+
+@misc{bayesian_torch,
+  author       = {Ranganath Krishnan and Pi Esposito and Mahesh Subedar},               
+  title        = {Bayesian-Torch: Bayesian neural network layers for uncertainty estimation},
+  howpublished = {\url{https://github.com/IntelLabs/bayesian-torch}},
+}
+
+@inproceedings{bnn_quant,
+  title={Quantization for Bayesian Deep Learning: Low-Precision Characterization and Robustness},
+  author={Lin, Jun-Liang and Krishnan, Ranganath and Ranipa, Keyur Ruganathbhai and Subedar, Mahesh and Sanghavi, Vrushabh and Arunachalam, Meena and Tickoo, Omesh and Iyer, Ravishankar and Kandemir, Mahmut Taylan},
+  booktitle={2023 IEEE International Symposium on Workload Characterization (IISWC)},
+  pages={180--192},
+  year={2023},
+  organization={IEEE}
+}
+
+@misc {ricv_org,
+    title = {{R}{I}{S}{C}-{V} {I}nternational. {R}{I}{S}{C}-{V}: {T}he {O}pen {S}tandard {R}{I}{S}{C} {I}nstruction {S}et {A}rchitecture},
+    howpublished = {\url{https://riscv.org/}},
+    note = {[Accessed 14-05-2024]},
+}
+
+@manual{riscv_scpec_unpriv,
+    title={The RISC-V Instruction Set Manual, Volume I: User-Level ISA, Document Version 20240411},
+    author={Editors Andrew Waterman and Krste Asanović},
+    organization={RISC-V Foundation},
+    year={2024},
+    month={April},
+    note={Available at \url{https://riscv.org/technical/specifications/}},
+}
+
+@manual{riscv_scpec_priv,
+    title={The RISC-V Instruction Set Manual, Volume II: Privileged ISA, Document Version 20240411},
+    author={Editors Andrew Waterman and Krste Asanović},
+    organization={RISC-V Foundation},
+    year={2024},
+    month={April},
+    note={Available at \url{https://riscv.org/technical/specifications/}},
+}
+
+@INPROCEEDINGS{riscv_sargantana,
+  author={Soria-Pardos, Víctor and Doblas, Max and López–Paradís, Guillem and Candón, Gerard and Rodas, Narcís and Carril, Xavier and Fontova–Musté, Pau and Leyva, Neiel and Marco-Sola, Santiago and Moretó, Miquel},
+  booktitle={2022 25th Euromicro Conference on Digital System Design (DSD)}, 
+  title={Sargantana: A 1 GHz+ In-Order RISC-V Processor with SIMD Vector Extensions in 22nm FD-SOI}, 
+  year={2022},
+  volume={},
+  number={},
+  pages={254-261},
+  keywords={Out of order;Runtime;High performance computing;Pipelines;Computer architecture;Benchmark testing;Solids;RISC-V;computer architecture;vector instructions;domain-specific accelerators},
+  doi={10.1109/DSD57027.2022.00042}}
+
+@ARTICLE{riscv_pulp,
+  author={Pullini, Antonio and Rossi, Davide and Loi, Igor and Tagliavini, Giuseppe and Benini, Luca},
+  journal={IEEE Journal of Solid-State Circuits}, 
+  title={Mr.Wolf: An Energy-Precision Scalable Parallel Ultra Low Power SoC for IoT Edge Processing}, 
+  year={2019},
+  volume={54},
+  number={7},
+  pages={1970-1981},
+  doi={10.1109/JSSC.2019.2912307}}
+
+@techreport{riscv_rocket,
+    Author= {Asanović, Krste and Avizienis, Rimas and Bachrach, Jonathan and Beamer, Scott and Biancolin, David and Celio, Christopher and Cook, Henry and Dabbelt, Daniel and Hauser, John and Izraelevitz, Adam and Karandikar, Sagar and Keller, Ben and Kim, Donggyu and Koenig, John and Lee, Yunsup and Love, Eric and Maas, Martin and Magyar, Albert and Mao, Howard and Moreto, Miquel and Ou, Albert and Patterson, David A. and Richards, Brian and Schmidt, Colin and Twigg, Stephen and Vo, Huy and Waterman, Andrew},
+    Title= {The Rocket Chip Generator},
+    Year= {2016},
+    Month= {Apr},
+    Url= {http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html},
+    Number= {UCB/EECS-2016-17},
+    Abstract= {Rocket Chip is an open-source Sysem-on-Chip design generator that emits synthesizable RTL. It leverages the Chisel hardware construction language to compose a library of sophisticated generators for cores, caches, and interconnects into an integrated SoC. Rocket Chip generates general-purpose processor cores that use the open RISC-V ISA, and provides both an in-order core generator (Rocket) and an out-of-order core generator (BOOM). For SoC designers interested in utilizing heterogeneous specialization for added efficiency gains, Rocket Chip supports the integration of custom accelerators in the form of instruction set extensions, coprocessors, or fully independent novel cores. Rocket Chip has been taped out (manufactured) eleven times, and yielded functional silicon prototypes capable of booting Linux.},
+}
+
+@misc{codasip,
+	author = {},
+	title = {{Codasip}. {A}rchitect your ambition with {R}{I}{S}{C}-{V} {C}ustom {C}ompute},
+	howpublished = {\url{https://codasip.com/}},
+	year = {},
+	note = {[Accessed 14-05-2024]},
+}
+
+@misc{synopsis,
+	author = {},
+	title = {{R}{I}{S}{C}-{V} | {S}ynopsys},
+	howpublished = {\url{https://www.synopsys.com/risc-v.html#p-design}},
+	year = {},
+	note = {[Accessed 14-05-2024]},
+}
+
+@article{binary_log,
+    author = {Clay S Turner},
+    title = {A fast binary logarithm algorithm [{DSP} tips \& tricks]},
+    journal = {IEEE Signal Processing Magazine},
+    year = {2010},
+    volume   = {27},
+    number   = {5},
+    pages    = {124--140},
+}
