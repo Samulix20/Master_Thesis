@@ -26,9 +26,7 @@ jobs:
       run: git config --global user.name "Samulix20"
     - name: Setup git email
       run: git config --global user.email ${{ secrets.USER_EMAIL }}
-    # This one fails if there are merge conflicts, which is intended behaviour
-    # Changes from outside overleaf should be made on another branch and manually merged before they are pushed on main
     - name: Pull changes from Overleaf
       run: git pull --rebase overleaf master 
-    - name: Push changes to Github and Overleaf (only from main)
+    - name: Push changes to Github
       run: git push --force origin main
