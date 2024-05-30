@@ -1,4 +1,4 @@
-# TFM Thesis
+# Overleaf sync
 
 ## Config
 
@@ -11,7 +11,7 @@ USER_NAME = "User name for git identity"
 GIT_TOKEN = "Github personal access token, can be created at https://github.com/settings/apps"
 ```
 
-## Automatic overleaf sync
+## Automatic Overleaf sync
 
 The `overleaf_sync.yml` workflows runs every dat at 8:00 and pulls changes from overleaf. Can also be run from Github from the Actions tab.
 
