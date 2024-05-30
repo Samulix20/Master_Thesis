@@ -13,8 +13,8 @@ GIT_TOKEN = "Github personal access token, can be created at https://github.com/
 
 ## Automatic overleaf sync
 
-The `overleaf_sync.yml` workflows runs every dat at 8:00 and pulls changes from overleaf. This can be edited.
+The `overleaf_sync.yml` workflows runs every dat at 8:00 and pulls changes from overleaf. Can also be run from Github from the Actions tab.
 
 ## Push to overleaf
 
-Pushes on `main` branch to paths of `root` directory trigger the `overleaf_push.yml` workflow which pushes the changes also to Overleaf 
+Pushes on `main` branch to paths of `root` directory trigger the `overleaf_push.yml` workflow which also pushes the changes to Overleaf. This fails if the overleaf repository has commits ahead. Make sure to run `overleaf_sync.yml` and pull before pushing to `main`.
