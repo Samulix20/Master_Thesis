@@ -1,7 +1,5 @@
 # Overleaf sync
 
-
-
 ## Config
 
 Requires the following repo secrets configured
