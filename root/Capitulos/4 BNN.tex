@@ -11,20 +11,7 @@ En esta sección se explican los pasos y bibliotecas desarrolladas para poder ej
 
 \section{Componentes desarrollados}
 
-Para poder llevar a cabo el proceso de la Figura \ref{fig:experiment_pipeline} se han realizado las siguientes tareas: desarrollar un conversor de modelos, desarrollar un motor de inferencia de BNN, actualizar el \textit{\textbf{B}oard \textbf{S}upport \textbf{P}ackage} (BSP) del procesador y desarrollar una herramienta de análisis de resultados.
-
-\subsection{Conversor de modelos}
-
-Se ha desarrollado una herramienta en Python que convierte modelos BNN TensorFlow ya entrenados en precisión de punto flotante a ficheros de código C que puedan ejecutarse junto al motor de inferencia explicado en la Sección \ref{sec:motor_inferencia_c}. Esta herramienta realiza las siguientes tareas:
-
-\begin{itemize}
-    \item Transformar los pesos a coma fija. Coma fija es un formato que permite representar y operar con números decimales utilizando hardware de precisión entera.
-    \item Analizar la precisión mínima necesaria. Buscar el tamaño de dato más pequeño en los que los pesos transformados se puedan almacenar. \todo
-    \item Generar vectores de pesos. Generar código C que almacene los pesos en vectores aplanados.
-    \item Generar función de inferencia. Analizar que capas forman el modelo y generar el código de una función de inferencia utilizando las funciones proveídas por el motor.
-    \item Transformar los datos de prueba a coma fija.
-    \item Generar vector de datos de prueba.
-\end{itemize}
+Para poder llevar a cabo el proceso de la Figura \ref{fig:experiment_pipeline} se han realizado las siguientes tareas: actualizar el \textit{\textbf{B}oard \textbf{S}upport \textbf{P}ackage} (BSP) del procesador, desarrollar un motor de inferencia de BNN, desarrollar un conversor de modelos y desarrollar una herramienta de análisis de resultados.
 
 \subsection{Actualización del Board Support Package}
 
@@ -32,7 +19,17 @@ Con el objetivo de mejorar la experiencia de desarrollo del motor de inferencia 
 
 \subsection{Motor de inferencia} \label{sec:motor_inferencia_c}
 
-Se ha desarrollado una librería de funciones que ejecutan la inferencia de capas BNN estándar y convolucionales con funciones de activación ReLU o exponenciales normalizadas (SoftMax) utilizando precisión de punto fijo. Mientras que calcular la función ReLU es trivial la función SoftMax no. Dicha función toma un vector de componentes $x \in X$ de tamaño $N$ como entrada y devuelve otro del mismo tamaño cuyos componentes $y\in Y$ se calculan según la Ecuación \ref{eq:softmax}.
+Se ha desarrollado una librería de funciones que ejecutan la inferencia de capas BNN estándar y convolucionales con funciones de activación ReLU o exponenciales normalizadas (SoftMax) utilizando precisión de coma fija. 
+
+\subsubsection{Precisión en coma fija}
+
+Implementar aritmética de coma flotante en hardware es caro, por lo que es común que procesadores de bajas prestaciones no dispongan de dicho hardware. GCC permite emular las operaciones de coma flotante mediante software, comúnmente conocido como \textit{soft-float}. Esta emulación tiene un gran impacto en el rendimiento por lo que no se ha utilizado.
+
+Se ha utilizado el formato coma fija para representar los números decimales en el motor de inferencia. Este formato permite representar números decimales y operar con ellos utilizando hardware de precisión entera, lo que tiene un impacto muy pequeño en el rendimiento. Esta codificación consiste en multiplicar los números con una escala potencia de 2. A mayor sea la escala mayor precisión se obtiene. La principal limitación de esta codificación es el tamaño de palabra de la arquitectura ya que pueden ocurrir desbordamientos al operar con números multiplicados por una escala grande. Por lo que en general se obtiene menor precisión que con la codificación en punto flotante.
+
+\subsubsection{Aproximación de la función SoftMax}
+
+Mientras que calcular la función ReLU es trivial la función SoftMax no. Dicha función toma un vector de componentes $x \in X$ de tamaño $N$ como entrada y devuelve otro del mismo tamaño cuyos componentes $y\in Y$ se calculan según la Ecuación \ref{eq:softmax}.
 \begin{equation} \label{eq:softmax}
 y_i = \dfrac{e^{x_i}}{\sum_{j = 0}^N e^{x_j}}
 \end{equation}
@@ -52,6 +49,12 @@ La parte entera $e^{a_i}$ se calcula mediante una LUT de 20 entradas para el ran
 e^{b_i} \approx \sum_{n=0}^{7} \dfrac{{b_i}^n}{n!}
 \end{equation}
 
+\subsubsection{Aproximación de la función logaritmo}
+
+Para calcular las métricas de incertidumbre se necesita la función logaritmo por lo que se ha implementado una versión del algoritmo desarrollado por Turner \cite{binary_log} para calcular el logaritmo de un número en coma fija.
+
+\subsubsection{Muestreo de la distribución Gaussiana estándar}
+
 Como se ha explicado previamente, las BNN necesitan muestrear distribuciones gaussianas. Como método de muestreo base se utilizada un algoritmo basado en la suma de distribuciones uniformes, dicha suma se aproximan a una distribución gaussiana debido al TCL, mostrado en la Ecuación \ref{eq:tcl_unif}.
 \begin{equation} \label{eq:tcl_unif}
 \sum_{n=0}^{N} \mathcal{U}_n(0,1) \sim \mathcal{N} \left( \dfrac{N}{2}, \sqrt{\dfrac{N}{12}} \right)
@@ -67,17 +70,30 @@ Para ello utiliza la suma de 12 distribuciones uniformes y posteriormente centra
 \sum_{n=0}^{12} \mathcal{U}_n(0,1) - 6 \sim \mathcal{N}(0,1)
 \end{equation}
 
+\todo poner demostración básica de los resultados que se obtienen y análisis de error
+
+\subsubsection{Muestreo de una distribución uniforme}
+
 Para generar muestras de distribuciones uniformes se utiliza una versión del algoritmo Xorshift de 32 bits \cite{xorshift}. Es un algoritmo sencillo para generar números pseudoaleatorios solamente con instrucciones \texttt{xor} y \texttt{shift}.
 
-Para calcular las métricas de incertidumbre se necesita la función logaritmo por lo que se ha implementado una versión del algoritmo desarrollado por Turner \cite{binary_log} para calcular el logaritmo de un número en coma fija. 
+\subsection{Conversor de modelos}
+
+Se ha desarrollado una herramienta en Python que convierte modelos BNN TensorFlow ya entrenados en precisión de punto flotante a ficheros de código C que puedan ejecutarse junto al motor de inferencia explicado en la Sección \ref{sec:motor_inferencia_c}. Esta herramienta realiza las siguientes tareas:
+
+\begin{itemize}
+    \item Transformar los pesos a coma fija.
+    \item Analizar la precisión mínima necesaria. Buscar el tamaño de dato más pequeño en los que los pesos transformados se puedan almacenar. \todo
+    \item Generar vectores de pesos. Generar código C que almacene los pesos en vectores aplanados.
+    \item Generar función de inferencia. Analizar que capas forman el modelo y generar el código de una función de inferencia utilizando las funciones proveídas por el motor.
+    \item Transformar los datos de prueba a coma fija.
+    \item Generar vector de datos de prueba.
+\end{itemize}
 
 \subsection{Verificación automática}
 
 Para analizar el correcto funcionamiento del motor de inferencia y estudiar el impacto en el rendimiento de las optimizaciones posteriores se ha desarrollado una herramienta que compara las predicciones del conjunto de datos de prueba obtenidas con el motor de inferencia y TensorFlow.
 
 Para comparar los conjuntos de predicciones se han utilizado la métrica de precisión y las métricas de incertidumbre. La precisión es simplemente el ratio de predicciones correctas sobre el número de predicciones. Analizar las métricas de incertidumbre es más complejo, por lo que se han utilizado los siguientes gráficos para ello.\\
-
-
 
 \boxtext{
 \begin{itemize}
@@ -86,17 +102,56 @@ Para comparar los conjuntos de predicciones se han utilizado la métrica de prec
     \item histograma de las predicciones correctas, incorrectas
     \item recta calibración
     \item precisión por grupos
-    \item cambio de prueba
-    \item cambio de prueba B
-    \item cambios hechos desde el mundo local despues del merge
-    \item nueva info desde overleaf
-    \item test after pull
 \end{itemize}
 }
 
 \section{Análisis de la carga de trabajo}
 
-
-
 \section{Optimizaciones software}
+\todo
 
+Operación \textit{\textbf{M}ultiply–\textbf{A}ccumulate} (MAC) con constante $b$
+\begin{equation} \label{eq:mac}
+o = b + \sum_{i=0}^N w_i x_i
+\end{equation}
+
+Operaciones de varianzas y esperanzas de variables independientes \todo
+\begin{equation} \label{eq:neuron_variance}
+E(X+Y) = E(X)+ E(Y)
+\end{equation}
+\begin{equation} \label{eq:neuron_variance}
+V(X+Y) = V(X) + V(Y)
+\end{equation}
+\begin{equation} \label{eq:neuron_variance}
+E(XY) = E(X)E(Y)
+\end{equation}
+\begin{equation} \label{eq:neuron_variance}
+V(XY) = (V(X)+E(X)^2)(V(Y)+E(Y)^2) - (E(X)^2E(Y)^2)
+\end{equation}
+
+Operación en esperanzas
+\begin{equation} \label{eq:neuron_expected}
+E[o] = b + \sum_{i=0}^N ( E[w_i] E[x_i] )
+\end{equation}
+
+Operación en varianzas
+\begin{equation} \label{eq:neuron_variance}
+V[o] = \sum_{i=0}^N ( V[w_i]V[x_i] + V[w_i]E[x_i]^2 + V[x_i]E[w_i]^2 )
+\end{equation}
+
+Considerando un peso $w \sim \mathcal{N}(\mu,\sigma)$, se define uno nuevo $w' = b u + a$, siendo $u$ una muestra de una distribución unifome $\mathcal{U}(0,1)$. 
+
+Para calcular $a$ y $b$ se resuelve el sistema de ecuaciones $\mu = E[w']$, $\sigma^2 = V[w']$
+
+\begin{equation} \label{eq:neuron_variance}
+\mu = \dfrac{b}{2} + a
+\end{equation}
+\begin{equation} \label{eq:neuron_variance}
+\sigma^2 = \dfrac{b^2}{12}
+\end{equation}
+\begin{equation} \label{eq:system_a}
+a = \mu - \dfrac{b}{2}
+\end{equation}
+\begin{equation} \label{eq:system_b}
+b = \sigma \sqrt{12}
+\end{equation}
