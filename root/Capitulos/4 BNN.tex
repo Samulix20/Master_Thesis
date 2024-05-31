@@ -49,13 +49,22 @@ La parte entera $e^{a_i}$ se calcula mediante una LUT de 20 entradas para el ran
 e^{b_i} \approx \sum_{n=0}^{7} \dfrac{{b_i}^n}{n!}
 \end{equation}
 
+La Figura \ref{fig:exp_aprox} muestra ... \todo
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\linewidth]{root/Imagenes/exp_aprox.pdf}
+    \caption{\todo}
+    \label{fig:exp_aprox}
+\end{figure}
+
 \subsubsection{Aproximación de la función logaritmo}
 
 Para calcular las métricas de incertidumbre se necesita la función logaritmo por lo que se ha implementado una versión del algoritmo desarrollado por Turner \cite{binary_log} para calcular el logaritmo de un número en coma fija.
 
 \subsubsection{Muestreo de la distribución Gaussiana estándar}
 
-Como se ha explicado previamente, las BNN necesitan muestrear distribuciones gaussianas. Como método de muestreo base se utilizada un algoritmo basado en la suma de distribuciones uniformes, dicha suma se aproximan a una distribución gaussiana debido al TCL, mostrado en la Ecuación \ref{eq:tcl_unif}.
+Como se ha explicado previamente, las BNN necesitan muestrear distribuciones gaussianas. Como método de muestreo base se utilizada un algoritmo basado en la suma de distribuciones uniformes, dicha suma se aproximan a una distribución gaussiana debido al TCL, como se muestra en la Ecuación \ref{eq:tcl_unif}.
 \begin{equation} \label{eq:tcl_unif}
 \sum_{n=0}^{N} \mathcal{U}_n(0,1) \sim \mathcal{N} \left( \dfrac{N}{2}, \sqrt{\dfrac{N}{12}} \right)
 \end{equation}
@@ -71,6 +80,30 @@ Para ello utiliza la suma de 12 distribuciones uniformes y posteriormente centra
 \end{equation}
 
 \todo poner demostración básica de los resultados que se obtienen y análisis de error
+
+% Vertically alling two sufigures and keep subcaption using floatrow and subcaptions pkgs
+\begin{figure}[htb]
+  \floatsetup{heightadjust=all, valign=c}
+  \begin{subcaptiongroup}
+  \begin{floatrow}
+    \ffigbox{%
+      \includegraphics[width=0.49\textwidth]{root/Imagenes/qqplot.png}
+    }{%
+      \caption{qqplot \todo}%
+      \label{fig:clasic_neuron}%
+    }
+    \ffigbox{%
+      \includegraphics[width=0.49\textwidth]{root/Imagenes/hist.pdf}
+    }{%
+      \caption{hist \todo}%
+      \label{fig:bnn_neuron}%
+    }
+  \end{floatrow}
+  \end{subcaptiongroup}
+  \caption{\todo.}%
+  \label{fig:neuron_comparation}%
+\end{figure}
+
 
 \subsubsection{Muestreo de una distribución uniforme}
 
