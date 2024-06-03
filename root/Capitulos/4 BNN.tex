@@ -49,12 +49,12 @@ La parte entera $e^{a_i}$ se calcula mediante una LUT de 20 entradas para el ran
 e^{b_i} \approx \sum_{n=0}^{7} \dfrac{{b_i}^n}{n!}
 \end{equation}
 
-La Figura \ref{fig:exp_aprox} muestra ... \todo
+La Figura \ref{fig:exp_aprox} muestra un estudio de la precisión de la aproximación. Se comparan sus resultados con los de la implementación de la función exponencial de la biblioteca estándar en punto flotante. Como medida cuantitativa del error se ha utilizado el error cuadrático medio (\textit{\textbf{M}ean \textbf{S}quared \textbf{E}rror}). Se aprecia como se obtiene una buena aproximación en el rango deseado.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.6\linewidth]{root/Imagenes/exp_aprox.pdf}
-    \caption{\todo}
+    \includegraphics[width=0.55\linewidth]{root/Imagenes/4_bnn_riscv/exp_aprox.pdf}
+    \caption{Comparación de la función $e^x$ de la biblioteca estándar en punto flotante (linea negra) con la aproximación en coma fija implementada (linea roja discontinua) en el rango $[-20,0]$.}
     \label{fig:exp_aprox}
 \end{figure}
 
@@ -79,31 +79,14 @@ Para ello utiliza la suma de 12 distribuciones uniformes y posteriormente centra
 \sum_{n=0}^{12} \mathcal{U}_n(0,1) - 6 \sim \mathcal{N}(0,1)
 \end{equation}
 
-\todo poner demostración básica de los resultados que se obtienen y análisis de error
+La Figura \ref{fig:gauss_aprox} muestra un análisis estadístico del método de muestreo implementado. En el gráfico Q-Q se aprecia como el histograma 
 
-% Vertically alling two sufigures and keep subcaption using floatrow and subcaptions pkgs
-\begin{figure}[htb]
-  \floatsetup{heightadjust=all, valign=c}
-  \begin{subcaptiongroup}
-  \begin{floatrow}
-    \ffigbox{%
-      \includegraphics[width=0.49\textwidth]{root/Imagenes/qqplot.png}
-    }{%
-      \caption{qqplot \todo}%
-      \label{fig:clasic_neuron}%
-    }
-    \ffigbox{%
-      \includegraphics[width=0.49\textwidth]{root/Imagenes/hist.pdf}
-    }{%
-      \caption{hist \todo}%
-      \label{fig:bnn_neuron}%
-    }
-  \end{floatrow}
-  \end{subcaptiongroup}
-  \caption{\todo.}%
-  \label{fig:neuron_comparation}%
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{root/Imagenes/4_bnn_riscv/gaus_aprox.png}
+    \caption{Análisis estadístico de $10^5$ muestras del GRNG implementado (azul) con respecto a $\mathcal{N}(0,1)$ (rojo). A la izquierda se muestra un gráfico Q-Q. A la derecha se muestra un histograma.}
+    \label{fig:gauss_aprox}
 \end{figure}
-
 
 \subsubsection{Muestreo de una distribución uniforme}
 
