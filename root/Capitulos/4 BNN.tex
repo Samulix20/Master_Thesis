@@ -4,7 +4,7 @@ En esta sección se explican los pasos y bibliotecas desarrolladas para poder ej
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{Imagenes/experiment_pipeline.pdf}
+    \includegraphics[width=\textwidth]{root/Imagenes/4_bnn_riscv/experiment_pipeline.pdf}
     \caption{\todo}
     \label{fig:experiment_pipeline}
 \end{figure}
@@ -109,17 +109,122 @@ Se ha desarrollado una herramienta en Python que convierte modelos BNN TensorFlo
 
 Para analizar el correcto funcionamiento del motor de inferencia y estudiar el impacto en el rendimiento de las optimizaciones posteriores se ha desarrollado una herramienta que compara las predicciones del conjunto de datos de prueba obtenidas con el motor de inferencia y TensorFlow.
 
-Para comparar los conjuntos de predicciones se han utilizado la métrica de precisión y las métricas de incertidumbre. La precisión es simplemente el ratio de predicciones correctas sobre el número de predicciones. Analizar las métricas de incertidumbre es más complejo, por lo que se han utilizado los siguientes gráficos para ello.\\
+Durante el proceso de verificación se han utilizado tres arquitecturas de modelos diferentes. La Tabla \ref{tab:hyper_models} muestra la arquitectura de los modelos para clasificación de píxeles hiperespectrales \cite{bnn_hyper_uncertainty}.
 
-\boxtext{
-\begin{itemize}
-    \item \todo
-    \item incertidumbre media de cada clase
-    \item histograma de las predicciones correctas, incorrectas
-    \item recta calibración
-    \item precisión por grupos
-\end{itemize}
-}
+\begin{table}[h]
+    \centering
+    \caption{Arquitectura de los modelos para clasificación de píxeles hiperespectrales.}
+    \label{tab:hyper_models}
+    \begin{tabular}{lll}
+    \hline
+         \textbf{Layer Type} & \textbf{Input} & \textbf{Output}\\ \hline
+         Dense & Number of spectral bands & 32\\
+         Dense & 32 & 16\\
+         Dense & 16 & Number of pixel classes\\ \hline
+    \end{tabular}
+\end{table}
+
+La Tabla \ref{tab:cnn_models} muestra una arquitectura LeNet-5 bayesiana. LeNet-5 es una arquitectura de red neuronal convolucional (\textit{\textbf{C}onvolutional \textbf{N}eural \textbf{N}etwork}) simple \cite{lenet}. Se ha entrenado un modelo con la misma arquitectura para reconocer el conjunto de datos MNIST y CIFAR10 pero utilizando capas bayesianas.
+
+\begin{table}[h]
+    \centering
+    \caption{Arquitectura LeNet-5 bayesiana.}
+    \label{tab:cnn_models}
+    \begin{tabular}{llll}
+        \hline
+         \textbf{Layer Type} &  \textbf{Input} &  \textbf{Output} & \textbf{Kernel Size} \\ \hline
+         Conv2D Valid & 28$\times$28 & 24$\times$24$\times$6 & 5$\times$5 \\
+         MaxPool2D & 24$\times$24$\times$6 & 12$\times$12$\times$6 & 2$\times$2 \\
+         Conv2D Valid & 12$\times$12$\times$6 & 8$\times$8$\times$16 & 5$\times$5 \\
+         MaxPool2D & 8$\times$8$\times$16 & 4$\times$4$\times$16 & 2$\times$2 \\
+         Conv2D Valid & 4$\times$4$\times$16 & 1$\times$1$\times$120 & 4$\times$4 \\
+         Dense & 120 & 84 & \\
+         Dense & 84 & 10 & \\ \hline
+    \end{tabular}
+\end{table}
+
+La Tabla \ref{tab:b2n2_model} muestra la arquitectura B2N2. 
+
+\begin{table}[h]
+    \centering
+    \caption{Bayesian B2N2 architecture}
+    \label{tab:b2n2_model}
+    \begin{tabular}{llll}
+    \hline
+    \textbf{Layer Type} & \textbf{Input} & \textbf{Output} & \textbf{Kernel Size}\\ \hline
+    Conv2D Same & 32$\times$32 & 32$\times$32$\times$32 & 3$\times$3 \\
+    Conv2D Same & 32$\times$32$\times$32 & 32$\times$32$\times$32 & 3$\times$3 \\
+    MaxPool2D & 32$\times$32$\times$32 & 16$\times$16$\times$32 & 2$\times$2 \\
+    Conv2D Same & 16$\times$16$\times$32 & 16$\times$16$\times$64 & 3$\times$3 \\
+    Conv2D Same & 16$\times$16$\times$64 & 16$\times$16$\times$64 & 3$\times$3 \\
+    MaxPool2D & 16$\times$16$\times$64 & 8$\times$8$\times$64 & 2$\times$2 \\
+    Conv2D Same & 8$\times$8$\times$64 & 8$\times$8$\times$128 & 3$\times$3 \\
+    Conv2D Same & 8$\times$8$\times$128 & 8$\times$8$\times$128 & 3$\times$3 \\
+    MaxPool2D & 8$\times$8$\times$128 & 4$\times$4$\times$128 & 2$\times$2 \\
+    Dense & 2028 & 10 & \\ \hline
+    \end{tabular}
+\end{table}
+
+Para comparar los conjuntos de predicciones se han utilizado la métrica de precisión y las métricas de incertidumbre. La precisión es el ratio de predicciones correctas sobre el número total de predicciones. la Tabla \ref{tab:engine_acc} muestra la precisión...\todo . 
+
+\begin{table}[ht]
+\centering
+\caption{Comparación de precisión obtenida con el motor de inferencia implementado con respecto a resultados obtenidos con TensorFlow}
+\label{tab:engine_acc}
+\begin{tabular}{lll}
+\hline
+ &  \multicolumn{2}{c}{\textbf{Motor de inferencia}}\\
+ \textbf{Modelo} & \textit{TensorFlow} & \textit{C} \\ \hline
+ Hiperespectral BO   & 0.9039 & 0.9101 \\
+ Hiperespectral IP   & 0.8139 & 0.8148 \\
+ Hiperespectral KSC  & 0.9256 & 0.9217 \\
+ Hiperespectral PU   & 0.9017 & 0.9021 \\
+ Hiperespectral SV   & 0.9257 & 0.9275 \\
+ Lenet-5 MNIST      & 0.9836 & 0.9830 \\
+ Lenet-5 CIFAR10    & 0.6351 & 0.6229 \\
+ B2N2 MNIST         & 0.9872 & 0.9854 \\
+ B2N2 CIFAR10       & 0.7295 & 0.7134 \\\hline
+\end{tabular}
+\end{table}
+
+Analizar las métricas de incertidumbre y las propiedades estadísticas de los modelos es más complejo, para hacerlo se han utilizado 4 tipos de gráficas de las que se puede ver un ejemplo en la Figura \ref{fig:figure_example}. 
+
+\ref{fig:example_hist} muestra un histograma de la incertidumbre agrupada por aciertos y fallos. \ref{fig:example_class} muestra la incertidumbre media, separada en epistémica y aleatoria, de las predicciones de cada clase. \ref{fig:example_acc_unc} muestra la precisión con respecto a la incertidumbre junto con un histograma de los datos agrupados también con respecto a la incertidumbre. \ref{fig:example_calibration} muestra la recta de calibración del modelo.
+
+\begin{figure}[h]
+     \centering
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{root/Imagenes/4_bnn_riscv/hist_predictions.pdf}
+         \caption{Histograma de incertidumbre dividido en predicciones correctas (azul) y predicciones incorrectas (rojo).}
+         \label{fig:example_hist}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{root/Imagenes/4_bnn_riscv/class_uncertainty.pdf}
+         \caption{Incertidumbre predictiva ($\mathbb{H}$) y aleatoria ($\mathbb{E}p$) agrupada por clases.\\}
+         \label{fig:example_class}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{root/Imagenes/4_bnn_riscv/acc_vs_unc.pdf}
+         \caption{Precisión y porcentaje de predicciones agrupadas por incertidumbre.\\}
+         \label{fig:example_acc_unc}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{root/Imagenes/4_bnn_riscv/calibration.pdf}
+         \caption{Recta de calibración del modelo, muestra probabilidades observadas con respecto a las probabilidades predichas por el modelo.}
+         \label{fig:example_calibration}
+     \end{subfigure}
+        \caption{Ejemplos de tipos de gráficas para analizar la incertidumbre y propiedades estadísticas de un modelo BNN.}
+        \label{fig:figure_example}
+\end{figure}
+
+Como se muestra en el ejemplo se obtienen resultados muy similares en todas las gráficas. Las únicas diferencias notables se aprecian en las rectas de precisión de la Figura \ref{fig:example_acc_unc}, pero estas diferencias ocurren en predicciones con incertidumbre alta de las que además hay muy pocas. El modelo al reportar una incertidumbre elevada ya esta avisando de la baja fiabilidad de la predicción con lo que diferencias en este tipo de predicciones son esperables y aceptables.
 
 \section{Análisis de la carga de trabajo}
 
