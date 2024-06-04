@@ -107,9 +107,11 @@ Se ha desarrollado una herramienta en Python que convierte modelos BNN TensorFlo
 
 \subsection{Verificación automática}
 
-Para analizar el correcto funcionamiento del motor de inferencia y estudiar el impacto en el rendimiento de las optimizaciones posteriores se ha desarrollado una herramienta que compara las predicciones del conjunto de datos de prueba obtenidas con el motor de inferencia y TensorFlow.
+Para analizar el correcto funcionamiento del motor de inferencia y estudiar el impacto en el rendimiento de las optimizaciones posteriores se ha desarrollado una herramienta que compara las predicciones del conjunto de datos de prueba obtenidas con el motor de inferencia y TensorFlow de forma automática. 
 
-Durante el proceso de verificación se han utilizado tres arquitecturas de modelos diferentes. La Tabla \ref{tab:hyper_models} muestra la arquitectura de los modelos para clasificación de píxeles hiperespectrales \cite{bnn_hyper_uncertainty}.
+\subsubsection{Modelos}
+
+Durante el proceso de verificación se han utilizado tres arquitecturas de modelos diferentes. La Tabla \ref{tab:hyper_models} muestra la arquitectura de los modelos para clasificación de píxeles hiperespectrales \cite{bnn_hyper_uncertainty}. Los conjuntos de datos utilizados para este modelo son diferentes imágenes hiperespectrales obtenidas mediante satélite denominadas BO, IP, KSC, PU y SV.
 
 \begin{table}[h]
     \centering
@@ -124,7 +126,7 @@ Durante el proceso de verificación se han utilizado tres arquitecturas de model
     \end{tabular}
 \end{table}
 
-La Tabla \ref{tab:cnn_models} muestra una arquitectura LeNet-5 bayesiana. LeNet-5 es una arquitectura de red neuronal convolucional (\textit{\textbf{C}onvolutional \textbf{N}eural \textbf{N}etwork}) simple \cite{lenet}. Se ha entrenado un modelo con la misma arquitectura para reconocer el conjunto de datos MNIST y CIFAR10 pero utilizando capas bayesianas.
+La Tabla \ref{tab:cnn_models} muestra una arquitectura LeNet-5 bayesiana. LeNet-5 es una arquitectura de red neuronal convolucional (\textit{\textbf{C}onvolutional \textbf{N}eural \textbf{N}etwork}) simple \cite{lenet}. Se ha entrenado un modelo con la misma arquitectura para reconocer el conjunto de datos MNIST \cite{MNIST_dataset} y CIFAR-10 \cite{CIFAR_dataset} pero utilizando capas bayesianas.
 
 \begin{table}[h]
     \centering
@@ -143,11 +145,11 @@ La Tabla \ref{tab:cnn_models} muestra una arquitectura LeNet-5 bayesiana. LeNet-
     \end{tabular}
 \end{table}
 
-La Tabla \ref{tab:b2n2_model} muestra la arquitectura B2N2. 
+La Tabla \ref{tab:b2n2_model} muestra la arquitectura B2N2, propuesta por Awano \emph{et al.} junto a su acelerador para BNN \cite{bnn_clt_approx}. También se ha entrenado para reconocer los conjuntos de datos MNIST y CIFAR-10.
 
 \begin{table}[h]
     \centering
-    \caption{Bayesian B2N2 architecture}
+    \caption{Arquitectura B2N2.}
     \label{tab:b2n2_model}
     \begin{tabular}{llll}
     \hline
@@ -165,38 +167,18 @@ La Tabla \ref{tab:b2n2_model} muestra la arquitectura B2N2.
     \end{tabular}
 \end{table}
 
-Para comparar los conjuntos de predicciones se han utilizado la métrica de precisión y las métricas de incertidumbre. La precisión es el ratio de predicciones correctas sobre el número total de predicciones. la Tabla \ref{tab:engine_acc} muestra la precisión...\todo . 
+\subsubsection{Métricas}
 
-\begin{table}[ht]
-\centering
-\caption{Comparación de precisión obtenida con el motor de inferencia implementado con respecto a resultados obtenidos con TensorFlow}
-\label{tab:engine_acc}
-\begin{tabular}{lll}
-\hline
- &  \multicolumn{2}{c}{\textbf{Motor de inferencia}}\\
- \textbf{Modelo} & \textit{TensorFlow} & \textit{C} \\ \hline
- Hiperespectral BO   & 0.9039 & 0.9101 \\
- Hiperespectral IP   & 0.8139 & 0.8148 \\
- Hiperespectral KSC  & 0.9256 & 0.9217 \\
- Hiperespectral PU   & 0.9017 & 0.9021 \\
- Hiperespectral SV   & 0.9257 & 0.9275 \\
- Lenet-5 MNIST      & 0.9836 & 0.9830 \\
- Lenet-5 CIFAR10    & 0.6351 & 0.6229 \\
- B2N2 MNIST         & 0.9872 & 0.9854 \\
- B2N2 CIFAR10       & 0.7295 & 0.7134 \\\hline
-\end{tabular}
-\end{table}
-
-Analizar las métricas de incertidumbre y las propiedades estadísticas de los modelos es más complejo, para hacerlo se han utilizado 4 tipos de gráficas de las que se puede ver un ejemplo en la Figura \ref{fig:figure_example}. 
+Para comparar los conjuntos de predicciones se han utilizado las métricas de incertidumbre y la precisión. Analizar las métricas de incertidumbre y las propiedades estadísticas de los modelos es complejo. Para hacerlo se han utilizado 4 tipos de gráficas de las que se puede ver un ejemplo en la Figura \ref{fig:figure_example}. Estas gráficas se han creado utilizando las predicciones para el conjunto de datos de píxeles hiperespectrales KSC.
 
 \ref{fig:example_hist} muestra un histograma de la incertidumbre agrupada por aciertos y fallos. \ref{fig:example_class} muestra la incertidumbre media, separada en epistémica y aleatoria, de las predicciones de cada clase. \ref{fig:example_acc_unc} muestra la precisión con respecto a la incertidumbre junto con un histograma de los datos agrupados también con respecto a la incertidumbre. \ref{fig:example_calibration} muestra la recta de calibración del modelo.
 
-\begin{figure}[h]
+\begin{figure}[H] % Si no se usa H hace un accidente de tren
      \centering
      \begin{subfigure}[b]{0.48\textwidth}
          \centering
          \includegraphics[width=\textwidth]{root/Imagenes/4_bnn_riscv/hist_predictions.pdf}
-         \caption{Histograma de incertidumbre dividido en predicciones correctas (azul) y predicciones incorrectas (rojo).}
+         \caption{Histogramas de incertidumbre divididos en predicciones correctas (azul) y predicciones incorrectas (rojo).}
          \label{fig:example_hist}
      \end{subfigure}
      \hfill
@@ -220,44 +202,69 @@ Analizar las métricas de incertidumbre y las propiedades estadísticas de los m
          \caption{Recta de calibración del modelo, muestra probabilidades observadas con respecto a las probabilidades predichas por el modelo.}
          \label{fig:example_calibration}
      \end{subfigure}
-        \caption{Ejemplos de tipos de gráficas para analizar la incertidumbre y propiedades estadísticas de un modelo BNN.}
+        \caption{Ejemplos de gráficas para analizar la incertidumbre y propiedades estadísticas de un modelo BNN. En \ref{fig:example_class}, \ref{fig:example_acc_unc} y \ref{fig:example_calibration} los colores amarillos representan los resultados obtenidos con TensorFlow y los colores azules los obtenidos con el motor de inferencia desarrollado. Predicciones del conjunto de prueba de píxeles hiperespectrales KSC.}
         \label{fig:figure_example}
 \end{figure}
 
-Como se muestra en el ejemplo se obtienen resultados muy similares en todas las gráficas. Las únicas diferencias notables se aprecian en las rectas de precisión de la Figura \ref{fig:example_acc_unc}, pero estas diferencias ocurren en predicciones con incertidumbre alta de las que además hay muy pocas. El modelo al reportar una incertidumbre elevada ya esta avisando de la baja fiabilidad de la predicción con lo que diferencias en este tipo de predicciones son esperables y aceptables.
+Como se muestra en el ejemplo se obtienen resultados muy similares en todas las gráficas. Las únicas diferencias notables se aprecian en las rectas de precisión de la Figura \ref{fig:example_acc_unc}, pero estas diferencias ocurren en predicciones con incertidumbre alta de las que además hay muy pocas. El modelo al reportar una incertidumbre elevada ya esta avisando de la baja fiabilidad de la predicción con lo que diferencias en este tipo de predicciones son esperables y aceptables. Para el resto de modelos se obtienen resultados con las mismas similitudes entre motores de inferencia, se pueden consultar todos en el Anexo \ref{}.
+
+La precisión es el ratio de predicciones correctas sobre el número total de predicciones. la Tabla \ref{tab:engine_acc} muestra la precisión obtenida con los diferentes modelos utilizando ambos motores de inferencia. Al tratarse de modelos probabilísticos pequeñas fluctuaciones son esperables, especialmente en las predicciones con mucha incertidumbre.
+
+\begin{table}[ht]
+\centering
+\caption{Comparación de precisión obtenida con el motor de inferencia implementado con respecto a resultados obtenidos con TensorFlow}
+\label{tab:engine_acc}
+\begin{tabular}{lll}
+\hline
+ &  \multicolumn{2}{c}{\textbf{Motor de inferencia}}\\
+ \textbf{Modelo} & \textit{TensorFlow} & \textit{C} \\ \hline
+ Hiperespectral BO   & 0.9039 & 0.9101 \\
+ Hiperespectral IP   & 0.8139 & 0.8148 \\
+ Hiperespectral KSC  & 0.9256 & 0.9217 \\
+ Hiperespectral PU   & 0.9017 & 0.9021 \\
+ Hiperespectral SV   & 0.9257 & 0.9275 \\
+ Lenet-5 MNIST      & 0.9836 & 0.9830 \\
+ Lenet-5 CIFAR10    & 0.6351 & 0.6229 \\
+ B2N2 MNIST         & 0.9872 & 0.9854 \\
+ B2N2 CIFAR10       & 0.7295 & 0.7134 \\\hline
+\end{tabular}
+\end{table}
+
+Los resultados demuestran que el motor de inferencia desarrollado incluso tras transformar los datos a coma fija y perder precisión en la representación no perjudica a las métricas de incertidumbre ni a la precisión.
 
 \section{Análisis de la carga de trabajo}
 
-\section{Optimizaciones software}
-\todo
-
-Operación \textit{\textbf{M}ultiply–\textbf{A}ccumulate} (MAC) con constante $b$
+La principal operación en la inferencia de NN es \textit{\textbf{M}ultiply–\textbf{AC}cumulate} (MAC), mostrada en la Ecuación \ref{eq:mac}. Una capa es un conjunto de neuronas, las entradas a una neurona $x_i$ se multiplican por sus pesos $w_i$ y se acumulan junto a al \textit{bias} $b$. Una capa no convolucional se puede representar como una única multiplicación de matriz vector.
 \begin{equation} \label{eq:mac}
-o = b + \sum_{i=0}^N w_i x_i
+b + \sum_{i=0}^N w_i x_i
 \end{equation}
 
-Operaciones de varianzas y esperanzas de variables independientes \todo
-\begin{equation} \label{eq:neuron_variance}
-E(X+Y) = E(X)+ E(Y)
-\end{equation}
-\begin{equation} \label{eq:neuron_variance}
-V(X+Y) = V(X) + V(Y)
-\end{equation}
-\begin{equation} \label{eq:neuron_variance}
-E(XY) = E(X)E(Y)
-\end{equation}
-\begin{equation} \label{eq:neuron_variance}
-V(XY) = (V(X)+E(X)^2)(V(Y)+E(Y)^2) - (E(X)^2E(Y)^2)
+En el caso de las BNN estas operaciones MAC además requieren muestrear una distribución gaussiana, como se muestra en la Ecuación \ref{eq:bnn_mac}.
+\begin{equation} \label{eq:bnn_mac}
+b + \sum_{i=0}^N Sample(\mu_i, \sigma_i)\ x_i
 \end{equation}
 
-Operación en esperanzas
+El procesador RISC-V tiene un contador de ciclos disponible llamado \texttt{mcycle}, lo que permite medir prestaciones con precisión a nivel de ciclo. Se ha utilizado este contador para crear un perfil de la carga de trabajo del motor de inferencia, el cual se muestra en la Figura \ref{fig:cycle_profile}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{root/Imagenes/4_bnn_riscv/cycles.pdf}
+    \caption{.}
+    \label{fig:cycle_profile}
+\end{figure}
+
+La operación de muestreo de la distribución es la más costosa con diferencia, ocupando mas del 80\% de los ciclos en los 3 modelos diferentes. Por ello, uno de los objetivos principales de este trabajo y de otros relacionados ha sido optimizar esta operación.
+
+\section{Optimizaciones software}
+
+Awano \emph{et al.} propusieron muestrear distribuciones Bernoulli obteniendo el parámetro de las mismas mediante una transformación de los parámetros de las distribuciones gaussianas \cite{bnn_clt_approx}. Se intentó replicar este método mediante software pero los resultados obtenidos no fueron los esperados.
+
+Este trabajo propone un método basado en el suyo pero utilizando distribuciones Uniformes en vez de distribuciones Bernoulli. Como las BNN integran modelado probabilístico hay que tener en cuenta las esperanzas y varianzas de las operaciones MAC, estas se muestran en las Ecuaciones \ref{eq:neuron_expected} y \ref{eq:neuron_variance}
 \begin{equation} \label{eq:neuron_expected}
-E[o] = b + \sum_{i=0}^N ( E[w_i] E[x_i] )
+E\left[ b + \sum_{i=0}^N w_i x_i \right]  = b + \sum_{i=0}^N ( E[w_i] E[x_i] )
 \end{equation}
-
-Operación en varianzas
 \begin{equation} \label{eq:neuron_variance}
-V[o] = \sum_{i=0}^N ( V[w_i]V[x_i] + V[w_i]E[x_i]^2 + V[x_i]E[w_i]^2 )
+V\left[ b + \sum_{i=0}^N w_i x_i \right] = \sum_{i=0}^N ( V[w_i]V[x_i] + V[w_i]E[x_i]^2 + V[x_i]E[w_i]^2 )
 \end{equation}
 
 Considerando un peso $w \sim \mathcal{N}(\mu,\sigma)$, se define uno nuevo $w' = b u + a$, siendo $u$ una muestra de una distribución unifome $\mathcal{U}(0,1)$. 
