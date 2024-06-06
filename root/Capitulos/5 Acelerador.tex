@@ -1,19 +1,24 @@
 \chapter{Extendiendo RISC-V}
 
+Este capítulo explica los pasos seguidos para diseñar un acelerador de BNN, como se ha incluido en una CPU RISC-V y los resultados que se han obtenido al utilizarlo.
+
 \section{Diseño del acelerador}
+
+Como se ha explicado en secciones previas, la sección del algoritmo mas importante a optimizar es el muestreo de distribuciones gaussianas. Para ello se va incluir un GRNG como una nueva unidad funcional (UF) en la CPU RISC-V base. Sarwar Malik \emph{et al.} \cite{clt_grng} propusieron un diseño basado en el TCL que añadía un componente corrector para reducir el error de muestreo de las colas de la distribución. Como también se ha mostrado previamente, no es necesaria una gran precisión a la hora de muestrear distribuciones, por lo que se va a diseñar un GNRG basado en la suma de 12 distribuciones uniformes sin bloque corrector.
 
 \subsection{Generación de números pseudoaleatorios uniformes}
 
-\todo para generar numeros pseudoaletorios uniformes se utiliza un componente hardware llamado \textit{\textbf{L}inear \textbf{F}eedback \textbf{S}hift \textbf{R}egister} (LFSR)
+Para generar números pseudoaletorios uniformes se ha utilizado un componente hardware llamado \textit{\textbf{L}inear \textbf{F}eedback \textbf{S}hift \textbf{R}egister} (LFSR). Se basan en un circuito de retroalimentación y un registro de estado. El circuito de retroalimentación es un conjunto de puertas XOR que implementan un polinomio generador. Dado un registro de estado de $n$ bits, si el polinomio puede producir $2^n-1$ valores antes de empezar a repetir la secuencia entonces la secuencia es máxima. Alfke \cite{lfsr_poly} recopiló una lista de polinomios generadores para secuencias máximas para varios tamaños de registros de estado.
 
-\boxtext{\begin{itemize}
-    \item estan basados un polinomios generadores \cite{lfsr_poly}
-    \item solo pueden generar un bit con baja correlacion, para eso se utilizan look-ahead lfsr, que genera varios por que avanza varios ciclos mediante un circuito mas complejo
-    \item cita al paper y a las ecuaciones para generar las matrices \cite{look_ahead_lfsr_base, look_ahead_lfsr_design}
-    \item explicar implementacion de script python que genera codigo vhdl para una configuración arbitraria de lfsr
-\end{itemize}}
+La desventaja de este tipo de LFSR es que no pueden generar más de un bit con baja correlación entre muestras.
 
-\subsection{Generador de números pseudoaleatorios Gaussianos}
+%\boxtext{\begin{itemize}
+%    \item solo pueden generar un bit con baja correlacion, para eso se utilizan look-ahead lfsr, que genera varios por que avanza varios ciclos mediante un circuito mas complejo
+%    \item cita al paper y a las ecuaciones para generar las matrices \cite{look_ahead_lfsr_base, look_ahead_lfsr_design}
+%    \item explicar implementacion de script python que genera codigo vhdl para una configuración arbitraria de lfsr
+%\end{itemize}}
+
+\subsection{Generador de números pseudoaleatorios gaussianos}
 
 \todo Suma de 12 valores de 12 bits, todos considerados en escala $2^{12}$ para que representen valores entre 0 y 1 (muestras uniformes 0,1). se segmenta para evitar problemas con el reloj, solo afecta al cambiar la semilla que hay 4 valores que hay que tirar, esto lo hace automaticamente el acelerador pero hay que dejar al menos 4 ciclos sin consumir datos
 
@@ -25,13 +30,12 @@
 \end{figure}
 
 \section{Modificaciones al procesador}
-\todo
 
 Se añade como una unidad funcional extra en execution. Esto permite hacer una modificacion minima al procesador, actualizar decode y actualizar el selector de resultado que avanza a la siguiente etapa.
 
 Otra opción es añadirlo como un periférico mapeado en memoria que se acceda mediante instrucciones load store. En este caso impone problemas con los consumidores a distancia 1 lo implica perdida de rendimiento. Generalmente el acceso a memoria tiene que pasar por circuitos mas complejos que añaden retardo (MMU) (en nuestro caso no ocurre).
 
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \includegraphics[width=0.9\textwidth]{Imagenes/riscv_core_extended.pdf}
     \caption{\todo}

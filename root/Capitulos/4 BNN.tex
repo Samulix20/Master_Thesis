@@ -1,6 +1,6 @@
 \chapter{Redes Neuronales Bayesianas en RISC-V}
 
-En esta sección se explican los pasos y bibliotecas desarrolladas para poder ejecutar inferencia de BNN de manera eficiente en un procesador RISC-V con solo soporte para precisión entera. La Figura \ref{fig:experiment_pipeline} muestra el proceso y componentes necesarios.
+En este capítulo se explican los pasos y bibliotecas desarrolladas para poder ejecutar inferencia de BNN de manera eficiente en un procesador RISC-V con solo soporte para precisión entera. La Figura \ref{fig:experiment_pipeline} muestra el proceso y componentes necesarios.
 
 \begin{figure}[h]
     \centering
@@ -249,17 +249,19 @@ El procesador RISC-V tiene un contador de ciclos disponible llamado \texttt{mcyc
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\textwidth]{root/Imagenes/4_bnn_riscv/cycles.pdf}
-    \caption{.}
+    \caption{Ratio de ciclos de ejecución dedicados al muestreo de distribuciones gaussianas (amarillo) y al del resto de operaciones (azul) en las diferentes arquitecturas de modelos utilizadas.}
     \label{fig:cycle_profile}
 \end{figure}
 
-La operación de muestreo de la distribución es la más costosa con diferencia, ocupando mas del 80\% de los ciclos en los 3 modelos diferentes. Por ello, uno de los objetivos principales de este trabajo y de otros relacionados ha sido optimizar esta operación.
+La operación de muestreo es la más costosa con diferencia, ocupando mas del 80\% de los ciclos en los 3 modelos diferentes. Por ello, uno de los objetivos principales de este trabajo y de otros relacionados ha sido optimizar esta sección.
 
 \section{Optimizaciones software}
 
-Awano \emph{et al.} propusieron muestrear distribuciones Bernoulli obteniendo el parámetro de las mismas mediante una transformación de los parámetros de las distribuciones gaussianas \cite{bnn_clt_approx}. Se intentó replicar este método mediante software pero los resultados obtenidos no fueron los esperados.
+Awano \emph{et al.} \cite{bnn_clt_approx} propusieron muestrear distribuciones Bernoulli obteniendo el parámetro de las mismas mediante una transformación de los parámetros de las distribuciones gaussianas. Se intentó replicar este método mediante software pero los resultados obtenidos no fueron los esperados.
 
-Este trabajo propone un método basado en el suyo pero utilizando distribuciones Uniformes en vez de distribuciones Bernoulli. Como las BNN integran modelado probabilístico hay que tener en cuenta las esperanzas y varianzas de las operaciones MAC, estas se muestran en las Ecuaciones \ref{eq:neuron_expected} y \ref{eq:neuron_variance}
+\todo
+
+Este trabajo partiendo de Awano \emph{et al.} propone un nuevo método que utiliza distribuciones Uniformes en vez de distribuciones Bernoulli. El TCL expone que en condiciones generales la distribución de una suma de variables aleatorias tiende a ser una distribución gaussiana. Las operaciones MAC son una suma de variables aleatorias por lo que según el TCL el resultado seguirá una distribución gaussiana. Una distribución gaussiana se define con 2 parámetros, la media y la desviación típica. Asumiendo que el tipo de distribución resultante es independiente del tipo de distribuciones de los sumandos, solamente se tiene que preservar la esperanza y la varianza de la operación MAC para no alterar los resultados de la BNN. Las Ecuaciones \ref{eq:neuron_expected}  y \ref{eq:neuron_variance} muestran la esperanza y la varianza de una operación MAC.
 \begin{equation} \label{eq:neuron_expected}
 E\left[ b + \sum_{i=0}^N w_i x_i \right]  = b + \sum_{i=0}^N ( E[w_i] E[x_i] )
 \end{equation}
@@ -267,19 +269,39 @@ E\left[ b + \sum_{i=0}^N w_i x_i \right]  = b + \sum_{i=0}^N ( E[w_i] E[x_i] )
 V\left[ b + \sum_{i=0}^N w_i x_i \right] = \sum_{i=0}^N ( V[w_i]V[x_i] + V[w_i]E[x_i]^2 + V[x_i]E[w_i]^2 )
 \end{equation}
 
-Considerando un peso $w \sim \mathcal{N}(\mu,\sigma)$, se define uno nuevo $w' = b u + a$, siendo $u$ una muestra de una distribución unifome $\mathcal{U}(0,1)$. 
-
-Para calcular $a$ y $b$ se resuelve el sistema de ecuaciones $\mu = E[w']$, $\sigma^2 = V[w']$
-
-\begin{equation} \label{eq:neuron_variance}
-\mu = \dfrac{b}{2} + a
-\end{equation}
-\begin{equation} \label{eq:neuron_variance}
+Se propone utilizar un nuevo peso $w'$ que cumpla $E[w'] = E[w]$ y $V[w'] = V[w]$, de forma que no altere los resultados de la BNN. $w' = bu + a$, siendo $u$ una muestra de una distribución Uniforme $\mathcal{U}(0,1)$ y $a$ y $b$ siendo constantes que se pueden calcular a partir de la media $\mu$ y desviación típica $\sigma$ de los pesos originales utilizando el sistema de ecuaciones mostrado en la Ecuación \ref{eq:a_b_equation}.
+\begin{equation}\label{eq:a_b_equation}
+\begin{cases}
+\mu = \dfrac{b}{2} + a\\ \\
 \sigma^2 = \dfrac{b^2}{12}
-\end{equation}
-\begin{equation} \label{eq:system_a}
-a = \mu - \dfrac{b}{2}
-\end{equation}
-\begin{equation} \label{eq:system_b}
+\end{cases}
+\rightarrow\ 
+\begin{cases}
+a = \mu - \dfrac{b}{2}\\ \\
 b = \sigma \sqrt{12}
+\end{cases}
 \end{equation}
+
+Esta optimización no aumenta el tamaño de los modelos y no necesita muestrear distribuciones gaussianas sino uniformes, cuyo algoritmo de muestreo es mucho mas sencillo. La Tabla \ref{tab:uniform_opt} muestra los resultados de precisión y aceleración (\textit{speedup}) obtenidos con esta optimización para todas las arquitecturas de modelos y conjuntos de datos.
+
+\begin{table}[h]
+    \centering
+    \caption{Resultados de precisión y \textit{speedup} obtenidos con la optimización desarrollada para todas las arquitectruas de modelos y conjuntos de datos.}
+    \label{tab:uniform_opt}
+    \begin{tabular}{llrrr}
+    \hline
+     \multirow{2}{*}{\textbf{Modelo}} & \textbf{Conjunto} & \multicolumn{2}{c}{\textbf{Precisión}} & \multirow{2}{*}{\textbf{Speedup}} \\
+     & \multicolumn{1}{c}{\textbf{de datos}} & \multicolumn{1}{l}{\textit{TensorFlow}} & \multicolumn{1}{l}{\textit{Optimizado}} & \\ \hline
+    \multirow{5}{*}{HYPER} & BO & 0.9039 & 0.9083 & \multirow{5}{*}{4.95} \\
+     & IP & 0.8139 & 0.8131 & \\
+     & KSC & 0.9256 & 0.9217 & \\
+     & PU & 0.9017 & 0.9017 & \\
+     & SV & 0.9257 & 0.9280 & \\ \hline
+    \multirow{2}{*}{LENET-5} & MNIST & 0.9836 & 0.8906 & \multirow{2}{*}{5.88} \\
+     & CIFAR-10 & 0.6351 & 0.4436 & \\ \hline
+    \multirow{2}{*}{B2N2} & MNIST & 0.9872 & 0.0964 & \multirow{2}{*}{4.88} \\
+     & CIFAR-10 & 0.7295 & 0.2873 & \\ \hline                  
+    \end{tabular}
+\end{table}
+
+Esta optimización ofrece muy buenos resultados en el caso de los modelos para clasificación de píxeles hiperespectrales, no afectando negativamente a la precisión de los modelos y obteniendo un \textit{speedup} de 4.95. Por contrario, en las arquitecturas de modelos mas le pérdida de precisión es mayor, en el caso del modelo B2N2 llega a ser completamente inaceptable. En el caso del modelo LENET-5 MNIST la precisión obtenida aun puede considerarse lo suficientemente buena ... \todo
