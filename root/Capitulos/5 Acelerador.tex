@@ -8,17 +8,27 @@ Como se ha explicado en secciones previas, la sección del algoritmo mas importa
 
 \subsection{Generación de números pseudoaleatorios uniformes}
 
-Para generar números pseudoaletorios uniformes se ha utilizado un componente hardware llamado \textit{\textbf{L}inear \textbf{F}eedback \textbf{S}hift \textbf{R}egister} (LFSR). Se basan en un circuito de retroalimentación y un registro de estado. El circuito de retroalimentación es un conjunto de puertas XOR que implementan un polinomio generador. Dado un registro de estado de $n$ bits, si el polinomio puede producir $2^n-1$ valores antes de empezar a repetir la secuencia entonces la secuencia es máxima. Alfke \cite{lfsr_poly} recopiló una lista de polinomios generadores para secuencias máximas para varios tamaños de registros de estado.
+Para generar números pseudoaletorios uniformes se ha utilizado un componente hardware llamado \textit{\textbf{L}inear \textbf{F}eedback \textbf{S}hift \textbf{R}egister} (LFSR). Se basan en un circuito de retroalimentación y un registro de estado. El circuito de retroalimentación es un conjunto de puertas XOR que implementan un polinomio generador. Dado un registro de estado de $n$ bits, si el polinomio puede producir $2^n-1$ valores antes de empezar a repetir la secuencia entonces la secuencia es máxima. Alfke \cite{lfsr_poly} recopiló una lista de polinomios generadores para secuencias máximas para varios tamaños de registros de estado. La desventaja de este tipo de LFSR es que no pueden generar más de un bit con baja correlación entre muestras. La Figura \ref{fig:lfsr_bar_corr} muestra diagramas de muestras con alta correlación.
 
-La desventaja de este tipo de LFSR es que no pueden generar más de un bit con baja correlación entre muestras.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{root/Imagenes/5_riscv/lfsr_bar_corr.png}
+    \caption{Diagramas de correlación de $10^4$ muestras de 12 bits de un LFSR. A la izquierda un diagrama de autocovarianza para diferentes distancias entre muestras. A la derecha un diagrama de dispersión de una muestra $i$ y la $i-1$.}
+    \label{fig:lfsr_bar_corr}
+\end{figure}
 
-%\boxtext{\begin{itemize}
-%    \item solo pueden generar un bit con baja correlacion, para eso se utilizan look-ahead lfsr, que genera varios por que avanza varios ciclos mediante un circuito mas complejo
-%    \item cita al paper y a las ecuaciones para generar las matrices \cite{look_ahead_lfsr_base, look_ahead_lfsr_design}
-%    \item explicar implementacion de script python que genera codigo vhdl para una configuración arbitraria de lfsr
-%\end{itemize}}
+Para paliar este problema se ha utilizado un \textit{Lookahead} LFSR \cite{look_ahead_lfsr_base}. Estos LFSR tienen un circuito de retroalimentación más complejo que generan $n$ bits con baja correlación. Este circuito aplica el polinomio generador base $n$ veces, Colavito \emph{et al.} \cite{look_ahead_lfsr_design} detallan como obtener estos circuitos mediante exponenciación de matrices y que restricciones deben seguir. En este trabajo se ha desarrollado un \textit{script} en Python que genera código VHDL para implementar \textit{Lookahead} LFSR utilizando su método. La Figura \ref{fig:lfsr_good_corr} muestra los diagramas de correlación que se obtienen utilizando este tipo de LFSR.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{root/Imagenes/5_riscv/lfsr_good_corr.png}
+    \caption{Diagramas de correlación de $10^4$ muestras de 12 bits de un 12-\textit{Lookahead} LFSR. A la izquierda un diagrama de autocovarianza para diferentes distancias entre muestras. A la derecha un diagrama de dispersión de una muestra $i$ y la $i-1$.}
+    \label{fig:lfsr_good_corr}
+\end{figure}
 
 \subsection{Generador de números pseudoaleatorios gaussianos}
+
+Un GRNG basado en el TCL tiene 2 componentes principales, un generador de muestras de distribuciones uniformes y un árbol de sumadores que acumula las muestras.
 
 \todo Suma de 12 valores de 12 bits, todos considerados en escala $2^{12}$ para que representen valores entre 0 y 1 (muestras uniformes 0,1). se segmenta para evitar problemas con el reloj, solo afecta al cambiar la semilla que hay 4 valores que hay que tirar, esto lo hace automaticamente el acelerador pero hay que dejar al menos 4 ciclos sin consumir datos
 
