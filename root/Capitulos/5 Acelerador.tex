@@ -28,73 +28,62 @@ Para paliar este problema se ha utilizado un \textit{Lookahead} LFSR \cite{look_
 
 \subsection{Generador de números pseudoaleatorios gaussianos}
 
-Un GRNG basado en el TCL tiene 2 componentes principales, un generador de muestras de distribuciones uniformes y un árbol de sumadores que acumula las muestras.
+Un GRNG basado en el TCL tiene 2 componentes principales, un generador de muestras de distribuciones uniformes y un árbol de sumadores que las acumula. Para sumar 12 muestras se necesita un árbol de 4 niveles. Como se busca obtener una muestra final de 16 bits las muestras iniciales deben ser de 12 bits, ya que por cada nivel del árbol las muestras aumentan su tamaño en 1 bit para evitar problemas de desbordamiento. Para evitar afectar negativamente a la frecuencia del reloj de la CPU original el árbol se ha segmentado por niveles, lo que permite obtener una muestra por ciclo. Solamente penalizando en el cambio de semilla, que hay que esperar 4 ciclos para obtener muestras con la semilla actualizada.
 
-\todo Suma de 12 valores de 12 bits, todos considerados en escala $2^{12}$ para que representen valores entre 0 y 1 (muestras uniformes 0,1). se segmenta para evitar problemas con el reloj, solo afecta al cambiar la semilla que hay 4 valores que hay que tirar, esto lo hace automaticamente el acelerador pero hay que dejar al menos 4 ciclos sin consumir datos
+Para generar 12 muestras de 12 bits se utiliza un 144-\textit{Lookahead} LFSR con un registro de estado de 151 bits. Las muestras representan valores entre 0 y 1, codificados en coma fija con una escala $2^{12}$. Para centrar la muestra final se utiliza un restador de 16 bits con un valor constante $6 \cdot 2^{12}$. La Figura \ref{fig:grng} muestra un diagrama del diseño y la Figura \ref{fig:grng_state} la máquina de estados de su unidad de control.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{Imagenes/grng.pdf}
-    \caption{\todo}
-    \label{fig:aa}
+    \includegraphics[width=\textwidth]{root/Imagenes/5_riscv/grng.pdf}
+    \caption{Diagrama del GRNG implementado. Las señales de control se muestran en azul, el resto en negro.}
+    \label{fig:grng}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{root/Imagenes/5_riscv/grng_states.pdf}
+    \caption{Diagrama de estados de la unidad de control del GRNG. El estado en el que se pueden generar muestras válidas esta marcado en verde, el resto en rojo.}
+    \label{fig:grng_state}
 \end{figure}
 
 \section{Modificaciones al procesador}
 
-Se añade como una unidad funcional extra en execution. Esto permite hacer una modificacion minima al procesador, actualizar decode y actualizar el selector de resultado que avanza a la siguiente etapa.
-
-Otra opción es añadirlo como un periférico mapeado en memoria que se acceda mediante instrucciones load store. En este caso impone problemas con los consumidores a distancia 1 lo implica perdida de rendimiento. Generalmente el acceso a memoria tiene que pasar por circuitos mas complejos que añaden retardo (MMU) (en nuestro caso no ocurre).
+El GRNG diseñado se ha integrado en la CPU original como una nueva UF en la etapa \textit{Execute}. Para ello se ha modificado la etapa de \textit{Decode} para añadir 2 nuevas instrucciones y el selector de resultado de la etapa \textit{Execute}. La Figura \ref{fig:extended_riscv_core} muestra un diagrama de la ruta de datos 
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{Imagenes/riscv_core_extended.pdf}
-    \caption{\todo}
-    \label{fig:bb}
+    \includegraphics[width=0.75\textwidth]{root/Imagenes/5_riscv/extended_core.pdf}
+    \caption{Ruta de datos del procesador RISC-V extendido con el GRNG.}
+    \label{fig:extended_riscv_core}
 \end{figure}
 
+Otra opción posible habría sido añadirlo como un periférico que se accediera mediante entrada y salida mapeada en memoria (\textit{\textbf{M}emory \textbf{M}apped \textbf{I}nput \textbf{O}utput}), pero esta fue descartada por los siguientes motivos. Implicaría que se accedería mediante instrucciones \texttt{load} y \texttt{store}, lo que reduciría el rendimiento ya que estas instrucciones no permiten consumidores a distancia 1. Además el acceso a memoria generalmente requiere circuitos mas complejos por lo que estas instrucciones pueden tener un coste mas elevado, esto no ocurre en la CPU base, cuyo acceso a memoria es lo más simple posible, pero esto si que podría ocurrir en otras CPU y afectar negativamente al rendimiento. Otro factor en contra de esta aproximación es que en el futuro se quiere crear una UF mas compleja que utilice el GRNG.
 
 \subsection{Actualizar el compilador}
-\todo
 
-Como hemos añadido instrucciones nuevas para poder utilizaras desde codigo de alto nivel como C hay que actualizar el compilador.
-
+Para poder utilizar el GRNG se han añadido 2 instrucciones nuevas al repertorio RISC-V. El objetivo de estas nuevas instrucciones es acelerar el motor de inferencia que se ha desarrollado, por lo que se han de poder utilizar desde código de alto nivel en C. Por lo que se ha actualizado el compilador \texttt{gcc} para RISC-V, lo que se ha podido hacer gracias a que es de código abierto. A continuación se describen las instrucciones añadidas:
 \begin{itemize}
-    \item \texttt{setseed rs1} cambia la semilla por el valor del registro \texttt{rs1}.
-    \item \texttt{genum rd} genera una muestra de $\mathcal{N}(0,1)$ y la guarda en los 16 bits mas altos del registro \texttt{rd}. Eso implica que la muestra está en coma fija en escala $2^{12 + 16}$.
+    \item \texttt{setseed rs1}. Cambia la semilla por el valor del registro \texttt{rs1}.
+    \item \texttt{genum rd}. Genera una muestra de $\mathcal{N}(0,1)$ y la guarda en los 16 bits mas altos del registro \texttt{rd}. Eso implica que la muestra está codificada en coma fija en escala $2^{12 + 16}$.
 \end{itemize}
 
-Para actualizar el compilador hay que cambiar hay que cambiar el código fuente de gcc. Modificar los ficheros \texttt{riscv-gnu-toolchain/riscv-binutils/opcodes/riscv-opc.c} y \texttt{riscv-gnu-toolchain/riscv-binutils/opcodes/riscv-opc.h}. Para ello hay que definir la codificación de las instrucciones mediante máscaras y valores para validar la mascara.
-\begin{table}[H]
+Para poder actualizar el compilador hay que definir la codificación de las instrucciones siguiendo las directrices de RISC-V. Además hay que definir una máscara junto con un valor para que \texttt{gcc} pueda comprobar la codificación mediante una operación \texttt{and}. Para ambas instrucciones se ha utilizado la codificación de instrucciones tipo R de RISC-V y se muestran en las Tablas \ref{tab:code_setseed} y \ref{tab:code_genum}.
+
+\begin{table}[h]
     \centering
-    \caption{Caption}
-    \label{tab:my_label}
-    \begin{tabular}{cccccccc}
-        &  funct7 &  rs2 &  rs1 &  funct3 &  rd &  opcode & \\
-        setseed &  0000000 &  xxxxx &  xxxxx &  000 &  00000 &  0001011 & \\
-        MASK &  1111111 &  00000 &  00000 &  111 &  11111 &  1111111 & 0xFE007FFF \\
-        MATCH &  0000000 &  00000 &  00000 &  000 &  00000 &  0001011 & 0xB\\
-        genum & 0000000 & 00000 & 00000 & 001& xxxxx & 0001011 &\\
-        MASK & 1111111 & 11111 & 11111 & 111& 00000 & 1111111 & 0xFFFFF07F\\
-        MATCH & 0000000 & 00000 & 00000 & 001& 00000 & 0001011 & 0x100B\\
-    \end{tabular}
+    \caption{Codificación, máscara y validación de la instrucción \texttt{setseed} separada en los campos de instrucción RISC-V tipo R.}
+    \label{tab:code_setseed}
+    \includegraphics[width=0.85\textwidth]{root/Imagenes/5_riscv/code_setseed.pdf}
 \end{table}
 
-\begin{itemize}
-\item campos \texttt{/* name, xlen, isa, operands, match, mask, match\_func, pinfo.  */}
-\item “d” is for destination
-\item “s” is for source register 1
-\item “t” is for source register 2
-\end{itemize}
+\begin{table}[h]
+    \centering
+    \caption{Codificación, máscara y validación de la instrucción \texttt{genum} separada en los campos de instrucción RISC-V tipo R.}
+    \label{tab:code_genum}
+    \includegraphics[width=0.85\textwidth]{root/Imagenes/5_riscv/code_genum.pdf}
+\end{table}
 
-\texttt{\{"setseed", 0, INSN\_CLASS\_I, "s,t", MATCH\_SETSEED, MASK\_SETSEED, match\_opcode, 0\}}
-
-\texttt{\{"genum", 0, INSN\_CLASS\_I, "d", MATCH\_GENUM, MASK\_GENUM, match\_opcode, 0\}}
-
-Luego estas instrucciones se pueden utilizar mediante inlines de ensamblador.
-
-\begin{verbatim}
-    
-\end{verbatim}
+%%%%%
 
 \section{Análisis de resultados}
 
