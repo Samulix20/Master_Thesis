@@ -87,28 +87,66 @@ Para poder actualizar el compilador hay que definir la codificación de las inst
 
 \section{Análisis de resultados}
 
+Utilizando la extensión desarrollada no se degrada la precisión con respecto a los resultados obtenidos con el motor de inferencia en C, ya que el algoritmo de muestreo es el mismo. La Tabla \ref{tab:riscv_speedup} muestra el \textit{speedup} obtenido para todas las arquitecturas de modelos.
+
+\begin{table}[h]
+    \centering
+    \caption{\textit{Speedups} obtenidos con la extensión RISC-V para todas las arquitecturas de modelos.}
+    \label{tab:riscv_speedup}
+    \begin{tabular}{ll}
+    \hline
+     \textbf{Modelo}& \textbf{Speedup} \\ \hline
+    HYPER& 6.37\\
+    LENET-5& 8.10\\
+    B2N2& 6.24\\ \hline
+    \end{tabular}
+\end{table}
+
+La Figura \ref{fig:ratio_all} muestra el ratio de ciclos dedicados al muestreo utilizando las diferentes optimizaciones desarrolladas en este trabajo. Se puede apreciar como las diferentes optimizaciones desarrolladas reducen cada vez mas este ratio.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{root/Imagenes/5_riscv/ratio_all.pdf}
+    \caption{Caption.}
+    \label{fig:ratio_all}
+\end{figure}
+
 \subsection{Análisis de coste}
-\todo pequeña introduccion de que es una FPGA quizas aqui
 
-implementacion en FPGA utilizando Xilinx ZCU104 FPGA board: 240 Look-Up Tables (LUT) and 320 Flip-Flops (FF). Power measurements where obtained using the power report of Vivado Design suite. %, which implies a 9.86 and a 16.65\% increment for LUT and FF, respectively, over our small base CPU. 
-This cost includes the GRNG and the modifications of the CPU instruction decoding and the data pipeline. These modifications have no impact on the 100 MHz clock, and only increase the power consumption by 0.65\%. Therefore, the reduction in energy consumption is almost identical to the performance gain. 
+Para analizar el coste de añadir la extensión a la CPU base se ha utilizado una FPGA. Una FPGA es un componente que permite implementar en hardware real circuitos lógicos definidos en un lenguaje de alto nivel como VHDL. Las FPGA estan compuestas por distintos tipos de bloques, las herramientas de síntesis transforman el diseño a estos bloques y configuran la red de interconexión de los mismos. Algunos tipos de bloques son LUT, registros (\textit{\textbf{F}lip-\textbf{F}lops}), memorias RAM (BRAM) o bloques para procesado de señal (\textit{\textbf{D}igital \textbf{S}ignal \textbf{P}rocessor}), que se pueden utilizar para realizar operaciones matemáticas complejas como la multiplicación. Utilizando una herramienta de síntesis se han obtenido los costes descritos en la Tabla \ref{tab:riscv_fpga_utilization}.
 
-\begin{table}[ht]
+%Xilinx ZCU104 FPGA, Vivado Design suite.
+
+\begin{table}[h]
 \centering
-\caption{FPGA resource utilization and power consumption of the baseline RISC-V CPU and the GRNG extension.}
+\caption{Utilización de recursos de la FPGA de la CPU base y la extensión.}
 \label{tab:riscv_fpga_utilization}
 \begin{tabular}{lrrr}
 \hline
-& \multicolumn{2}{c}{\textbf{Resource Utilization}} & \textbf{Utilization \%}\\
-\textbf{Type} & \textit{Base CPU} & \textit{GRNG Extension} & \textit{Extended CPU}\\ \hline
+\multirow{2}{*}{\textbf{Tipo}} & \multicolumn{2}{c}{\textbf{Recursos Utilizados}} & \multirow{2}{*}{\textbf{Utilización FPGA \%}}\\
+ & \textit{CPU Base} & \textit{Extensión GRNG} & \\ \hline
 LUT	        & 2435 & 240 & 1.16 \\
-Flip-Flop	& 1922 & 320 & 0.49 \\
+FF	        & 1922 & 320 & 0.49 \\
 BRAM	    & 16   & 0 & 5.13 \\
 DSP	        & 12   & 0 & 0.69 \\ \hline
- & \multicolumn{3}{c}{\textbf{Power consumption (W)}} \\
-\textbf{Type} & \textit{Base CPU} & \textit{GRNG Extension} \\ \hline
-Dynamic & 0.023 & 0.004 \\
-Static & 0.593 & 0 \\ \hline
 \end{tabular}
 \end{table}
 
+Añadir la extensión a la CPU base implica un incremento del 9.86 y del 16.65\% en LUTs y FFs. Hay que tener en cuenta que este coste además del GRNG incluye las modificaciones a la ruta de datos del procesador. Aun así el coste total de la CPU es muy bajo, no llegando a utilizar ni un 10\% de los bloques de la FPGA. Además al haber segmentado el GRNG este no tiene ningun efecto negativo en la frecuencia del reloj del diseño original, 100 MHz.
+
+La herramienta de síntesis también calcula estimaciones del consumo energético del diseño implementado, dividiéndolo en estático y dinámico. La Tabla \ref{tab:riscv_fpga_power} muestra esta estimación. 
+
+\begin{table}[h]
+\centering
+\caption{Estimación del consumo energético de la CPU base y extendida.}
+\label{tab:riscv_fpga_power}
+\begin{tabular}{lccc}
+\hline
+\multirow{2}{*}{\textbf{Tipo}} & \multicolumn{3}{c}{\textbf{Consumo Energético (W)}} \\
+ & \textit{CPU Base} & \textit{Extensión GRNG} & Total \\ \hline
+Dinámico & 0.023 & 0.004 & 0.027\\
+Estático & 0.593 & 0.000 & 0.593\\ \hline
+\end{tabular}
+\end{table}
+
+El consumo energético aumenta solamente en un 0.65\%. Por lo tanto, la extensión consigue una reducción en del consumo casi idéntica a la ganancia en rendimiento.
