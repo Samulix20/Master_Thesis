@@ -15,7 +15,8 @@ abstract = {Assessing the environmental impacts of machine learning on microcont
 journal = {Commun. ACM},
 month = {oct},
 pages = {68–77},
-numpages = {10}
+numpages = {10},
+note = {\url{https://doi.org/10.1145/3608473}}
 }
 
 % Original BNN paper
@@ -47,7 +48,8 @@ numpages = {10}
   eprint       = {1802.00822},
   timestamp    = {Thu, 05 Sep 2019 16:43:40 +0200},
   biburl       = {https://dblp.org/rec/journals/corr/abs-1802-00822.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
+  bibsource    = {dblp computer science bibliography, https://dblp.org},
+  note = {\url{http://arxiv.org/abs/1802.00822}}
 }
 
 % Accelrator, Aproximante weights using Bernoulli sampling considering the whole network a CLT
@@ -65,6 +67,7 @@ numpages = {10}
   keywords   = {Bayesian neural network, Uncertainty, Monte Carlo, FPGA accelerator},
   readstatus = {read},
   url        = {https://www.sciencedirect.com/science/article/pii/S0167926022001523},
+  note = {\url{https://www.sciencedirect.com/science/article/pii/S0167926022001523}}
 }
 
 % GRNG paper
@@ -84,7 +87,8 @@ journal = {ACM Comput. Surv.},
 month = {nov},
 articleno = {53},
 numpages = {37},
-keywords = {Hardware accelerators, AWGN, Gaussian, algorithms, normal, random number generator}
+keywords = {Hardware accelerators, AWGN, Gaussian, algorithms, normal, random number generator},
+note = {https://doi.org/10.1145/2980052}
 }
 
 % CLT limitations
@@ -259,7 +263,8 @@ keywords = {Hardware accelerators, AWGN, Gaussian, algorithms, normal, random nu
  journal={Journal of Statistical Software},
  author={Marsaglia, George},
  year={2003},
- pages={1–6}
+ pages={1–6},
+ note={\url{https://www.jstatsoft.org/index.php/jss/article/view/v008i14}}
 }
 
 @misc{lfsr_poly,
@@ -269,13 +274,6 @@ Counters, and Long PseudoRandom Sequence Generators},
     author = {Peter Alfke},
     month = {July},
     year = {1996}
-}
-
-@misc{bnn_github,
-  author = "Pérez Pedrajas, Samuel and Resano Ezcaray, Javier and Suárez Gracia, Darío",
-  title = "{BNN\_RISC-V}",
-  url = {https://github.com/Samulix20/BNN\_RISC-V},
-  year = {2024}
 }
 
 @ARTICLE{kl_divergence,
@@ -292,8 +290,7 @@ Counters, and Long PseudoRandom Sequence Generators},
 
 @misc{european_processor,
 	title = {{E}uropean {P}rocessor {I}nitiative},
-	howpublished = {\url{https://www.european-processor-initiative.eu/}},
-	note = {[Accessed 09-05-2024]},
+	howpublished = {\url{https://www.european-processor-initiative.eu/}}
 }
 
 @ARTICLE{riscv_survey,
@@ -339,24 +336,6 @@ keywords = {Gaussian distribution, exponential distribution, normal distribution
 	issn = {2185-2847},	pages = {84--93},	url = {http://www.ijnc.org/index.php/ijnc/article/view/222}
 }
 
-@misc{tfprob,
-	title = {{T}ensor{F}low {P}robability},
-	howpublished = {\url{https://www.tensorflow.org/probability}},
-	note = {[Accessed 13-05-2024]},
-}
-
-@misc{tflite,
-	title = {{T}ensor{F}low {L}ite | {M}{L} for {M}obile and {E}dge {D}evices},
-	howpublished = {\url{https://www.tensorflow.org/lite}},
-	note = {[Accessed 13-05-2024]},
-}
-
-@misc{bayesian_torch,
-  author       = {Ranganath Krishnan and Pi Esposito and Mahesh Subedar},               
-  title        = {Bayesian-Torch: Bayesian neural network layers for uncertainty estimation},
-  howpublished = {\url{https://github.com/IntelLabs/bayesian-torch}},
-}
-
 @inproceedings{bnn_quant,
   title={Quantization for Bayesian Deep Learning: Low-Precision Characterization and Robustness},
   author={Lin, Jun-Liang and Krishnan, Ranganath and Ranipa, Keyur Ruganathbhai and Subedar, Mahesh and Sanghavi, Vrushabh and Arunachalam, Meena and Tickoo, Omesh and Iyer, Ravishankar and Kandemir, Mahmut Taylan},
@@ -368,8 +347,7 @@ keywords = {Gaussian distribution, exponential distribution, normal distribution
 
 @misc {ricv_org,
     title = {{R}{I}{S}{C}-{V} {I}nternational. {R}{I}{S}{C}-{V}: {T}he {O}pen {S}tandard {R}{I}{S}{C} {I}nstruction {S}et {A}rchitecture},
-    howpublished = {\url{https://riscv.org/}},
-    note = {[Accessed 14-05-2024]},
+    howpublished = {\url{https://riscv.org/}}
 }
 
 @manual{riscv_scpec_unpriv,
@@ -378,7 +356,7 @@ keywords = {Gaussian distribution, exponential distribution, normal distribution
     organization={RISC-V Foundation},
     year={2024},
     month={April},
-    note={Available at \url{https://riscv.org/technical/specifications/}},
+    note={\url{https://riscv.org/technical/specifications/}},
 }
 
 @manual{riscv_scpec_priv,
@@ -387,7 +365,7 @@ keywords = {Gaussian distribution, exponential distribution, normal distribution
     organization={RISC-V Foundation},
     year={2024},
     month={April},
-    note={Available at \url{https://riscv.org/technical/specifications/}},
+    note={\url{https://riscv.org/technical/specifications/}},
 }
 
 @INPROCEEDINGS{riscv_sargantana,
@@ -422,19 +400,16 @@ keywords = {Gaussian distribution, exponential distribution, normal distribution
 }
 
 @misc{codasip,
-	author = {},
-	title = {{Codasip}. {A}rchitect your ambition with {R}{I}{S}{C}-{V} {C}ustom {C}ompute},
+	author = {Codasip},
+	title = {{A}rchitect your ambition with {R}{I}{S}{C}-{V} {C}ustom {C}ompute},
 	howpublished = {\url{https://codasip.com/}},
-	year = {},
-	note = {[Accessed 14-05-2024]},
+	year = {}
 }
 
 @misc{synopsis,
-	author = {},
-	title = {{R}{I}{S}{C}-{V} | {S}ynopsys},
+    author = {Synopsys},
+	title = {{R}{I}{S}{C}-{V}},
 	howpublished = {\url{https://www.synopsys.com/risc-v.html#p-design}},
-	year = {},
-	note = {[Accessed 14-05-2024]},
 }
 
 @article{binary_log,
@@ -462,8 +437,6 @@ keywords = {Gaussian distribution, exponential distribution, normal distribution
 	author = {{Y}ann {L}e{C}un and {C}orinna {C}ortes and {C}hris {B}urges},
 	title = {{M}{N}{I}{S}{T} handwritten digit database},
 	howpublished = {\url{http://yann.lecun.com/exdb/mnist/}},
-	year = {},
-	note = {[Accessed 04-06-2024]},
 }
 
 @article{CIFAR_dataset,
@@ -475,10 +448,142 @@ title = {Learning Multiple Layers of Features from Tiny Images},
 journal = {University of Toronto}
 }
 
-@misc{
-
+@misc{ai_market_size,
+    author = {Statista},
+    title = {{Market size and revenue comparison for artificial intelligence worldwide from 2020 to 2030 (in billion U.S. dollars) [Graph]}},
+    year = {2024},
+    month = {May},
+    howpublished = {\url{https://www.statista.com/statistics/941835/artificial-intelligence-market-size-revenue-comparisons/}}
 }
 
-%Market size and revenue comparison for artificial intelligence worldwide from 2020 to 2030 (in billion U.S. dollars) [Graph], Statista, May 28, 2024. [Online]. Available: https://www.statista.com/statistics/941835/artificial-intelligence-market-size-revenue-comparisons/
+@misc{ai_interest_growth,
+    author = {Goldman Sachs},
+    title = {{A}rtificial intelligence ({AI}) market interest growth 2015 to 2023, by share of companies [Graph]},
+    year = {2023},
+    month = {August},
+    howpublished = {\url{https://www.statista.com/statistics/1424672/ai-market-interest-worldwide/}}
+}
 
-%Artificial intelligence (AI) market interest growth 2015 to 2023, by share of companies [Graph], Goldman Sachs, August 1, 2023. [Online]. Available: https://www.statista.com/statistics/1424672/ai-market-interest-worldwide/
+@misc{eu_ai,
+	title = {{L}a {L}ey de {I}nteligencia {A}rtificial de la {UE}},
+	howpublished = {\url{https://artificialintelligenceact.eu/es/}},
+}
+
+% Tools and Git repos
+
+
+@misc{tfprob,
+    author = {Google Brain Team},
+	title = {{T}ensor{F}low {P}robability},
+	howpublished = {\url{https://www.tensorflow.org/probability}}
+}
+
+@misc{tflite,
+    author = {Google Brain Team},
+	title = {{T}ensor{F}low {L}ite | {M}{L} for {M}obile and {E}dge {D}evices},
+	howpublished = {\url{https://www.tensorflow.org/lite}}
+}
+
+@misc{bayesian_torch,
+  author       = {Ranganath Krishnan and Pi Esposito and Mahesh Subedar},               
+  title        = {Bayesian-Torch: Bayesian neural network layers for uncertainty estimation},
+  howpublished = {\url{https://github.com/IntelLabs/bayesian-torch}},
+}
+
+
+@misc{ghdl,
+    author = {Tristan Gingold},
+    title = {{GHDL}},
+    howpublished = {\url{http://ghdl.free.fr/}},
+}
+
+@misc{gtkwave,
+    title = {{GTKW}ave},
+    howpublished = {\url{https://gtkwave.sourceforge.net/}},
+}
+
+@misc{gcc_riscv,
+    author = {RISC-V Collaboration},
+    title = {{G}it{H}ub. riscv-gnu-toolchain},
+    howpublished = {\url{https://github.com/riscv-collab/riscv-gnu-toolchain}}
+}
+
+@misc{bnn_hyper_git,
+    author={Alcolea, Adrián and Resano, Javier},
+    title={{G}it{H}ub. {BNN}\_for\_hyperspectral\_datasets\_analysis},
+    howpublished = {\url{https://github.com/universidad-zaragoza/BNN_for_hyperspectral_datasets_analysis}},
+    year={2022},
+}
+
+@misc{pyelftools,
+    author = {Eli Bendersky},
+    title = {{Github. pyelftools}},
+    howpublished = {\url{https://github.com/eliben/pyelftools}}
+}
+
+@Article{matplotlib,
+  Author    = {Hunter, J. D.},
+  Title     = {Matplotlib: A 2D graphics environment},
+  Journal   = {Computing in Science \& Engineering},
+  Volume    = {9},
+  Number    = {3},
+  Pages     = {90--95},
+  abstract  = {Matplotlib is a 2D graphics package used for Python for
+  application development, interactive scripting, and publication-quality
+  image generation across user interfaces and operating systems.},
+  publisher = {IEEE COMPUTER SOC},
+  doi       = {10.1109/MCSE.2007.55},
+  year      = 2007
+}
+
+
+@misc{fpga_board,
+    author = {AMD Xilinx},
+    title = {{Zynq UltraScale+ MPSoC ZCU104 Evaluation Kit}},
+    howpublished = {\url{https://www.xilinx.com/products/boards-and-kits/zcu104.html#overview}}
+}
+
+@misc{vivado,
+    author = {AMD Xilinx},
+    title = {{Vivado Design Suite}},
+    howpublished = {\url{https://www.xilinx.com/products/design-tools/vivado.html}}
+}
+
+@misc{overleaf,
+    author = {The Overleaf Team},
+    title = {{Overleaf, Online LaTeX Editor}},
+    howpublished = {\url{https://es.overleaf.com/}}
+}
+
+@misc{drawio,
+    author = {JGraph},
+    title = {{draw.io}},
+    howpublished = {\url{https://app.diagrams.net/}}
+}
+
+@misc{git,
+    author = {Linus Torvalds and Junio Hamano and Software Freedom Conservancy},
+    title = {{Git}},
+    howpublished = {\url{https://www.git-scm.com/}}
+}
+
+@misc{github,
+    title = {{GitHub}},
+    howpublished = {\url{https://github.com/}}
+}
+
+% Our repos
+
+@misc{base_riscv_cpu_git,
+    author = {Pérez Pedrajas, Samuel and Resano Ezcaray, Javier and Suárez Gracia, Darío},
+    year = {2022},
+    title = {{GitHub. riscv-vhdl}},
+    howpublished = {\url{https://github.com/Samulix20/riscv-vhdl}}
+}
+
+@misc{bnn_github,
+  author = "Pérez Pedrajas, Samuel and Resano Ezcaray, Javier and Suárez Gracia, Darío",
+  title = {{GitHub. BNN\_RISC-V}},
+  howpublished = {\url{https://github.com/Samulix20/BNN\_RISC-V}},
+  year = {2024}
+}

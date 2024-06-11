@@ -53,9 +53,11 @@ El GRNG diseñado se ha integrado en la CPU original como una nueva UF en la eta
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\textwidth]{root/Imagenes/5_riscv/extended_core.pdf}
-    \caption{Ruta de datos del procesador RISC-V extendido con el GRNG.}
+    \caption{Ruta de datos del procesador RISC-V extendido con el GRNG. Los bloques relacionados con la arquitectura base RV32I se muestran en azul, los bloques para detectar riesgos de datos en gris, los bloques relacionados con el modo M en rojo, los bloques de extensiones estándar extra en verde, el bloque GRNG añadido en amarillo y en morado el interfaz con el bus de memoria.}
     \label{fig:extended_riscv_core}
 \end{figure}
+
+
 
 Otra opción posible habría sido añadirlo como un periférico que se accediera mediante entrada y salida mapeada en memoria (\textit{\textbf{M}emory \textbf{M}apped \textbf{I}nput \textbf{O}utput}), pero esta fue descartada por los siguientes motivos. Implicaría que se accedería mediante instrucciones \texttt{load} y \texttt{store}, lo que reduciría el rendimiento ya que estas instrucciones no permiten consumidores a distancia 1. Además el acceso a memoria generalmente requiere circuitos mas complejos por lo que estas instrucciones pueden tener un coste mas elevado, esto no ocurre en la CPU base, cuyo acceso a memoria es lo más simple posible, pero esto si que podría ocurrir en otras CPU y afectar negativamente al rendimiento. Otro factor en contra de esta aproximación es que en el futuro se quiere crear una UF mas compleja que utilice el GRNG.
 
@@ -114,8 +116,6 @@ La Figura \ref{fig:ratio_all} muestra el ratio de ciclos dedicados al muestreo u
 \subsection{Análisis de coste}
 
 Para analizar el coste de añadir la extensión a la CPU base se ha utilizado una FPGA. Una FPGA es un componente que permite implementar en hardware real circuitos lógicos definidos en un lenguaje de alto nivel como VHDL. Las FPGA estan compuestas por distintos tipos de bloques, las herramientas de síntesis transforman el diseño a estos bloques y configuran la red de interconexión de los mismos. Algunos tipos de bloques son LUT, registros (\textit{\textbf{F}lip-\textbf{F}lops}), memorias RAM (BRAM) o bloques para procesado de señal (\textit{\textbf{D}igital \textbf{S}ignal \textbf{P}rocessor}), que se pueden utilizar para realizar operaciones matemáticas complejas como la multiplicación. Utilizando una herramienta de síntesis se han obtenido los costes descritos en la Tabla \ref{tab:riscv_fpga_utilization}.
-
-%Xilinx ZCU104 FPGA, Vivado Design suite.
 
 \begin{table}[h]
 \centering

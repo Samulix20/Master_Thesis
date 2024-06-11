@@ -5,7 +5,7 @@ En este capítulo se explican los pasos y bibliotecas desarrolladas para poder e
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{root/Imagenes/4_bnn_riscv/experiment_pipeline.pdf}
-    \caption{\todo}
+    \caption{Diagrama de componentes necesarios para poder ejecutar la inferencia de BNN en un procesador RISC-V simulado.}
     \label{fig:experiment_pipeline}
 \end{figure}
 
@@ -206,7 +206,7 @@ Para comparar los conjuntos de predicciones se han utilizado las métricas de in
         \label{fig:figure_example}
 \end{figure}
 
-Como se muestra en el ejemplo se obtienen resultados muy similares en todas las gráficas. Las únicas diferencias notables se aprecian en las rectas de precisión de la Figura \ref{fig:example_acc_unc}, pero estas diferencias ocurren en predicciones con incertidumbre alta de las que además hay muy pocas. El modelo al reportar una incertidumbre elevada ya esta avisando de la baja fiabilidad de la predicción con lo que diferencias en este tipo de predicciones son esperables y aceptables. Para el resto de modelos se obtienen resultados con las mismas similitudes entre motores de inferencia, se pueden consultar todos en el Anexo \ref{}.
+Como se muestra en el ejemplo se obtienen resultados muy similares en todas las gráficas. Las únicas diferencias notables se aprecian en las rectas de precisión de la Figura \ref{fig:example_acc_unc}, pero estas diferencias ocurren en predicciones con incertidumbre alta de las que además hay muy pocas. El modelo al reportar una incertidumbre elevada ya esta avisando de la baja fiabilidad de la predicción con lo que diferencias en este tipo de predicciones son esperables y aceptables. Para el resto de modelos se obtienen resultados con las mismas similitudes entre motores de inferencia, se pueden consultar todos en el Anexo \ref{}. \todo
 
 La precisión es el ratio de predicciones correctas sobre el número total de predicciones. la Tabla \ref{tab:engine_acc} muestra la precisión obtenida con los diferentes modelos utilizando ambos motores de inferencia. Al tratarse de modelos probabilísticos pequeñas fluctuaciones son esperables, especialmente en las predicciones con mucha incertidumbre.
 
