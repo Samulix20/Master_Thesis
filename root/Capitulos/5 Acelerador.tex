@@ -6,7 +6,7 @@ Este capítulo explica los pasos seguidos para diseñar un acelerador de BNN, co
 
 Como se ha explicado en secciones previas, la sección del algoritmo mas importante a optimizar es el muestreo de distribuciones gaussianas. Para ello se va incluir un GRNG como una nueva unidad funcional (UF) en la CPU RISC-V base. Sarwar Malik \emph{et al.} \cite{clt_grng} propusieron un diseño basado en el TCL que añadía un componente corrector para reducir el error de muestreo de las colas de la distribución. Como también se ha mostrado previamente, no es necesaria una gran precisión a la hora de muestrear distribuciones, por lo que se va a diseñar un GNRG basado en la suma de 12 distribuciones uniformes sin bloque corrector.
 
-\subsection{Generación de números pseudoaleatorios uniformes}
+\subsection{Números pseudoaleatorios uniformes}
 
 Para generar números pseudoaletorios uniformes se ha utilizado un componente hardware llamado \textit{\textbf{L}inear \textbf{F}eedback \textbf{S}hift \textbf{R}egister} (LFSR). Se basan en un circuito de retroalimentación y un registro de estado. El circuito de retroalimentación es un conjunto de puertas XOR que implementan un polinomio generador. Dado un registro de estado de $n$ bits, si el polinomio puede producir $2^n-1$ valores antes de empezar a repetir la secuencia entonces la secuencia es máxima. Alfke \cite{lfsr_poly} recopiló una lista de polinomios generadores para secuencias máximas para varios tamaños de registros de estado. La desventaja de este tipo de LFSR es que no pueden generar más de un bit con baja correlación entre muestras. La Figura \ref{fig:lfsr_bar_corr} muestra diagramas de muestras con alta correlación.
 
@@ -26,7 +26,7 @@ Para paliar este problema se ha utilizado un \textit{Lookahead} LFSR \cite{look_
     \label{fig:lfsr_good_corr}
 \end{figure}
 
-\subsection{Generador de números pseudoaleatorios gaussianos}
+\subsection{Números pseudoaleatorios gaussianos}
 
 Un GRNG basado en el TCL tiene 2 componentes principales, un generador de muestras de distribuciones uniformes y un árbol de sumadores que las acumula. Para sumar 12 muestras se necesita un árbol de 4 niveles. Como se busca obtener una muestra final de 16 bits las muestras iniciales deben ser de 12 bits, ya que por cada nivel del árbol las muestras aumentan su tamaño en 1 bit para evitar problemas de desbordamiento. Para evitar afectar negativamente a la frecuencia del reloj de la CPU original el árbol se ha segmentado por niveles, lo que permite obtener una muestra por ciclo. Solamente penalizando en el cambio de semilla, que hay que esperar 4 ciclos para obtener muestras con la semilla actualizada.
 
@@ -109,7 +109,7 @@ La Figura \ref{fig:ratio_all} muestra el ratio de ciclos dedicados al muestreo u
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.6\textwidth]{root/Imagenes/5_riscv/ratio_all.pdf}
-    \caption{Caption.}
+    \caption{Ratio de ciclos dedicados al muestreo de pesos en diferentes arquitecturas de modelos utilizando el algoritmo base del motor de inferencia (amarillo), la optimización que transforma las distribuciones a uniformes (rojo) y la extensión RISC-V (azul).}
     \label{fig:ratio_all}
 \end{figure}
 

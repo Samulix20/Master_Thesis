@@ -189,40 +189,11 @@ note = {https://doi.org/10.1145/2980052}
   eprint       = {2011.07586},
   timestamp    = {Wed, 18 Nov 2020 16:48:35 +0100},
   biburl       = {https://dblp.org/rec/journals/corr/abs-2011-07586.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
+  bibsource    = {dblp computer science bibliography, https://dblp.org},
+  note = {\url{https://arxiv.org/abs/2011.07586}}
 }
 
 %%%%%%%%%%
-
-% Use dropout after normal CNN using bernoulli, its supposedly the same as BNN with weight distributions
-@misc{gal2016bayesian,
-      title={Bayesian Convolutional Neural Networks with Bernoulli Approximate Variational Inference}, 
-      author={Yarin Gal and Zoubin Ghahramani},
-      year={2016},
-      eprint={1506.02158},
-      archivePrefix={arXiv},
-      primaryClass={stat.ML}
-}
-
-% Accelerator based on the dropout approximation idea
-@article{DBLP:journals/corr/abs-2105-09163,
-  author       = {Hongxiang Fan and
-                  Martin Ferianc and
-                  Miguel Rodrigues and
-                  Hongyu Zhou and
-                  Xinyu Niu and
-                  Wayne Luk},
-  title        = {High-Performance FPGA-based Accelerator for Bayesian Neural Networks},
-  journal      = {CoRR},
-  volume       = {abs/2105.09163},
-  year         = {2021},
-  url          = {https://arxiv.org/abs/2105.09163},
-  eprinttype    = {arXiv},
-  eprint       = {2105.09163},
-  timestamp    = {Fri, 01 Jul 2022 13:19:26 +0200},
-  biburl       = {https://dblp.org/rec/journals/corr/abs-2105-09163.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
-}
 
 @InProceedings{sampling_free_bnn_accel,
   author    = {Hiromitsu Awano and Masanori Hashimoto},
@@ -293,17 +264,6 @@ Counters, and Long PseudoRandom Sequence Generators},
 	howpublished = {\url{https://www.european-processor-initiative.eu/}}
 }
 
-@ARTICLE{riscv_survey,
-  author={Cui, Enfang and Li, Tianzheng and Wei, Qian},
-  journal={IEEE Access}, 
-  title={RISC-V Instruction Set Architecture Extensions: A Survey}, 
-  year={2023},
-  volume={11},
-  number={},
-  pages={24696-24711},
-  keywords={Instruction sets;Microprocessors;Computer architecture;Task analysis;Graphics processing units;Cloud computing;Artificial intelligence;RISC-V;instruction set architecture;extensions;survey},
-  doi={10.1109/ACCESS.2023.3246491}}
-
 @article{wallace_grng,
 author = {Wallace, C. S.},
 title = {Fast pseudorandom generators for normal and exponential variates},
@@ -321,7 +281,8 @@ journal = {ACM Trans. Math. Softw.},
 month = {mar},
 pages = {119–127},
 numpages = {9},
-keywords = {Gaussian distribution, exponential distribution, normal distribution, pseudorandom numbers, random numbers}
+keywords = {Gaussian distribution, exponential distribution, normal distribution, pseudorandom numbers, random numbers},
+note = {\url{https://doi.org/10.1145/225545.225554}}
 }
 
 @article{bnn_lut_grng,
@@ -333,7 +294,8 @@ keywords = {Gaussian distribution, exponential distribution, normal distribution
 	year = {2020},
 	keywords = {Bayesian Neural Network; Lookup Table; Inversion Transform Sampling},
 	abstract = {The main problems of deep learning are requiring a large amount of data for learning, and prediction with excessive confidence. A Bayesian neural network (BNN), in which a Bayesian approach is incorporated into a neural network (NN), has drawn attention as a method for solving these problems. In a BNN, the probability distribution is assumed for the weight, in contrast to a conventional NN, in which the weight is point estimated. This makes it possible to obtain the prediction as a distribution and to evaluate how uncertain the prediction is. However, a BNN has more computational complexity and a greater number of parameters than an NN. To obtain an inference result as a distribution, a BNN uses weight sampling to generate the respective weight values, and thus, a BNN accelerator requires weight sampling hardware based on a random number generator in addition to the standard components of a deep learning neural network accelerator. Therefore, the throughput of weight sampling must be sufficiently high at a low hardware resource cost. We propose a resource-efficient weight sampling method using inversion transform sampling and a lookup-table (LUT)-based function approximation for hardware implementation of a BNN. Inversion transform sampling simplifies the mechanism of generating a Gaussian random number from a uniform random number provided by a common random number generator, such as a linear feedback shift register. Employing an LUT-based low-bit precision function approximation enables inversion transform sampling to be implemented at a low hardware cost. The evaluation results indicate that this approach effectively reduces the occupied hardware resources while maintaining accuracy and prediction variance equivalent to that with a non-approximated sampling method.},
-	issn = {2185-2847},	pages = {84--93},	url = {http://www.ijnc.org/index.php/ijnc/article/view/222}
+	issn = {2185-2847},	pages = {84--93},	url = {http://www.ijnc.org/index.php/ijnc/article/view/222},
+    note = {http://www.ijnc.org/index.php/ijnc/article/view/222},
 }
 
 @inproceedings{bnn_quant,
@@ -397,6 +359,7 @@ keywords = {Gaussian distribution, exponential distribution, normal distribution
     Url= {http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html},
     Number= {UCB/EECS-2016-17},
     Abstract= {Rocket Chip is an open-source Sysem-on-Chip design generator that emits synthesizable RTL. It leverages the Chisel hardware construction language to compose a library of sophisticated generators for cores, caches, and interconnects into an integrated SoC. Rocket Chip generates general-purpose processor cores that use the open RISC-V ISA, and provides both an in-order core generator (Rocket) and an out-of-order core generator (BOOM). For SoC designers interested in utilizing heterogeneous specialization for added efficiency gains, Rocket Chip supports the integration of custom accelerators in the form of instruction set extensions, coprocessors, or fully independent novel cores. Rocket Chip has been taped out (manufactured) eleven times, and yielded functional silicon prototypes capable of booting Linux.},
+    note = {\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}}
 }
 
 @misc{codasip,
@@ -469,8 +432,24 @@ journal = {University of Toronto}
 	howpublished = {\url{https://artificialintelligenceact.eu/es/}},
 }
 
-% Tools and Git repos
+@article{deep_learning_nature,
+  title = {Deep learning},
+  volume = {521},
+  ISSN = {1476-4687},
+  url = {http://dx.doi.org/10.1038/nature14539},
+  DOI = {10.1038/nature14539},
+  number = {7553},
+  journal = {Nature},
+  publisher = {Springer Science and Business Media LLC},
+  author = {LeCun,  Yann and Bengio,  Yoshua and Hinton,  Geoffrey},
+  year = {2015},
+  month = may,
+  pages = {436–444}
+}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Tools and Git repos
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 @misc{tfprob,
     author = {Google Brain Team},
@@ -570,6 +549,12 @@ journal = {University of Toronto}
 @misc{github,
     title = {{GitHub}},
     howpublished = {\url{https://github.com/}}
+}
+
+@misc{inkscape,
+  author = {Inkscape Project},
+  title = {{Inkscape}},
+  howpublished = {https://inkscape.org},
 }
 
 % Our repos

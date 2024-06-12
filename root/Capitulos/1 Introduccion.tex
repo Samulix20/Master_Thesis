@@ -3,7 +3,7 @@
 
 \section{Motivación}
 
-La Inteligencia Artificial (IA) gana cada año mas popularidad, como se muestra en la Figura \ref{fig:ai_grow}.
+La Inteligencia Artificial (IA) gana cada año mas popularidad. La Figura \ref{fig:ai_grow} muestra unas gráficas que \todo.
 
 % Vertically alling two sufigures and keep subcaption using floatrow and subcaptions pkgs
 \begin{figure}[htb]
@@ -26,9 +26,9 @@ La Inteligencia Artificial (IA) gana cada año mas popularidad, como se muestra 
   \label{fig:ai_grow}%
 \end{figure}
 
-Al aumentar este interés y por tanto su uso en diversos campos también lo hará el consumo energético. La motivación principal de este trabajo es desarrollar componentes hardware para aumentar la eficiencia energética de algoritmos de IA. Concretamente este trabajo se centra el en un tipo de redes neuronales (\textit{\textbf{N}eural \textbf{N}etwork}) llamadas redes neuronales bayesianas (\textit{\textbf{B}ayesian \textbf{N}eural \textbf{N}etwork}). Estas redes permiten calcular la incertidumbre de sus predicciones lo que aporta transparencia en su uso. En relación, otra de las motivaciones de este trabajo es fomentar el uso de este tipo de redes para, en consecuencia, fomentar el uso de IA transparente, siguiendo la filosofía de la Ley de Inteligencia Artificial de la Unión Europea \cite{eu_ai}. Otra de las motivaciones principales de este trabajo es fomentar el desarrollo de la arquitectura RISC-V, también en concordancia con otro proyecto europeo, el \textit{European Processor Initiative} (EPI) \cite{european_processor}.
+Al aumentar este interés y por tanto su uso en diversos campos también lo hará el consumo energético. La motivación principal de este trabajo es desarrollar componentes hardware para aumentar la eficiencia energética de la inferencia en un subconjunto de técnicas de aprendizaje automático. Concretamente, este trabajo se centra en las redes neuronales bayesianas (\textit{\textbf{B}ayesian \textbf{N}eural \textbf{N}etwork}). Estas redes calculan la incertidumbre de sus predicciones aportando transparencia en su uso. En relación, otra de las motivaciones de este trabajo es facilitar la adopción de estas redes para ayudar hacia el objetivo de la Unión Europea de trabajar con IAs más transparentes \cite{eu_ai}. Otra de las motivaciones principales de este trabajo es fomentar el desarrollo de la arquitectura RISC-V, que es una arquitectura de procesadores abierta y libre. Europa ha apostado por esta arquitectura, mediante el proyecto el \textit{European Processor Initiative} (EPI) \cite{european_processor}, para que sus empresas puedan diseñar y producir sus propios procesadores sin las restricciones y costos asociados con las arquitecturas propietarias tradicionales. 
 
-Concretamente este trabajo se centra en la combinación de la IA, concretamente el aprendizaje automático  (\textbf{M}achine \textbf{L}earning), y el internet de las cosas (\textit{\textbf{I}nternet \textbf{o}f \textbf{T}hings}). Esta combinación se conoce comúnmente como TinyML y tiene un gran potencial a la hora de reducir el consumo energético \cite{tinyML_sustainable}. Los componentes IoT son mas eficientes energéticamente que los procesadores de altas prestaciones, por lo que trasladar la ejecución de los algoritmos de IA a estos componentes reduciría su consumo además de eliminar comunicaciones costosas entre componentes IoT desplegados y servidores.
+Específicamente, este TFM aborda la ejecución de la inferencia de BNNs en dispositivos de bajas prestaciones orientados hacia la internet de las cosas (\textit{\textbf{I}nternet \textbf{o}f \textbf{T}hings}). Esta combinación se conoce comúnmente como TinyML y tiene un gran potencial a la hora de reducir el consumo energético \cite{tinyML_sustainable}. Los componentes IoT son mas eficientes energéticamente que los procesadores de altas prestaciones, por lo que trasladar la ejecución de la inferencia de BNN a estos componentes reduciría su consumo además de eliminar comunicaciones costosas entre componentes IoT desplegados y servidores.
 
 \section{Objetivos y alcance}
 
@@ -37,26 +37,32 @@ El objetivo principal de este trabajo es optimizar la inferencia de BNN en un pr
     \item Estudiar el funcionamiento de la inferencia de las BNN.
     \item Analizar aceleradores existentes de inferencia de BNN.
     \item Investigar el soporte existente para ejecutar inferencia de BNN en procesadores de bajas prestaciones sin precisión de punto flotante.
-    \item Implementar una librería en C junto a herramientas que permitan ejecutar la inferencia de BNN en un procesador RISC-V desarrollado en un trabajo previo \cite{riscv_tfg}.
-    \item Validar la librería implementada con diferentes modelos.
-    \item Analizar la carga de trabajo de la librería desarrollada.
+    \item Implementar una biblioteca en C junto a herramientas que permitan ejecutar la inferencia de BNN en un procesador RISC-V desarrollado en un trabajo previo \cite{riscv_tfg}.
+    \item Validar la biblioteca implementada con diferentes modelos.
+    \item Analizar la carga de trabajo de la biblioteca desarrollada.
     \item Desarrollar optimizaciones software y analizar sus ventajas y desventajas.
     \item Investigar sobre generadores de números aleatorios gaussianos (\textit{\textbf{G}aussian \textbf{R}andom \textbf{N}umber \textbf{G}enerator}).
     \item Diseñar un GRNG que se pueda integrar en el procesador RISC-V como una extensión.
     \item Estudiar los pasos necesarios para extender un procesador RISC-V y poder utilizar la extensión desde código en alto nivel C.
-    \item Analizar el coste y rendimiento de la extensión utilizando una (\textit{\textbf{F}ield \textbf{P}rogrammable \textbf{G}ate \textbf{A}rray}).
+    \item Analizar el coste y rendimiento de la extensión utilizando una \textit{Field Programmable Gate Array} (FPGA).
 \end{enumerate}
 
 Todo el código de este trabajo se encuentra disponible en un repositorio público en GitHub \cite{bnn_github}.
 
 %% quizas aqui se puede poner que lo hemos enviado al congreso y las JJI
 
+\section{Estructura del documento}
+
+La siguiente sección explica las herramientas que se han utilizado para completar este trabajo. El Capítulo 2 describe la metodología que se ha segundo durante el desarrollo del trabajo y herramientas utilizadas. El Capítulo 3 describe el estado del arte relacionado con la arquitectura RISC-V y las BNN. El Capítulo 4 muestra los componentes desarrollados para ejecutar inferencia de BNN en plataformas RISC-V y los resultados obtenidos. El Capítulo 5 explica como se ha implementado una extensión para la inferencia de BNN en un procesador RISC-V y los resultados que se han obtenido. Por último el Capitulo 6 contiene las conclusiones del trabajo.
+
 \section{Herramientas Utilizadas}
 
-El diseño del procesador base se encuentra en el repositorio riscv-vhdl \cite{base_riscv_cpu_git}. Para definir la extensión del procesador RISC-V se ha utilizado el lenguaje de especificación hardware VHDL. Para simular el comportamiento del procesador se ha utilizado el simulador GHDL \cite{ghdl} junto con el visor de ondas GTKWave \cite{gtkwave}. Para compilar programas en C para el procesador se ha utilizado el conjunto de herramientas GNU RISC-V Compiler Toolchain \cite{gcc_riscv}. 
+El diseño del procesador base utilizado se encuentra en el repositorio riscv-vhdl \cite{base_riscv_cpu_git}. Para definir la extensión del procesador RISC-V se ha utilizado el lenguaje de especificación hardware VHDL. Para simular el comportamiento del procesador se ha utilizado el simulador GHDL \cite{ghdl} junto con el visor de ondas GTKWave \cite{gtkwave}. Los programas que se han ejecutado en los procesadores simulados se han desarrollado en C y para compilarlos se ha utilizado el conjunto de herramientas GNU RISC-V Compiler Toolchain \cite{gcc_riscv}. 
 
-Para entrenar BNNs se ha utilizado la biblioteca de Python TensorFlow Probability \cite{tfprob} junto al repositorio BNN\_for\_hyperspectral\_datasets\_analysis \cite{bnn_hyper_git}. El proceso de compilación y pruebas se han automatizado todo lo posible mediante la herramienta Make y \textit{scripts} en Bash y Python. Para manejar ficheros ELF desde Python se ha utilizado la biblioteca pyelftools \cite{pyelftools}. Para crear gráficas se ha utilizado la biblioteca de Python Matplotlib \cite{matplotlib}. Como programa de control de versiones se ha utilizado Git \cite{git} junto con GitHub como repositorio en línea.
+Para entrenar BNNs se ha utilizado la biblioteca de Python TensorFlow Probability \cite{tfprob} junto al repositorio BNN\_for\_hyperspectral\_datasets\_analysis \cite{bnn_hyper_git}. El proceso de compilación y pruebas se han automatizado todo lo posible mediante la herramienta Make y \textit{scripts} en Bash y Python. Para manejar ficheros ELF desde Python se ha utilizado la biblioteca pyelftools \cite{pyelftools}. Para crear gráficas se ha utilizado la biblioteca de Python Matplotlib \cite{matplotlib}. 
 
 Se ha utilizado la plataforma de desarrollo Xilinx ZCU104 FPGA \cite{fpga_board} junto a Vivado Design Suite \cite{vivado} para implementar los diseños hardware sobre una FPGA y analizar sus costes.
 
-Para redactar este documento se ha utilizado el editor de \LaTeX\ en línea Overleaf \cite{overleaf} y para crear los diagramas se utilizado el editor en línea draw.io \cite{drawio} junto al editor de gráficos vectoriales Inkscape.
+Para redactar este documento se ha utilizado el editor de \LaTeX\ en línea Overleaf \cite{overleaf} y para crear los diagramas se utilizado el editor en línea draw.io \cite{drawio} junto al editor de gráficos vectoriales Inkscape \cite{inkscape}.
+
+Como programa de control de versiones se ha utilizado Git \cite{git} junto con GitHub \cite{github} como repositorio en línea.

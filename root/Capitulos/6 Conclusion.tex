@@ -1,1 +1,7 @@
 \chapter{Conclusiones}
+
+Este trabajo estudia la inferencia de BNN en dispositivos IoT de bajo consumo, utilizando como ejemplo un procesador RISC-V. Se han desarrollado herramientas de código abierto para transformar modelos BNN en punto flotante de TensorFlow a código C para inferencia utilizando solo precisión entera. Además, analiza diferentes métodos de optimización para el algoritmo de muestreo de pesos del algoritmo de inferencia, ya que consume la mayor parte del tiempo de ejecución.
+
+Para acelerar la inferencia, este trabajo propone muestrear una distribución uniforme en lugar de una gaussiana. Esta optimización logra, en promedio, un \textit{speedup} de 5 en varios modelos representativos de BNN. Sin embargo, solo conserva la precisión y las métricas de incertidumbre para modelos pequeños. Para mejorar estos resultados, se ha desarrollado una extensión para RISC-V que permite muestrear una distribución gaussiana usando solo una instrucción, implementada en un procesador de 32 bits. Las muestras gaussianas se generan utilizando un generador de números aleatorios gaussiano basado en el TCL de bajo coste. La extensión acelera la inferencia hasta 8.10 veces, con reducciones similares en el consumo de energía y sin degradación significativa en la precisión o las métricas de incertidumbre. Se ha implementado el diseño en una FPGA Xilinx ZCU104. Su coste es solo de 240 LUTs y 320 Flip-Flops, generando un aumento del 0.65\% en el consumo de energía, sin afectar la frecuencia del reloj del sistema.
+
+Trabajo futuro... \todo

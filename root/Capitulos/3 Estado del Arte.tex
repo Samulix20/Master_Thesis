@@ -1,22 +1,20 @@
 \chapter{Estado del Arte}
 
-Este trabajo engloba dos temas de investigación actual como son la arquitectura RISC-V y las BNN. Este capítulo presenta un análisis del estado del arte en ambos.
-
 \section{RISC-V}
 
 RISC-V es una arquitectura libre de conjunto de instrucciones reducido (\textit{\textbf{R}educed \textbf{I}nstruction \textbf{S}et \textbf{C}omputer}) \cite{ricv_org}. A diferencia de las arquitecturas propietarias tradicionales, RISC-V ofrece una especificación libre, lo que permite diseñar nuevos sistemas hardware sin tener que licenciar la arquitectura.
 
 %pagar por una licencia. Gracias a ello ha ganado un impulso e interés considerables en la industria en los últimos años \cite{riscv_survey}. Tanto es así que la Unión Europea en su proyecto \textit{European Processor Initiative} (EPI) tiene como objetivo desarrollar un procesador basado en la arquitectura RISC-V \cite{european_processor}.
 
-RISC-V se caracteriza por su simplicidad y modularidad, esto hace que sea una buena solución para diseñar tanto procesadores de muy altas prestaciones como procesadores simples para dispositivos empotrados. El tamaño del repertorio mínimo de instrucciones de 32 bits es de 40 instrucciones, hasta el momento hay 43 extensiones no privilegiadas y 16 extensiones privilegiadas recogidas en el manual de la arquitectura \cite{riscv_scpec_unpriv, riscv_scpec_priv}.
+RISC-V se caracteriza por su simplicidad y modularidad, esto hace que sea una buena solución para diseñar tanto procesadores de muy altas prestaciones como procesadores simples para dispositivos empotrados. El tamaño del repertorio mínimo de instrucciones de 32 bits es de 40 instrucciones. Sobre este repertorio  hay 43 extensiones no privilegiadas y 16 extensiones privilegiadas recogidas en el manual de la arquitectura que dan soporte por ejemplo a la coma flotante, operaciones atómicas, \ldots \cite{riscv_scpec_unpriv, riscv_scpec_priv}.
 
 La filosofía de diseño RISC-V consiste en partir de un conjunto de instrucciones base sencillo y extenderlo con instrucciones de dominio específico para obtener un diseño final lo mas óptimo posible pero que mantenga la flexibilidad que puede ofrecer un procesador de propósito general. Una desventaja de esta filosofía es que al adaptar un programa para utilizar diferentes extensiones su portabilidad a otros chips se reduce.
 
-Siguiendo la filosofía de diseño RISC-V, en la actualidad empresas como Codasip \cite{codasip} o Synposis \cite{synopsis} ofrecen diseños de procesadores base junto con entornos de desarrollo para extenderlos y crear procesadores a medida para sus clientes. También existen entornos y procesadores abiertos, como Sargantana \cite{riscv_sargantana}, PULP \cite{riscv_pulp} y Rocket \cite{riscv_rocket}.
+Siguiendo la filosofía de diseño RISC-V, en la actualidad, empresas como Codasip \cite{codasip} o Synopsis \cite{synopsis} ofrecen diseños de procesadores base junto con entornos de desarrollo para extenderlos mediante instrucciones específicas y crear procesadores a medida para sus clientes. También existen entornos y procesadores abiertos, como Sargantana \cite{riscv_sargantana}, PULP \cite{riscv_pulp} y Rocket \cite{riscv_rocket}.
 
-En este trabajo se utiliza un procesador RISC-V sencillo de 32 bits segmentado en 5 etapas con ejecución en orden que implementa las instrucciones estándar RV32IM. RV32I indica que soporta el conjunto de instrucciones base para enteros de 32 bits. M que indica soporta el modo de ejecución \textit{Machine}, interrupciones, excepciones y la extensión Zicsr, que permite interactuar con registros de control. La Figura \ref{fig:riscv_data_pipeline} muestra un esquema simplificado de la ruta de datos del procesador. Este procesador es un ejemplo perfecto de un procesador de bajo coste y prestaciones que puede encontrarse en un sistema empotrado.
+Este trabajo utiliza un procesador RISC-V sencillo de 32 bits segmentado en 5 etapas con ejecución en orden que implementa las instrucciones estándar RV32IM. RV32I indica que soporta el conjunto de instrucciones base para enteros de 32 bits. M que indica soporta el modo de ejecución \textit{Machine}, interrupciones, excepciones y la extensión Zicsr, que permite interactuar con registros de control. La Figura \ref{fig:riscv_data_pipeline} muestra un esquema simplificado de la ruta de datos del procesador. Este procesador es un ejemplo perfecto de un procesador de bajo coste y prestaciones que puede encontrarse en un sistema empotrado.
 
-\begin{figure}[h]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=0.8\textwidth]{root/Imagenes/3_estado_arte/riscv_core.pdf}
     \caption{Ruta de datos del procesador RISC-V utilizado. Los bloques relacionados con la arquitectura base RV32I se muestran en azul, los bloques para detectar riesgos de datos en gris, los bloques relacionados con el modo M en rojo, los bloques de extensiones estándar extra en verde y en morado el interfaz con el bus de memoria.}
@@ -25,9 +23,9 @@ En este trabajo se utiliza un procesador RISC-V sencillo de 32 bits segmentado e
 
 \section{Redes Neuronales Bayesianas}
 
-El aprendizaje automático es una rama de la inteligencia artificial que se centra en el desarrollo de algoritmos y modelos que pueden resolver problemas para los que no han sido explícitamente programados.
+El aprendizaje automático es una rama de la inteligencia artificial que se centra en el desarrollo de algoritmos y modelos estadísticos que permiten generalizar respuestas en problemas para los que no han sido explícitamente programados aprendiendo de un conjunto de datos dado.
 
-Las NN son modelos de aprendizaje automático cuya estructura esta inspirada en el funcionamiento de redes de neuronas biológicas. Una NN esta compuesta por capas de neuronas conectadas entre si. Cada capa cuenta con un conjunto de pesos y una función de activación. Las NN necesitan un proceso de entrenamiento en el que son expuestas a un conjunto de datos etiquetados para que puedan ajustar el valor de los pesos de las diferentes capas. En los últimos años, las NN han obtenido muy buenos resultados en problemas de clasificación y regresión entre otros.
+Las NN son modelos de aprendizaje automático cuya estructura esta inspirada en el funcionamiento de redes de neuronas biológicas \cite{deep_learning_nature}. Una NN esta compuesta por capas de neuronas conectadas entre si. Cada capa cuenta con un conjunto de pesos y una función de activación. Las NN necesitan un proceso de entrenamiento en el que son expuestas a un conjunto de datos etiquetados para que puedan ajustar el valor de los pesos de las diferentes capas. En los últimos años, las NN han obtenido muy buenos resultados en problemas de clasificación y regresión entre otros.
 
 Las BNN son un tipo de NN que integran modelado probabilístico, lo que les permite cuantificar la incertidumbre en tareas de aprendizaje automático, mejorando su confianza y fiabilidad \cite{bnn_hyper_uncertainty}. Sin embargo, necesitan más parámetros para definir los pesos, normalmente el doble que una NN convencional, y la inferencia es más compleja. Los pesos de las BNN son distribuciones de probabilidad, normalmente distribuciones gaussianas, que se han de muestrear durante las propagaciones de la entrada. El algoritmo de inferencia más común para las BNN requiere múltiples propagaciones de la entrada de la red, aumentando drásticamente el coste computacional del mismo \cite{bnn_theory_paper}. 
 
@@ -85,7 +83,7 @@ p(y^*|x^*,D) = \int p(y|x^*,w) p(w|D) dw
 
 Mediante métodos de Monte Carlo se puede aproximar la integral de la Ecuación \ref{eq:bayes_inference}. En este caso, las muestras son diferentes propagaciones estocásticas de la entrada. En cada una de estas propagaciones, los pesos se muestrean de las distribuciones gaussianas que forman la distribución a posteriori aproximada.
 
-Siendo $T$ el número de muestras, $K$ el número de clases posibles y una muestra $a_t = p(y^* = c_k | x^*, w_t)$. Cada muestra $a_t$ es un vector de longitud $K$, cada uno de sus componentes $c_k$ representa la probabilidad de clasificar $x^*$ como $y^*$. Para obtener una única predicción se puede tomar el máximo $c_k$ del vector promedio de todas las muestras.
+Siendo $T$ el número de muestras, $K$ el número de clases posibles y una muestra $a_t$ el vector de longitud $K$ de componentes $p(y^* = c_k | x^*, w_t)$. Cada uno de sus componentes representa la probabilidad de que $y^*$ sea $c_k$. Para obtener una única predicción se puede tomar el componente máximo del vector promedio de todas las muestras.
 
 \subsubsection{Cálculo de la incertidumbre}
 
