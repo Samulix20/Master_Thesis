@@ -3,7 +3,7 @@
 
 \section{Motivación}
 
-La Inteligencia Artificial (IA) gana cada año mas popularidad. La Figura \ref{fig:ai_grow} muestra unas gráficas que \todo.
+La inteligencia artificial (IA) gana cada año mas popularidad, impulsada por los últimos avances en tecnología y su aplicación en diversas industrias. La Figura \ref{fig:ai_grow} muestra el crecimiento del interés en la IA por parte de las empresas y en la Figura \ref{fig:ai_market_size} se representa el crecimiento del mercado de la IA.
 
 % Vertically alling two sufigures and keep subcaption using floatrow and subcaptions pkgs
 \begin{figure}[htb]
@@ -13,17 +13,18 @@ La Inteligencia Artificial (IA) gana cada año mas popularidad. La Figura \ref{f
     \ffigbox{%
       \includegraphics[width=0.48\textwidth]{root/Imagenes/1_intro/ai_interest.png}
     }{%
-      \caption{Interés de las empresas \cite{ai_interest_growth}.}%
+      \caption{Interés de las empresas, representado mediante el porcentaje de empresas \cite{ai_interest_growth}.}
+      \label{fig:ai_grow}
     }
     \ffigbox{%
       \includegraphics[width=0.49\textwidth]{root/Imagenes/1_intro/market_size.png}
     }{%
-      \caption{Valor de mercado \cite{ai_market_size}.}%
+      \caption{Valor de mercado en miles de millo \cite{ai_market_size}.}
+      \label{fig:ai_market_size}
     }
   \end{floatrow}
   \end{subcaptiongroup}
-  \caption{Crecimiento de la IA en los últimos 10 años y crecimiento esperado.}%
-  \label{fig:ai_grow}%
+  \caption{Crecimiento de la IA en los últimos 10 años y crecimiento esperado hasta 2030.}%
 \end{figure}
 
 Al aumentar este interés y por tanto su uso en diversos campos también lo hará el consumo energético. La motivación principal de este trabajo es desarrollar componentes hardware para aumentar la eficiencia energética de la inferencia en un subconjunto de técnicas de aprendizaje automático. Concretamente, este trabajo se centra en las redes neuronales bayesianas (\textit{\textbf{B}ayesian \textbf{N}eural \textbf{N}etwork}). Estas redes calculan la incertidumbre de sus predicciones aportando transparencia en su uso. En relación, otra de las motivaciones de este trabajo es facilitar la adopción de estas redes para ayudar hacia el objetivo de la Unión Europea de trabajar con IAs más transparentes \cite{eu_ai}. Otra de las motivaciones principales de este trabajo es fomentar el desarrollo de la arquitectura RISC-V, que es una arquitectura de procesadores abierta y libre. Europa ha apostado por esta arquitectura, mediante el proyecto el \textit{European Processor Initiative} (EPI) \cite{european_processor}, para que sus empresas puedan diseñar y producir sus propios procesadores sin las restricciones y costos asociados con las arquitecturas propietarias tradicionales. 

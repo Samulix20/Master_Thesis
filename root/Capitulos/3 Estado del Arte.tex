@@ -6,7 +6,7 @@ RISC-V es una arquitectura libre de conjunto de instrucciones reducido (\textit{
 
 %pagar por una licencia. Gracias a ello ha ganado un impulso e interés considerables en la industria en los últimos años \cite{riscv_survey}. Tanto es así que la Unión Europea en su proyecto \textit{European Processor Initiative} (EPI) tiene como objetivo desarrollar un procesador basado en la arquitectura RISC-V \cite{european_processor}.
 
-RISC-V se caracteriza por su simplicidad y modularidad, esto hace que sea una buena solución para diseñar tanto procesadores de muy altas prestaciones como procesadores simples para dispositivos empotrados. El tamaño del repertorio mínimo de instrucciones de 32 bits es de 40 instrucciones. Sobre este repertorio  hay 43 extensiones no privilegiadas y 16 extensiones privilegiadas recogidas en el manual de la arquitectura que dan soporte por ejemplo a la coma flotante, operaciones atómicas, \ldots \cite{riscv_scpec_unpriv, riscv_scpec_priv}.
+RISC-V se caracteriza por su simplicidad y modularidad, esto hace que sea una buena solución para diseñar tanto procesadores de muy altas prestaciones como procesadores simples para dispositivos empotrados. El tamaño del repertorio mínimo de instrucciones de 32 bits es de 40 instrucciones. Sobre este repertorio  hay 43 extensiones no privilegiadas,  que dan soporte por ejemplo a la coma flotante, operaciones atómicas, \ldots y 16 extensiones privilegiadas, como por ejemplo la extensión de virtualización, recogidas en el manual de la arquitectura  \cite{riscv_scpec_unpriv, riscv_scpec_priv}.
 
 La filosofía de diseño RISC-V consiste en partir de un conjunto de instrucciones base sencillo y extenderlo con instrucciones de dominio específico para obtener un diseño final lo mas óptimo posible pero que mantenga la flexibilidad que puede ofrecer un procesador de propósito general. Una desventaja de esta filosofía es que al adaptar un programa para utilizar diferentes extensiones su portabilidad a otros chips se reduce.
 
@@ -25,7 +25,7 @@ Este trabajo utiliza un procesador RISC-V sencillo de 32 bits segmentado en 5 et
 
 El aprendizaje automático es una rama de la inteligencia artificial que se centra en el desarrollo de algoritmos y modelos estadísticos que permiten generalizar respuestas en problemas para los que no han sido explícitamente programados aprendiendo de un conjunto de datos dado.
 
-Las NN son modelos de aprendizaje automático cuya estructura esta inspirada en el funcionamiento de redes de neuronas biológicas \cite{deep_learning_nature}. Una NN esta compuesta por capas de neuronas conectadas entre si. Cada capa cuenta con un conjunto de pesos y una función de activación. Las NN necesitan un proceso de entrenamiento en el que son expuestas a un conjunto de datos etiquetados para que puedan ajustar el valor de los pesos de las diferentes capas. En los últimos años, las NN han obtenido muy buenos resultados en problemas de clasificación y regresión entre otros.
+Las NN son modelos de aprendizaje automático cuya estructura esta inspirada en el funcionamiento de redes de neuronas biológicas \cite{deep_learning_nature}. Una NN esta compuesta por capas de neuronas conectadas entre si. Cada capa cuenta con un conjunto de pesos y una función de activación. Las NN necesitan un proceso de entrenamiento en el que son expuestas a un conjunto de datos etiquetados para que puedan ajustar el valor de los pesos de las diferentes capas. En los últimos años, las NN han obtenido muy buenos resultados en problemas de clasificación y regresión entre otros \cite{cnn_image_survey}.
 
 Las BNN son un tipo de NN que integran modelado probabilístico, lo que les permite cuantificar la incertidumbre en tareas de aprendizaje automático, mejorando su confianza y fiabilidad \cite{bnn_hyper_uncertainty}. Sin embargo, necesitan más parámetros para definir los pesos, normalmente el doble que una NN convencional, y la inferencia es más compleja. Los pesos de las BNN son distribuciones de probabilidad, normalmente distribuciones gaussianas, que se han de muestrear durante las propagaciones de la entrada. El algoritmo de inferencia más común para las BNN requiere múltiples propagaciones de la entrada de la red, aumentando drásticamente el coste computacional del mismo \cite{bnn_theory_paper}. 
 
@@ -69,7 +69,7 @@ Las métricas de incertidumbre proporcionadas por las BNN son muy útiles para d
 
 \subsection{Marco teórico} \label{sec:bnn_formulas}
 
-Estas redes neuronales utilizan el Teorema de Bayes,  ecuación \ref{eq:bayes_theo}, para modelar la probabilidad de un conjunto de pesos $w$ dado un conjunto de datos de entrenamiento $D = \{x, y\}$. Esta distribución de probabilidad es la probabilidad a posteriori.
+Estas redes neuronales se basan el Teorema de Bayes,  mostrado en la Ecuación \ref{eq:bayes_theo}, para modelar la probabilidad de un conjunto de pesos $w$ dado un conjunto de datos de entrenamiento $D = \{x, y\}$. Esta distribución de probabilidad es la probabilidad a posteriori.
 \begin{equation} \label{eq:bayes_theo}
 p(w|D) = \dfrac{p(D|w) p(w)}{p(D)}
 \end{equation}

@@ -1,6 +1,6 @@
 \chapter{Redes Neuronales Bayesianas en RISC-V}
 
-En este capítulo se explican los pasos y bibliotecas desarrolladas para poder ejecutar inferencia de BNN de manera eficiente en un procesador RISC-V con solo soporte para precisión entera. La Figura \ref{fig:experiment_pipeline} muestra el proceso y componentes necesarios.
+En este capítulo se explican los pasos y bibliotecas desarrolladas para poder ejecutar inferencia de BNN de manera eficiente en un procesador RISC-V con  soporte único para precisión entera. La Figura \ref{fig:experiment_pipeline} muestra el proceso y componentes necesarios.
 
 \begin{figure}[h]
     \centering
@@ -11,7 +11,7 @@ En este capítulo se explican los pasos y bibliotecas desarrolladas para poder e
 
 \section{Componentes desarrollados}
 
-Para poder llevar a cabo el proceso de la Figura \ref{fig:experiment_pipeline} se han realizado las siguientes tareas: actualizar el \textit{\textbf{B}oard \textbf{S}upport \textbf{P}ackage} (BSP) del procesador, desarrollar un motor de inferencia de BNN, desarrollar un conversor de modelos y desarrollar una herramienta de análisis de resultados.
+Para poder llevar a cabo el proceso de la Figura \ref{fig:experiment_pipeline} se han realizado las siguientes tareas: actualizar el \textit{\textbf{B}oard \textbf{S}upport \textbf{P}ackage} (BSP) del procesador para aumentar la productividad al realizar el TFM, desarrollar un motor de inferencia de BNN, diseñar  un conversor de modelos y implementar una herramienta de análisis de resultados.
 
 \subsection{Actualización del Board Support Package}
 
@@ -19,7 +19,7 @@ Con el objetivo de mejorar la experiencia de desarrollo del motor de inferencia 
 
 \subsection{Motor de inferencia} \label{sec:motor_inferencia_c}
 
-Se ha desarrollado una librería de funciones que ejecutan la inferencia de capas BNN estándar y convolucionales con funciones de activación ReLU o exponenciales normalizadas (SoftMax) utilizando precisión de coma fija. 
+Se ha desarrollado una biblioteca de funciones que ejecutan la inferencia de capas BNN estándar y convolucionales con funciones de activación ReLU o exponenciales normalizadas (SoftMax) utilizando precisión de coma fija, ya que los paquetes standard como TensorFlow o pytorch no ofrecen esta funcionalidad para dispositivos IoT. 
 
 \subsubsection{Precisión en coma fija}
 
@@ -60,11 +60,11 @@ La Figura \ref{fig:exp_aprox} muestra un estudio de la precisión de la aproxima
 
 \subsubsection{Aproximación de la función logaritmo}
 
-Para calcular las métricas de incertidumbre se necesita la función logaritmo por lo que se ha implementado una versión del algoritmo desarrollado por Turner \cite{binary_log} para calcular el logaritmo de un número en coma fija.
+Para calcular las métricas de incertidumbre se necesita la función logaritmo por lo que se ha implementado una versión del algoritmo desarrollado por Turner para calcular el logaritmo de un número en coma fija~\cite{binary_log}.
 
 \subsubsection{Muestreo de la distribución Gaussiana estándar}
 
-Como se ha explicado previamente, las BNN necesitan muestrear distribuciones gaussianas. Como método de muestreo base se utilizada un algoritmo basado en la suma de distribuciones uniformes, dicha suma se aproximan a una distribución gaussiana debido al TCL, como se muestra en la Ecuación \ref{eq:tcl_unif}.
+Como se ha explicado previamente, las BNN necesitan muestrear distribuciones gaussianas. Como método de muestreo base se ha utilizado un algoritmo basado en la suma de distribuciones uniformes, dicha suma se aproximan a una distribución gaussiana debido al TCL, como se muestra en la Ecuación \ref{eq:tcl_unif}.
 \begin{equation} \label{eq:tcl_unif}
 \sum_{n=0}^{N} \mathcal{U}_n(0,1) \sim \mathcal{N} \left( \dfrac{N}{2}, \sqrt{\dfrac{N}{12}} \right)
 \end{equation}
@@ -74,12 +74,12 @@ El algoritmo implementado genera muestras de $\mathcal{N}(0,1)$ para luego trans
 \mathcal{N}(\mu, \sigma) = \sigma \mathcal{N}(0,1) + \mu
 \end{equation}
 
-Para ello utiliza la suma de 12 distribuciones uniformes y posteriormente centra la distribución como muestra la Ecuación \ref{eq:tcl_12center}.
+La aproximación empleada utiliza la suma de 12 distribuciones uniformes y posteriormente centra la distribución como muestra la Ecuación \ref{eq:tcl_12center}.
 \begin{equation} \label{eq:tcl_12center}
 \sum_{n=0}^{12} \mathcal{U}_n(0,1) - 6 \sim \mathcal{N}(0,1)
 \end{equation}
 
-La Figura \ref{fig:gauss_aprox} muestra un análisis estadístico del método de muestreo implementado. En el gráfico Q-Q se aprecia como el histograma 
+La Figura \ref{fig:gauss_aprox} muestra un análisis estadístico del método de muestreo implementado. En el gráfico Q-Q se aprecia como el histograma \todo
 
 \begin{figure}[h]
     \centering
@@ -98,7 +98,7 @@ Se ha desarrollado una herramienta en Python que convierte modelos BNN TensorFlo
 
 \begin{itemize}
     \item Transformar los pesos a coma fija.
-    \item Analizar la precisión mínima necesaria para almacenar los datos transformos a coma fija.
+    \item Analizar la precisión mínima necesaria para almacenar los datos transformados a coma fija.
     \item Generar vectores de pesos. Generar código C que almacene los pesos en vectores aplanados.
     \item Generar la función de inferencia. Analizar que capas forman el modelo y generar el código de una función de inferencia utilizando las funciones proveídas por el motor.
     \item Transformar los datos de prueba a coma fija.
