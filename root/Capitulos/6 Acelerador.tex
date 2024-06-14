@@ -4,7 +4,7 @@
 
 Como se ha explicado en secciones previas, la sección del algoritmo mas importante a optimizar es el muestreo de distribuciones gaussianas. Para ello se va incluir un GRNG como una nueva unidad funcional (UF) en la CPU RISC-V base. Sarwar Malik \emph{et al.} \cite{clt_grng} propusieron un diseño basado en el TCL que añadía un componente corrector para reducir el error de muestreo de las colas de la distribución. Como también se ha mostrado previamente, no es necesaria una gran precisión a la hora de muestrear distribuciones, por lo que se va a diseñar un GNRG basado en la suma de 12 distribuciones uniformes sin bloque corrector.
 
-\subsection{Números pseudoaleatorios uniformes}
+\subsection{Generador de números pseudoaleatorios uniformes}
 
 Para generar números pseudoaletorios uniformes se ha utilizado un componente hardware llamado \textit{\textbf{L}inear \textbf{F}eedback \textbf{S}hift \textbf{R}egister} (LFSR). Se basan en un circuito de retroalimentación y un registro de estado. El circuito de retroalimentación es un conjunto de puertas XOR que implementan un polinomio generador. Dado un registro de estado de $n$ bits, si el polinomio puede producir $2^n-1$ valores antes de empezar a repetir la secuencia entonces la secuencia es máxima. Alfke \cite{lfsr_poly} recopiló una lista de polinomios generadores para secuencias máximas para varios tamaños de registros de estado. La desventaja de este tipo de LFSR es que no pueden generar más de un bit con baja correlación entre muestras. La Figura \ref{fig:lfsr_bar_corr} muestra diagramas de muestras con alta correlación.
 
@@ -24,7 +24,7 @@ Para paliar este problema se ha utilizado un \textit{Lookahead} LFSR \cite{look_
     \label{fig:lfsr_good_corr}
 \end{figure}
 
-\subsection{Números pseudoaleatorios gaussianos}
+\subsection{Generador de números pseudoaleatorios gaussianos}
 
 Un GRNG basado en el TCL tiene 2 componentes principales, un generador de muestras de distribuciones uniformes y un árbol de sumadores que las acumula. Para sumar 12 muestras se necesita un árbol de 4 niveles. Como se busca obtener una muestra final de 16 bits las muestras iniciales deben ser de 12 bits, ya que por cada nivel del árbol las muestras aumentan su tamaño en 1 bit para evitar problemas de desbordamiento. Para evitar afectar negativamente a la frecuencia del reloj de la CPU original el árbol se ha segmentado por niveles, lo que permite obtener una muestra por ciclo. Solamente penalizando en el cambio de semilla, que hay que esperar 4 ciclos para obtener muestras con la semilla actualizada.
 
@@ -44,7 +44,7 @@ Para generar 12 muestras de 12 bits se utiliza un 144-\textit{Lookahead} LFSR co
     \label{fig:grng_state}
 \end{figure}
 
-\section{Modificaciones al procesador}
+\section{Modificaciones del procesador RISC-V base}
 
 El GRNG diseñado se ha integrado en la CPU original como una nueva UF en la etapa \textit{Execute}. Para ello se ha modificado la etapa de \textit{Decode} para añadir 2 nuevas instrucciones y el selector de resultado de la etapa \textit{Execute}. La Figura \ref{fig:extended_riscv_core} muestra un diagrama de la ruta de datos 
 
@@ -59,7 +59,7 @@ El GRNG diseñado se ha integrado en la CPU original como una nueva UF en la eta
 
 Otra opción posible habría sido añadirlo como un periférico que se accediera mediante entrada y salida mapeada en memoria (\textit{\textbf{M}emory \textbf{M}apped \textbf{I}nput \textbf{O}utput}), pero esta fue descartada por los siguientes motivos. Implicaría que se accedería mediante instrucciones \texttt{load} y \texttt{store}, lo que reduciría el rendimiento ya que estas instrucciones no permiten consumidores a distancia 1. Además el acceso a memoria generalmente requiere circuitos mas complejos por lo que estas instrucciones pueden tener un coste mas elevado, esto no ocurre en la CPU base, cuyo acceso a memoria es lo más simple posible, pero esto si que podría ocurrir en otras CPU y afectar negativamente al rendimiento. Otro factor en contra de esta aproximación es que en el futuro se quiere crear una UF mas compleja que utilice el GRNG.
 
-\subsection{Actualizar el compilador}
+\section{Actualización del compilador gcc con nuevas instrucciones}
 
 Para poder utilizar el GRNG se han añadido 2 instrucciones nuevas al repertorio RISC-V. El objetivo de estas nuevas instrucciones es acelerar el motor de inferencia que se ha desarrollado, por lo que se han de poder utilizar desde código de alto nivel en C. Por lo que se ha actualizado el compilador \texttt{gcc} para RISC-V, lo que se ha podido hacer gracias a que es de código abierto. A continuación se describen las instrucciones añadidas:
 \begin{itemize}
@@ -111,7 +111,7 @@ La Figura \ref{fig:ratio_all} muestra el ratio de ciclos dedicados al muestreo u
     \label{fig:ratio_all}
 \end{figure}
 
-\subsection{Análisis de coste}
+\section{Análisis de coste}
 
 Para analizar el coste de añadir la extensión a la CPU base se ha utilizado una FPGA. Una FPGA es un componente que permite implementar en hardware real circuitos lógicos definidos en un lenguaje de alto nivel como VHDL. Las FPGA estan compuestas por distintos tipos de bloques, las herramientas de síntesis transforman el diseño a estos bloques y configuran la red de interconexión de los mismos. Algunos tipos de bloques son LUT, registros (\textit{\textbf{F}lip-\textbf{F}lops}), memorias RAM (BRAM) o bloques para procesado de señal (\textit{\textbf{D}igital \textbf{S}ignal \textbf{P}rocessor}), que se pueden utilizar para realizar operaciones matemáticas complejas como la multiplicación. Utilizando una herramienta de síntesis se han obtenido los costes descritos en la Tabla \ref{tab:riscv_fpga_utilization}.
 

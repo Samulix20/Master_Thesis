@@ -1,4 +1,4 @@
-\chapter{Motor de inferencia} \label{ch:motor_inferencia}
+\chapter{Motor de inferencia para Redes Neuronales Bayesianas} \label{ch:motor_inferencia}
 
 \section{Biblioteca desarrollada en C}
 
@@ -39,7 +39,7 @@ La Figura \ref{fig:exp_aprox} muestra un estudio de la precisión de la aproxima
     \label{fig:exp_aprox}
 \end{figure}
 
-\subsection{Muestreo de la distribución Gaussiana estándar}
+\subsection{Muestreo de distribuciones Gaussianas}
 
 Como se ha explicado previamente, las BNN necesitan muestrear distribuciones gaussianas. Como método de muestreo base se ha utilizado un algoritmo basado en la suma de distribuciones uniformes, dicha suma se aproximan a una distribución gaussiana debido al TCL, como se muestra en la Ecuación \ref{eq:tcl_unif}.
 \begin{equation} \label{eq:tcl_unif}
@@ -67,7 +67,7 @@ La Figura \ref{fig:gauss_aprox} muestra un análisis estadístico del método de
 
 Además de las gráficas mostradas también se han utilizado los test de bondad de ajuste de D’Agostino \emph{et. al.} \cite{normaltest_1, normaltest_2} y el de Kolmogorov-Smirnov \cite{kstest}.
 
-\subsection{Muestreo de una distribución uniforme}
+\subsection{Muestreo de distribuciones Uniformes}
 
 Generar muestras de distribuciones uniformes es una parte del algoritmo para generar muestras de una distribución gaussiana explicado previamente. Para hacerlo se utiliza una versión del algoritmo Xorshift de 32 bits \cite{xorshift}. Es un algoritmo sencillo para generar números pseudoaleatorios solamente con instrucciones \texttt{xor} y \texttt{shift}.
 
