@@ -3,7 +3,7 @@
 
 \section{Motivación}
 
-La inteligencia artificial (IA) gana cada año mas popularidad, impulsada por los últimos avances en tecnología y su aplicación en diversas industrias. La Figura \ref{fig:ai_grow} muestra el crecimiento del interés en la IA por parte de las empresas y en la Figura \ref{fig:ai_market_size} se representa el crecimiento del mercado de la IA.
+La inteligencia artificial (IA) gana cada año mas popularidad, impulsada por los últimos avances en tecnología y su aplicación en diversas industrias. La Figura \ref{fig:ai_grow} muestra el porcentaje de empresas que muestran interés en la IA y en la Figura \ref{fig:ai_market_size} se representa el crecimiento del valor del mercado de la IA en miles de millones de dolares.
 
 % Vertically alling two sufigures and keep subcaption using floatrow and subcaptions pkgs
 \begin{figure}[htb]
@@ -54,16 +54,5 @@ Todo el código de este trabajo se encuentra disponible en un repositorio públi
 
 \section{Estructura del documento}
 
-La siguiente sección explica las herramientas que se han utilizado para completar este trabajo. El Capítulo 2 describe la metodología que se ha segundo durante el desarrollo del trabajo y herramientas utilizadas. El Capítulo 3 describe el estado del arte relacionado con la arquitectura RISC-V y las BNN. El Capítulo 4 muestra los componentes desarrollados para ejecutar inferencia de BNN en plataformas RISC-V y los resultados obtenidos. El Capítulo 5 explica como se ha implementado una extensión para la inferencia de BNN en un procesador RISC-V y los resultados que se han obtenido. Por último el Capitulo 6 contiene las conclusiones del trabajo.
+\todo La siguiente sección explica las herramientas que se han utilizado para completar este trabajo. El Capítulo 2 describe la metodología que se ha segundo durante el desarrollo del trabajo y herramientas utilizadas. El Capítulo 3 describe el estado del arte relacionado con la arquitectura RISC-V y las BNN. El Capítulo 4 muestra los componentes desarrollados para ejecutar inferencia de BNN en plataformas RISC-V y los resultados obtenidos. El Capítulo 5 explica como se ha implementado una extensión para la inferencia de BNN en un procesador RISC-V y los resultados que se han obtenido. Por último el Capitulo 6 contiene las conclusiones del trabajo.
 
-\section{Herramientas Utilizadas}
-
-El diseño del procesador base utilizado se encuentra en el repositorio riscv-vhdl \cite{base_riscv_cpu_git}. Para definir la extensión del procesador RISC-V se ha utilizado el lenguaje de especificación hardware VHDL. Para simular el comportamiento del procesador se ha utilizado el simulador GHDL \cite{ghdl} junto con el visor de ondas GTKWave \cite{gtkwave}. Los programas que se han ejecutado en los procesadores simulados se han desarrollado en C y para compilarlos se ha utilizado el conjunto de herramientas GNU RISC-V Compiler Toolchain \cite{gcc_riscv}. 
-
-Para entrenar BNNs se ha utilizado la biblioteca de Python TensorFlow Probability \cite{tfprob} junto al repositorio BNN\_for\_hyperspectral\_datasets\_analysis \cite{bnn_hyper_git}. El proceso de compilación y pruebas se han automatizado todo lo posible mediante la herramienta Make y \textit{scripts} en Bash y Python. Para manejar ficheros ELF desde Python se ha utilizado la biblioteca pyelftools \cite{pyelftools}. Para crear gráficas se ha utilizado la biblioteca de Python Matplotlib \cite{matplotlib}. 
-
-Se ha utilizado la plataforma de desarrollo Xilinx ZCU104 FPGA \cite{fpga_board} junto a Vivado Design Suite \cite{vivado} para implementar los diseños hardware sobre una FPGA y analizar sus costes.
-
-Para redactar este documento se ha utilizado el editor de \LaTeX\ en línea Overleaf \cite{overleaf} y para crear los diagramas se utilizado el editor en línea draw.io \cite{drawio} junto al editor de gráficos vectoriales Inkscape \cite{inkscape}.
-
-Como programa de control de versiones se ha utilizado Git \cite{git} junto con GitHub \cite{github} como repositorio en línea.
