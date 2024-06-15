@@ -1,6 +1,6 @@
 \chapter{Metodología}
 
-\section{Herramientas utilizados}
+\section{Herramientas utilizadas}
 
 El diseño del procesador base utilizado se encuentra en el repositorio riscv-vhdl \cite{base_riscv_cpu_git}. Para definir la extensión del procesador RISC-V se ha utilizado el lenguaje de especificación hardware VHDL. Para simular el comportamiento del procesador se ha utilizado el simulador GHDL \cite{ghdl} junto con el visor de ondas GTKWave \cite{gtkwave}. Los programas que se han ejecutado en los procesadores simulados se han desarrollado en C y para compilarlos se ha utilizado el conjunto de herramientas GNU RISC-V Compiler Toolchain \cite{gcc_riscv}. 
 
@@ -124,7 +124,7 @@ Con el objetivo de mejorar la experiencia de desarrollo del motor de inferencia 
 
 \subsection{Verificación}
 
-Para analizar el correcto funcionamiento del motor de inferencia y estudiar el impacto en el rendimiento de las optimizaciones posteriores se ha desarrollado una herramienta que compara las predicciones del conjunto de datos de prueba obtenidas con el motor de inferencia y TensorFlow de forma automática. Este componente aparece en la Figura \ref{fig:experiment_pipeline} como componente 6.
+\todo Para analizar el correcto funcionamiento del motor de inferencia y estudiar el impacto en el rendimiento de las optimizaciones posteriores se ha desarrollado una herramienta que compara las predicciones del conjunto de datos de prueba obtenidas con el motor de inferencia y TensorFlow de forma automática. Este componente aparece en la Figura \ref{fig:experiment_pipeline} como componente 6.
 
 Para comparar los conjuntos de predicciones se han utilizado las métricas de incertidumbre y la precisión. La precisión se puede calcular como el ratio de predicciones acertadas sobre el número total de predicciones. Analizar las métricas de incertidumbre y las propiedades estadísticas de los modelos es complejo. Para hacerlo se han utilizado 4 tipos de gráficas que las representan, estas se explicaran mas adelante en la Sección \ref{sec:uncertainty_example} mediante ejemplos.
 
