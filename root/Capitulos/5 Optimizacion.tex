@@ -12,7 +12,7 @@ E\left[ b + \sum_{i=0}^N w_i x_i \right]  = b + \sum_{i=0}^N ( E[w_i] E[x_i] )
 V\left[ b + \sum_{i=0}^N w_i x_i \right] = \sum_{i=0}^N ( V[w_i]V[x_i] + V[w_i]E[x_i]^2 + V[x_i]E[w_i]^2 )
 \end{equation}
 
-La optimización consiste en utilizar un nuevo peso $w'$ que cumpla $E[w'] = E[w]$ y $V[w'] = V[w]$, de forma que no altere los resultados de la BNN. $w' = q \cdot b$, siendo $b$ una muestra de una distribución Bernoulli $\mathcal{B}(p)$, esta distribuciones toma el valor 1 con probabilidad $p$ y el valor 0 con pr
+La optimización consiste en utilizar un nuevo peso $w'$ que cumpla $E[w'] = E[w]$ y $V[w'] = V[w]$, de forma que no altere los resultados de la BNN. $w' = q \cdot b$, siendo $b$ una muestra de una distribución Bernoulli $\mathcal{B}(p)$, esta distribuciones toma el valor 1 con probabilidad $p$ y el valor 0 con probabilidad $1-p$.
 
 
 y $a$ y $b$ siendo constantes que se pueden calcular a partir de la media $\mu$ y desviación típica $\sigma$ de los pesos originales utilizando el sistema de ecuaciones mostrado en la Ecuación \ref{eq:a_b_equation}.
