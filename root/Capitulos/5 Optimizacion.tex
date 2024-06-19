@@ -1,14 +1,23 @@
-%% quizas mover a otro chapter
-
 \chapter{Optimizaciones software}
-
-\todo
 
 \section{Optimización mediante distribuciones Bernoulli}
 
-Awano \emph{et al.} \cite{bnn_clt_approx} propusieron muestrear distribuciones Bernoulli en vez de distribuciones gaussianas para aumentar la eficiencia del algoritmo. Los parámetros de estas nuevas distribuciones se obtienen mediante una transformación de los parámetros de las distribuciones originales. Se replicó este método mediante software pero los resultados obtenidos no fueron lo suficientemente buenos en ninguno de los modelos. 
+Awano \emph{et al.} \cite{bnn_clt_approx} propusieron muestrear distribuciones Bernoulli en vez de distribuciones gaussianas para aumentar la eficiencia del algoritmo en un acelerador para inferencia. Los parámetros de estas nuevas distribuciones se obtienen mediante una transformación de los parámetros de las distribuciones originales. A continuación se explican los fundamentos teóricos de esta optimización.
 
-Para el conjunto de datos de píxeles hiperespectrales KSC el modelo optimizado no degradaba la precisión pero en la Figura \ref{fig:bernoulli} se muestra un ejemplo de como las métricas de incertidumbre son alteradas.
+El TCL expone que en condiciones generales la distribución de una suma de variables aleatorias tiende a ser una distribución gaussiana. Las operaciones MAC son una suma de variables aleatorias por lo que según el TCL el resultado seguirá una distribución gaussiana. Una distribución gaussiana se define con 2 parámetros, la media y la desviación típica. Asumiendo que el tipo de distribución resultante es independiente del tipo de distribuciones de los sumandos, solamente se tiene que preservar la esperanza y la varianza de la operación MAC para no alterar los resultados de la BNN. Las Ecuaciones \ref{eq:neuron_expected}  y \ref{eq:neuron_variance} muestran la esperanza y la varianza de una operación MAC.
+\begin{equation} \label{eq:neuron_expected}
+E\left[ b + \sum_{i=0}^N w_i x_i \right]  = b + \sum_{i=0}^N ( E[w_i] E[x_i] )
+\end{equation}
+\begin{equation} \label{eq:neuron_variance}
+V\left[ b + \sum_{i=0}^N w_i x_i \right] = \sum_{i=0}^N ( V[w_i]V[x_i] + V[w_i]E[x_i]^2 + V[x_i]E[w_i]^2 )
+\end{equation}
+
+La optimización consiste en utilizar un nuevo peso $w'$ que cumpla $E[w'] = E[w]$ y $V[w'] = V[w]$, de forma que no altere los resultados de la BNN. $w' = q \cdot b$, siendo $b$ una muestra de una distribución Bernoulli $\mathcal{B}(p)$, esta distribuciones toma el valor 1 con probabilidad $p$ y el valor 0 
+
+
+y $a$ y $b$ siendo constantes que se pueden calcular a partir de la media $\mu$ y desviación típica $\sigma$ de los pesos originales utilizando el sistema de ecuaciones mostrado en la Ecuación \ref{eq:a_b_equation}.
+
+En este trabajo se ha implementado esta optimización mediante software y se han analizado sus efectos sobre la precisión y métricas de incertidumbre.
 
 \begin{figure}[h]
      \centering
@@ -33,15 +42,7 @@ Esta degradación de las métricas hace que este modelo pierda una de las princi
 
 \section{Optimización mediante distribuciones Uniformes}
 
-Este trabajo partiendo de Awano \emph{et al.} propone un nuevo método que utiliza distribuciones Uniformes en vez de distribuciones Bernoulli. El TCL expone que en condiciones generales la distribución de una suma de variables aleatorias tiende a ser una distribución gaussiana. Las operaciones MAC son una suma de variables aleatorias por lo que según el TCL el resultado seguirá una distribución gaussiana. Una distribución gaussiana se define con 2 parámetros, la media y la desviación típica. Asumiendo que el tipo de distribución resultante es independiente del tipo de distribuciones de los sumandos, solamente se tiene que preservar la esperanza y la varianza de la operación MAC para no alterar los resultados de la BNN. Las Ecuaciones \ref{eq:neuron_expected}  y \ref{eq:neuron_variance} muestran la esperanza y la varianza de una operación MAC.
-\begin{equation} \label{eq:neuron_expected}
-E\left[ b + \sum_{i=0}^N w_i x_i \right]  = b + \sum_{i=0}^N ( E[w_i] E[x_i] )
-\end{equation}
-\begin{equation} \label{eq:neuron_variance}
-V\left[ b + \sum_{i=0}^N w_i x_i \right] = \sum_{i=0}^N ( V[w_i]V[x_i] + V[w_i]E[x_i]^2 + V[x_i]E[w_i]^2 )
-\end{equation}
-
-Se propone utilizar un nuevo peso $w'$ que cumpla $E[w'] = E[w]$ y $V[w'] = V[w]$, de forma que no altere los resultados de la BNN. $w' = bu + a$, siendo $u$ una muestra de una distribución Uniforme $\mathcal{U}(0,1)$ y $a$ y $b$ siendo constantes que se pueden calcular a partir de la media $\mu$ y desviación típica $\sigma$ de los pesos originales utilizando el sistema de ecuaciones mostrado en la Ecuación \ref{eq:a_b_equation}.
+Este trabajo partiendo de Awano \emph{et al.} propone un nuevo método que utiliza distribuciones Uniformes en vez de distribuciones Bernoulli. Se propone utilizar un nuevo peso $w'$ que cumpla $E[w'] = E[w]$ y $V[w'] = V[w]$, de forma que no altere los resultados de la BNN. $w' = bu + a$, siendo $u$ una muestra de una distribución Uniforme $\mathcal{U}(0,1)$ y $a$ y $b$ siendo constantes que se pueden calcular a partir de la media $\mu$ y desviación típica $\sigma$ de los pesos originales utilizando el sistema de ecuaciones mostrado en la Ecuación \ref{eq:a_b_equation}.
 \begin{equation}\label{eq:a_b_equation}
 \begin{cases}
 \mu = \dfrac{b}{2} + a\\ \\
