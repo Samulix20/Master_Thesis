@@ -1,8 +1,8 @@
-\chapter{Optimizaciones software}
+\chapter{Optimizaciones software} \label{ch:optimizaciones}
 
 \section{Optimización mediante distribuciones Bernoulli}
 
-Awano \emph{et al.} \cite{bnn_clt_approx} propusieron muestrear distribuciones Bernoulli en vez de distribuciones gaussianas para aumentar la eficiencia del algoritmo en un acelerador para inferencia. Los parámetros de estas nuevas distribuciones se obtienen mediante una transformación de los parámetros de las distribuciones originales. A continuación se explican los fundamentos teóricos de esta optimización.
+Awano \emph{et al.} \cite{bnn_clt_approx} propusieron muestrear distribuciones Bernoulli en vez de distribuciones gaussianas para aumentar la eficiencia del algoritmo en un acelerador para inferencia. Los parámetros de estas nuevas distribuciones se obtienen mediante una transformación de los parámetros de las distribuciones originales. En este trabajo se ha implementado esta optimización mediante software y se ha analizado su impacto en la precisión, métricas de incertidumbre y rendimiento. A continuación se explican los fundamentos teóricos de la optimización.
 
 El TCL expone que en condiciones generales la distribución de una suma de variables aleatorias tiende a ser una distribución gaussiana. Las operaciones MAC son una suma de variables aleatorias por lo que según el TCL el resultado seguirá una distribución gaussiana. Una distribución gaussiana se define con 2 parámetros, la media y la desviación típica. Asumiendo que el tipo de distribución resultante es independiente del tipo de distribuciones de los sumandos, solamente se tiene que preservar la esperanza y la varianza de la operación MAC para no alterar los resultados de la BNN. Las Ecuaciones \ref{eq:neuron_expected}  y \ref{eq:neuron_variance} muestran la esperanza y la varianza de una operación MAC.
 \begin{equation} \label{eq:neuron_expected}
@@ -12,38 +12,25 @@ E\left[ b + \sum_{i=0}^N w_i x_i \right]  = b + \sum_{i=0}^N ( E[w_i] E[x_i] )
 V\left[ b + \sum_{i=0}^N w_i x_i \right] = \sum_{i=0}^N ( V[w_i]V[x_i] + V[w_i]E[x_i]^2 + V[x_i]E[w_i]^2 )
 \end{equation}
 
-La optimización consiste en utilizar un nuevo peso $w'$ que cumpla $E[w'] = E[w]$ y $V[w'] = V[w]$, de forma que no altere los resultados de la BNN. $w' = q \cdot b$, siendo $b$ una muestra de una distribución Bernoulli $\mathcal{B}(p)$, esta distribuciones toma el valor 1 con probabilidad $p$ y el valor 0 con probabilidad $1-p$.
+La optimización consiste en utilizar un nuevo peso $w'$ que cumpla $E[w'] = E[w]$ y $V[w'] = V[w]$, de forma que no altere los resultados de la BNN. $w' = qb$, siendo $b$ una muestra de una distribución Bernoulli $\mathcal{B}(p)$, esta distribuciones toma el valor 1 con probabilidad $p$ y el valor 0 con probabilidad $1-p$. Las constantes $p$ y $q$ se calculan a partir de la media $\mu$ y desviación típica $\sigma$ de las distribuciones originales mediante el sistema de ecuaciones mostrado en la Ecuación \ref{eq:bernoulli_opt}.
+\begin{equation}\label{eq:bernoulli_opt}
+\begin{cases}
+\mu = pq\\ \\
+\sigma^2 = p(1-p)q^2
+\end{cases}
+\rightarrow\ 
+\begin{cases}
+p = \dfrac{\mu^2}{\mu^2 + \sigma^2}\\ \\
+q = \dfrac{\mu^2 + \sigma^2}{\mu}
+\end{cases}
+\end{equation}
 
-
-y $a$ y $b$ siendo constantes que se pueden calcular a partir de la media $\mu$ y desviación típica $\sigma$ de los pesos originales utilizando el sistema de ecuaciones mostrado en la Ecuación \ref{eq:a_b_equation}.
-
-En este trabajo se ha implementado esta optimización mediante software y se han analizado sus efectos sobre la precisión y métricas de incertidumbre.
-
-\begin{figure}[h]
-     \centering
-     \begin{subfigure}[b]{0.46\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{root/Imagenes/opt_software/bernoulli_hist.pdf}
-         \caption{Histogramas de incertidumbre divididos en predicciones correctas (azul) y predicciones incorrectas (rojo).\\ \\}
-         \label{fig:bernoulli_hist}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.51\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{root/Imagenes/opt_software/bernoulli_class.pdf}
-         \caption{Incertidumbre predictiva ($\mathbb{H}$) y aleatoria ($\mathbb{E}p$) agrupada por clases de los resultados obtenidos con TensorFlow (amarillo) y mediante la optimización basada en distribuciones de Bernoulli (azul).}
-         \label{fig:bernoulli_class}
-     \end{subfigure}
-     \caption{Gráficas de análisis de incertidumbre de las predicciones del conjunto de prueba de píxeles hiperespectrales KSC, optimizados mediante distribuciones de Bernoulli y obtenidos mediante TensorFlow.}
-     \label{fig:bernoulli}
-\end{figure}
-
-Esta degradación de las métricas hace que este modelo pierda una de las principales ventajas de utilizar una BNN por lo que no tiene sentido utilizarlo.
+Esta optimización no aumenta el tamaño de los modelos y no necesita muestrear distribuciones gaussianas sino Bernoulli, cuyo algoritmo de muestreo es mucho mas sencillo. Dicho algoritmo de muestreo incluye una instrucción de salto, este tipo de instrucciones puede tener un coste muy elevado en algunas arquitecturas hardware. Por lo que este trabajo ha desarrollado otra optimización que utiliza una distribución que no requiere este tipo de instrucciones, explicada a continuación.
 
 \section{Optimización mediante distribuciones Uniformes}
 
-Este trabajo partiendo de Awano \emph{et al.} propone un nuevo método que utiliza distribuciones Uniformes en vez de distribuciones Bernoulli. Se propone utilizar un nuevo peso $w'$ que cumpla $E[w'] = E[w]$ y $V[w'] = V[w]$, de forma que no altere los resultados de la BNN. $w' = bu + a$, siendo $u$ una muestra de una distribución Uniforme $\mathcal{U}(0,1)$ y $a$ y $b$ siendo constantes que se pueden calcular a partir de la media $\mu$ y desviación típica $\sigma$ de los pesos originales utilizando el sistema de ecuaciones mostrado en la Ecuación \ref{eq:a_b_equation}.
-\begin{equation}\label{eq:a_b_equation}
+Partiendo de Awano \emph{et al.} este trabajo propone un nuevo método que utiliza distribuciones Uniformes en vez de distribuciones Bernoulli. En este caso el nuevo peso se define como $w' = bu + a$, siendo $u$ una muestra de una distribución Uniforme $\mathcal{U}(0,1)$. $a$ y $b$ siendo constantes que se pueden calcular a partir de la media $\mu$ y desviación típica $\sigma$ de los pesos originales utilizando el sistema de ecuaciones mostrado en la Ecuación \ref{eq:uniform_opt}.
+\begin{equation}\label{eq:uniform_opt}
 \begin{cases}
 \mu = \dfrac{b}{2} + a\\ \\
 \sigma^2 = \dfrac{b^2}{12}
@@ -55,48 +42,69 @@ b = \sigma \sqrt{12}
 \end{cases}
 \end{equation}
 
-Esta optimización no aumenta el tamaño de los modelos y no necesita muestrear distribuciones gaussianas sino uniformes, cuyo algoritmo de muestreo es mucho mas sencillo. La Tabla \ref{tab:uniform_opt} muestra los resultados de precisión y aceleración (\textit{speedup}) obtenidos con esta optimización para todas las arquitecturas de modelos y conjuntos de datos.
+Esta optimización tampoco aumenta el tamaño de los modelos, muestrea distribuciones Uniformes cuyo algoritmo de muestreo es muy sencillo y además no requiere instrucciones de salto.
+
+\section{Análisis de resultados}
+
+La Tabla \ref{tab:uniform_opt} muestra los resultados de precisión y aceleración (\textit{speedup}) obtenidos con las optimizaciones Bernoulli y Uniforme para todas las arquitecturas de modelos y conjuntos de datos.
 
 \begin{table}[h]
     \centering
-    \caption{Resultados de precisión y \textit{speedup} obtenidos con la optimización desarrollada para todas las arquitectruas de modelos y conjuntos de datos.}
+    \caption{Resultados de precisión y \textit{speedup} obtenidos con las optimizaciones Bernoulli y Uniforme para todas las arquitecturas de modelos y conjuntos de datos.}
     \label{tab:uniform_opt}
-    \begin{tabular}{llrrr}
+    \begin{tabular}{llrrrrr}
     \hline
-     \multirow{2}{*}{\textbf{Modelo}} & \textbf{Conjunto} & \multicolumn{2}{c}{\textbf{Precisión}} & \multirow{2}{*}{\textbf{Speedup}} \\
-     & \multicolumn{1}{c}{\textbf{de datos}} & \multicolumn{1}{l}{\textit{TensorFlow}} & \multicolumn{1}{l}{\textit{Optimizado}} & \\ \hline
-    \multirow{5}{*}{HYPER} & BO & 0.9039 & 0.9083 & \multirow{5}{*}{4.95} \\
-     & IP & 0.8139 & 0.8131 & \\
-     & KSC & 0.9256 & 0.9217 & \\
-     & PU & 0.9017 & 0.9017 & \\
-     & SV & 0.9257 & 0.9280 & \\ \hline
-    \multirow{2}{*}{LENET-5} & MNIST & 0.9836 & 0.8906 & \multirow{2}{*}{5.88} \\
-     & CIFAR-10 & 0.6351 & 0.4436 & \\ \hline
-    \multirow{2}{*}{B2N2} & MNIST & 0.9872 & 0.0964 & \multirow{2}{*}{4.88} \\
-     & CIFAR-10 & 0.7295 & 0.2873 & \\ \hline                  
+     \multirow{2}{*}{\textbf{Modelo}} & \textbf{Conjunto} & \multicolumn{3}{c}{\textbf{Precisión}} & \multicolumn{2}{c}{\textbf{Speedup}} \\
+     
+     & \multicolumn{1}{c}{\textbf{de datos}} & \multicolumn{1}{l}{\textit{TensorFlow}} & \multicolumn{1}{l}{\textit{Bernoulli}} & \multicolumn{1}{l}{\textit{Uniforme}} & \multicolumn{1}{l}{\textit{Bernoulli}} & \multicolumn{1}{l}{\textit{Uniforme}} \\ \hline
+    \multirow{5}{*}{HYPER} 
+        & BO & 0.9039 & 0.9039 & 0.9082 & \multirow{5}{*}{5.18} & \multirow{5}{*}{4.95} \\
+        & IP & 0.8139 & 0.8154 & 0.8130 \\
+        & KSC & 0.9256 & 0.9274 & 0.9217 \\
+        & PU & 0.9017 & 0.9004 & 0.9016 \\
+        & SV & 0.9257 & 0.9238 & 0.9279 \\ \hline
+    \multirow{2}{*}{LENET-5} 
+        & MNIST & 0.9836 & 0.9883 & 0.9885 & \multirow{2}{*}{\todo} & \multirow{2}{*}{5.88} \\
+        & CIFAR-10 & 0.6351 & 0.6336 & 0.6220 & \\ \hline
+    \multirow{2}{*}{B2N2} 
+        & MNIST & 0.9872 & 0.9917 & 0.9910 & \multirow{2}{*}{\todo} & \multirow{2}{*}{4.88} \\
+        & CIFAR-10 & 0.7295 & 0.7273 & 0.7197 & \\ \hline                  
     \end{tabular}
 \end{table}
 
-Esta optimización ofrece muy buenos resultados en el caso de los modelos para clasificación de píxeles hiperespectrales, no afectando negativamente a la precisión de los modelos y obteniendo un \textit{speedup} de 4.95. Por contrario, en las arquitecturas de modelos mas le pérdida de precisión es mayor, en el caso del modelo B2N2 llega a ser completamente inaceptable. En el caso del modelo LENET-5 MNIST la precisión obtenida aun puede considerarse lo suficientemente buena la Figura \ref{fig:bad_uncert} muestra como se han degradado las métricas de incertidumbre del modelo. 
+Ninguna de las optimizaciones tiene un efecto negativo en la precisión de los modelos utilizados para verificación. En el caso del procesador RISC-V utilizado la penalización de las instrucciones de salto es solamente de 2 ciclos y en el caso de que el muestreo de la distribución Bernoulli devuelva el 0 se puede ignorar la operación MAC ya que acumularía 0, por lo que la optimización Bernoulli obtiene un \textit{speedup} mayor que la Uniforme.
 
-%Esta degradación de las métricas hace que este modelo pierda una de las principales ventajas de utilizar una BNN por lo que no tiene sentido utilizarlo.
+Con respecto a las modificaciones a las métricas de incertidumbre, ambas optimizaciones producen pequeñas alteraciones. La magnitud de estas alteraciones es dependiente de la optimización y del modelo, en algunos casos la optimización Bernoulli produce alteraciones menores y en otros la Uniforme. La Figura \ref{fig:comp_lenet_cifar} muestra un caso en el que la optimización Bernoulli produce menos alteraciones que la Uniforme y la Figura \ref{fig:comp_bo} un caso en el que ocurre lo contrario. En el Anexo \ref{} se pueden encontrar los resultados obtenidos con todos los modelos y conjuntos de datos.
 
+\begin{figure}[h]
+    \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{root/Imagenes/opt_software/Bernoulli/LENET_CIFAR/class_uncertainty.pdf}
+         \caption{Optimización Bernoulli}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{root/Imagenes/opt_software/Uniform/LENET_CIFAR/class_uncertainty.pdf}
+         \caption{Optimización Uniforme}
+    \end{subfigure}
+    \caption{Incertidumbre predictiva ($\mathbb{H}$) y aleatoria ($\mathbb{E}p$) agrupada por clases de las predicciones obtenidas con \textit{TensorFlow} (amarillo) y el motor de inferencia optimizado (azul) del modelo LeNet-5 y el conjunto de datos CIFAR-10.}
+    \label{fig:comp_lenet_cifar}
+\end{figure}
 
 \begin{figure}[h]
      \centering
-     \begin{subfigure}[b]{0.46\textwidth}
+     \begin{subfigure}[b]{0.49\textwidth}
          \centering
-         \includegraphics[width=\textwidth]{root/Imagenes/opt_software/hist_uncertainty.pdf}
-         \caption{Histogramas de incertidumbre divididos en predicciones correctas (azul) y predicciones incorrectas (rojo).\\}
-         \label{fig:bad_uncert_hist}
+         \includegraphics[width=\textwidth]{root/Imagenes/opt_software/Bernoulli/HYPER_BO/class_uncertainty.pdf}
+         \caption{Optimización Bernoulli}
      \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.51\textwidth}
+     \begin{subfigure}[b]{0.49\textwidth}
          \centering
-         \includegraphics[width=\textwidth]{root/Imagenes/opt_software/class_uncertainty.pdf}
-         \caption{Incertidumbre predictiva ($\mathbb{H}$) y aleatoria ($\mathbb{E}p$) agrupada por clases de los resultados obtenidos con TensorFlow (amarillo), el motor de inferencia sin optimización (azul) y con optimización (rojo).}
-         \label{fig:bad_uncert_class}
+         \includegraphics[width=\textwidth]{root/Imagenes/opt_software/Uniform/HYPER_BO/class_uncertainty.pdf}
+         \caption{Optimización Uniforme}
      \end{subfigure}
-     \caption{Gráficas de análisis de incertidumbre de los resultados del modelo LENET-5 MNIST optimizado, sin optimizar y obtenidos mediante TensorFlow.}
-     \label{fig:bad_uncert}
+    \caption{Incertidumbre predictiva ($\mathbb{H}$) y aleatoria ($\mathbb{E}p$) agrupada por clases de las predicciones obtenidas con \textit{TensorFlow} (amarillo) y el motor de inferencia optimizado (azul) del conjunto de datos de píxeles hiperespectrales BO.}
+    \label{fig:comp_bo}
 \end{figure}
+

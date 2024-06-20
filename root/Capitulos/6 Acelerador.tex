@@ -1,26 +1,29 @@
-\chapter{Extensión RISC-V para inferencia de Redes Neuronales Bayesianas}
+\chapter{Extensión RISC-V para inferencia de Redes Neuronales Bayesianas} \label{ch:extension}
 
-\section{Diseño del acelerador}
+\section{Diseño de una nueva unidad funcional}
 
-Como se ha explicado en secciones previas, la sección del algoritmo mas importante a optimizar es el muestreo de distribuciones gaussianas. Para ello se va incluir un GRNG como una nueva unidad funcional (UF) en la CPU RISC-V base. Sarwar Malik \emph{et al.} \cite{clt_grng} propusieron un diseño basado en el TCL que añadía un componente corrector para reducir el error de muestreo de las colas de la distribución. Como también se ha mostrado previamente, no es necesaria una gran precisión a la hora de muestrear distribuciones, por lo que se va a diseñar un GNRG basado en la suma de 12 distribuciones uniformes sin bloque corrector.
+Como se ha explicado en secciones previas, la sección del algoritmo mas importante a optimizar es el muestreo de distribuciones gaussianas. Para ello se va incluir un GRNG como una nueva unidad funcional (UF) en la CPU RISC-V base. Sarwar Malik \emph{et al.} propusieron un diseño basado en el TCL que añadía un componente corrector para reducir el error de muestreo de las colas de la distribución \cite{clt_grng} . Como también se ha mostrado previamente, no es necesaria una gran precisión a la hora de muestrear distribuciones, por lo que se va a diseñar un GNRG basado en la suma de 12 distribuciones uniformes sin bloque corrector. 
+
+Se ha optado por utilizar un GRNG y no un generador de otro tipo como el que requieren alguna de las optimizaciones software para desviarse lo menos posible del algoritmo original y crear una UF que pueda ser útil para otro tipo de aplicaciones que requieran muestrear distribuciones Gaussianas.
 
 \subsection{Generador de números pseudoaleatorios uniformes}
 
-Para generar números pseudoaletorios uniformes se ha utilizado un componente hardware llamado \textit{\textbf{L}inear \textbf{F}eedback \textbf{S}hift \textbf{R}egister} (LFSR). Se basan en un circuito de retroalimentación y un registro de estado. El circuito de retroalimentación es un conjunto de puertas XOR que implementan un polinomio generador. Dado un registro de estado de $n$ bits, si el polinomio puede producir $2^n-1$ valores antes de empezar a repetir la secuencia entonces la secuencia es máxima. Alfke \cite{lfsr_poly} recopiló una lista de polinomios generadores para secuencias máximas para varios tamaños de registros de estado. La desventaja de este tipo de LFSR es que no pueden generar más de un bit con baja correlación entre muestras. La Figura \ref{fig:lfsr_bar_corr} muestra diagramas de muestras con alta correlación.
+Para generar números pseudoaletorios uniformes se ha utilizado un componente hardware llamado \textit{\textbf{L}inear \textbf{F}eedback \textbf{S}hift \textbf{R}egister} (LFSR). Se basan en un circuito de retroalimentación y un registro de estado. El circuito de retroalimentación es un conjunto de puertas XOR que implementan un polinomio generador. Dado un registro de estado de $n$ bits, si el polinomio puede producir $2^n-1$ valores a
+ntes de empezar a repetir la secuencia entonces la secuencia es máxima. Alfke recopiló una lista de polinomios generadores para secuencias máximas para varios tamaños de registros de estado \cite{lfsr_poly}. La desventaja de este tipo de LFSR es que no pueden generar más de un bit con baja correlación entre muestras. La Figura \ref{fig:lfsr_bar_corr} muestra diagramas de muestras con alta correlación, el diagrama de autocovarianza debería mostrar un único pico en el 0 y el gráfico de dispersión un patrón de ruido blanco.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\textwidth]{root/Imagenes/5_riscv/lfsr_bar_corr.png}
-    \caption{Diagramas de correlación de $10^4$ muestras de 12 bits de un LFSR. A la izquierda un diagrama de autocovarianza para diferentes distancias entre muestras. A la derecha un diagrama de dispersión de una muestra $i$ y la $i-1$.}
+    \includegraphics[width=0.7\textwidth]{root/Imagenes/riscv_ext/lfsr_bar_corr.png}
+    \caption{Diagramas de correlación de $10^4$ muestras de 12 bits de un LFSR. A la izquierda un diagrama de autocovarianza para diferentes distancias entre muestras. A la derecha un diagrama de dispersión de una muestra $i$ con respecto a la $i-1$.}
     \label{fig:lfsr_bar_corr}
 \end{figure}
 
-Para paliar este problema se ha utilizado un \textit{Lookahead} LFSR \cite{look_ahead_lfsr_base}. Estos LFSR tienen un circuito de retroalimentación más complejo que generan $n$ bits con baja correlación. Este circuito aplica el polinomio generador base $n$ veces, Colavito \emph{et al.} \cite{look_ahead_lfsr_design} detallan como obtener estos circuitos mediante exponenciación de matrices y que restricciones deben seguir. En este trabajo se ha desarrollado un \textit{script} en Python que genera código VHDL para implementar \textit{Lookahead} LFSR utilizando su método. La Figura \ref{fig:lfsr_good_corr} muestra los diagramas de correlación que se obtienen utilizando este tipo de LFSR.
+Para paliar este problema se ha utilizado un \textit{Lookahead} LFSR \cite{look_ahead_lfsr_base}. Estos LFSR tienen un circuito de retroalimentación más complejo que generan $n$ bits con baja correlación. Este circuito aplica el polinomio generador base $n$ veces, Colavito \emph{et al.} detallaron como obtener estos circuitos mediante exponenciación de matrices y que restricciones deben seguir \cite{look_ahead_lfsr_design}. En este trabajo se ha desarrollado un \textit{script} en Python que genera código VHDL para implementar \textit{Lookahead} LFSR utilizando su método. La Figura \ref{fig:lfsr_good_corr} muestra los diagramas de correlación que se obtienen utilizando este tipo de LFSR.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\textwidth]{root/Imagenes/5_riscv/lfsr_good_corr.png}
-    \caption{Diagramas de correlación de $10^4$ muestras de 12 bits de un 12-\textit{Lookahead} LFSR. A la izquierda un diagrama de autocovarianza para diferentes distancias entre muestras. A la derecha un diagrama de dispersión de una muestra $i$ y la $i-1$.}
+    \includegraphics[width=0.7\textwidth]{root/Imagenes/riscv_ext/lfsr_good_corr.png}
+    \caption{Diagramas de correlación de $10^4$ muestras de 12 bits de un 12-\textit{Lookahead} LFSR. A la izquierda un diagrama de autocovarianza para diferentes distancias entre muestras. A la derecha un diagrama de dispersión de una muestra $i$ con respecto a la $i-1$.}
     \label{fig:lfsr_good_corr}
 \end{figure}
 
@@ -32,14 +35,14 @@ Para generar 12 muestras de 12 bits se utiliza un 144-\textit{Lookahead} LFSR co
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{root/Imagenes/5_riscv/grng.pdf}
-    \caption{Diagrama del GRNG implementado. Las señales de control se muestran en azul, el resto en negro.}
+    \includegraphics[width=\textwidth]{root/Imagenes/riscv_ext/grng.pdf}
+    \caption{Diagrama del GRNG implementado. Las señales de control se muestran en azul, las de datos en negro.}
     \label{fig:grng}
 \end{figure}
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{root/Imagenes/5_riscv/grng_states.pdf}
+    \includegraphics[width=0.8\textwidth]{root/Imagenes/riscv_ext/grng_states.pdf}
     \caption{Diagrama de estados de la unidad de control del GRNG. El estado en el que se pueden generar muestras válidas esta marcado en verde, el resto en rojo.}
     \label{fig:grng_state}
 \end{figure}
@@ -50,8 +53,8 @@ El GRNG diseñado se ha integrado en la CPU original como una nueva UF en la eta
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.75\textwidth]{root/Imagenes/5_riscv/extended_core.pdf}
-    \caption{Ruta de datos del procesador RISC-V extendido con el GRNG. Los bloques relacionados con la arquitectura base RV32I se muestran en azul, los bloques para detectar riesgos de datos en gris, los bloques relacionados con el modo M en rojo, los bloques de extensiones estándar extra en verde, el bloque GRNG añadido en amarillo y en morado el interfaz con el bus de memoria.}
+    \includegraphics[width=0.75\textwidth]{root/Imagenes/riscv_ext/extended_core.pdf}
+    \caption{Ruta de datos del procesador RISC-V extendido con el GRNG, mostrado en amarillo. Los bloques relacionados con la arquitectura base RV32I se muestran en azul, los bloques para detectar riesgos de datos en gris, los bloques relacionados con el modo M en rojo, los bloques de extensiones estándar extra en verde y en morado el interfaz con el bus de memoria.}
     \label{fig:extended_riscv_core}
 \end{figure}
 
@@ -73,43 +76,35 @@ Para poder actualizar el compilador hay que definir la codificación de las inst
     \centering
     \caption{Codificación, máscara y validación de la instrucción \texttt{setseed} separada en los campos de instrucción RISC-V tipo R.}
     \label{tab:code_setseed}
-    \includegraphics[width=0.85\textwidth]{root/Imagenes/5_riscv/code_setseed.pdf}
+    \includegraphics[width=0.85\textwidth]{root/Imagenes/riscv_ext/code_setseed.pdf}
 \end{table}
 
 \begin{table}[h]
     \centering
     \caption{Codificación, máscara y validación de la instrucción \texttt{genum} separada en los campos de instrucción RISC-V tipo R.}
     \label{tab:code_genum}
-    \includegraphics[width=0.85\textwidth]{root/Imagenes/5_riscv/code_genum.pdf}
+    \includegraphics[width=0.85\textwidth]{root/Imagenes/riscv_ext/code_genum.pdf}
 \end{table}
 
 %%%%%
 
 \section{Análisis de resultados}
 
-Utilizando la extensión desarrollada no se degrada la precisión con respecto a los resultados obtenidos con el motor de inferencia en C, ya que el algoritmo de muestreo es el mismo. La Tabla \ref{tab:riscv_speedup} muestra el \textit{speedup} obtenido para todas las arquitecturas de modelos.
+Utilizando la extensión desarrollada no degrada la precisión ni las métricas de incertidumbre con respecto a los resultados obtenidos con el motor de inferencia en C, ya que el algoritmo de muestreo es el mismo. La Tabla \ref{tab:riscv_speedup} muestra el \textit{speedup} obtenido con todas las optimizaciones desarrolladas en este trabajo para todas las arquitecturas de modelos. Utilizando la nueva UF se obtiene el mejor rendimiento.
 
 \begin{table}[h]
     \centering
-    \caption{\textit{Speedups} obtenidos con la extensión RISC-V para todas las arquitecturas de modelos.}
+    \caption{\textit{Speedups} obtenidos con todas las optmizaciones desarrolladas en este trabajo para todas las arquitecturas de modelos.}
     \label{tab:riscv_speedup}
-    \begin{tabular}{ll}
+    \begin{tabular}{llll}
     \hline
-     \textbf{Modelo}& \textbf{Speedup} \\ \hline
-    HYPER& 6.37\\
-    LENET-5& 8.10\\
-    B2N2& 6.24\\ \hline
+    \multirow{2}{*}{\textbf{Modelo}} & \multicolumn{3}{c}{\textbf{Speedup}}\\
+    & \textit{Bernoulli} & \textit{Uniforme} & \textit{Extensión}\\ \hline
+    HYPER& 5.18 & 4.95 & 6.37 \\
+    LENET-5& \todo & 5.88 & 8.10 \\
+    B2N2& \todo & 4.88 & 6.24 \\ \hline
     \end{tabular}
 \end{table}
-
-La Figura \ref{fig:ratio_all} muestra el ratio de ciclos dedicados al muestreo utilizando las diferentes optimizaciones desarrolladas en este trabajo. Se puede apreciar como las diferentes optimizaciones desarrolladas reducen cada vez mas este ratio.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.6\textwidth]{root/Imagenes/5_riscv/ratio_all.pdf}
-    \caption{Ratio de ciclos dedicados al muestreo de pesos en diferentes arquitecturas de modelos utilizando el algoritmo base del motor de inferencia (amarillo), la optimización que transforma las distribuciones a uniformes (rojo) y la extensión RISC-V (azul).}
-    \label{fig:ratio_all}
-\end{figure}
 
 \section{Análisis de coste}
 
@@ -132,7 +127,7 @@ DSP	        & 12   & 0 & 0.69 \\ \hline
 
 Añadir la extensión a la CPU base implica un incremento del 9.86 y del 16.65\% en LUTs y FFs. Hay que tener en cuenta que este coste además del GRNG incluye las modificaciones a la ruta de datos del procesador. Aun así el coste total de la CPU es muy bajo, no llegando a utilizar ni un 10\% de los bloques de la FPGA. Además al haber segmentado el GRNG este no tiene ningun efecto negativo en la frecuencia del reloj del diseño original, 100 MHz.
 
-La herramienta de síntesis también calcula estimaciones del consumo energético del diseño implementado, dividiéndolo en estático y dinámico. La Tabla \ref{tab:riscv_fpga_power} muestra esta estimación. 
+La herramienta de síntesis también calcula estimaciones del consumo energético del diseño implementado, dividiéndolo en estático y dinámico. La Tabla \ref{tab:riscv_fpga_power} muestra esta estimación. El consumo energético aumenta solamente en un 0.65\%. Por lo tanto, la extensión consigue una reducción en del consumo casi idéntica a la ganancia en rendimiento.
 
 \begin{table}[h]
 \centering
@@ -146,5 +141,3 @@ Dinámico & 0.023 & 0.004 & 0.027\\
 Estático & 0.593 & 0.000 & 0.593\\ \hline
 \end{tabular}
 \end{table}
-
-El consumo energético aumenta solamente en un 0.65\%. Por lo tanto, la extensión consigue una reducción en del consumo casi idéntica a la ganancia en rendimiento.

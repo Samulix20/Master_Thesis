@@ -30,18 +30,18 @@ La parte entera $e^{a_i}$ se calcula mediante una LUT de 20 entradas para el ran
 e^{b_i} \approx \sum_{n=0}^{7} \dfrac{{b_i}^n}{n!}
 \end{equation}
 
-La Figura \ref{fig:exp_aprox} muestra un estudio de la precisión de la aproximación. Se comparan sus resultados con los de la implementación de la función exponencial de la biblioteca estándar en punto flotante. Como medida cuantitativa del error se ha utilizado el error cuadrático medio (\textit{\textbf{M}ean \textbf{S}quared \textbf{E}rror}). Se aprecia como se obtiene una buena aproximación en el rango deseado.
+La Figura \ref{fig:exp_aprox} muestra un estudio de la precisión de la aproximación. Se comparan sus resultados con los de la implementación de la función exponencial de la biblioteca estándar en punto flotante. Como medida cuantitativa del error se ha utilizado el error cuadrático medio (\textit{\textbf{M}ean \textbf{S}quared \textbf{E}rror}). Se aprecia cómo se obtiene una buena aproximación en el rango deseado.
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.55\linewidth]{root/Imagenes/4_bnn_riscv/exp_aprox.pdf}
-    \caption{Comparación de la función $e^x$ de la biblioteca estándar en punto flotante (linea negra) con la aproximación en coma fija implementada (linea roja discontinua) en el rango $[-20,0]$.}
-    \label{fig:exp_aprox}
+	\centering
+	\includegraphics[width=0.55\linewidth]{root/Imagenes/bnn_lib/exp_aprox.pdf}
+	\caption{Comparación de la función $e^x$ de la biblioteca estándar en punto flotante (línea negra) con la aproximación en coma fija implementada (línea roja discontinua) en el rango $[-20,0]$.}
+	\label{fig:exp_aprox}
 \end{figure}
 
 \subsection{Muestreo de distribuciones Gaussianas}
 
-Como se ha explicado previamente, las BNN necesitan muestrear distribuciones gaussianas. Como método de muestreo base se ha utilizado un algoritmo basado en la suma de distribuciones uniformes, dicha suma se aproximan a una distribución gaussiana debido al TCL, como se muestra en la Ecuación \ref{eq:tcl_unif}.
+Como se ha explicado previamente, las BNN necesitan muestrear distribuciones gaussianas. Como método de muestreo base se ha utilizado un algoritmo basado en la suma de distribuciones uniformes, dicha suma se aproxima a una distribución gaussiana debido al TCL, como se muestra en la Ecuación \ref{eq:tcl_unif}.
 \begin{equation} \label{eq:tcl_unif}
 \sum_{n=0}^{N} \mathcal{U}_n(0,1) \sim \mathcal{N} \left( \dfrac{N}{2}, \sqrt{\dfrac{N}{12}} \right)
 \end{equation}
@@ -59,10 +59,10 @@ La aproximación empleada utiliza la suma de 12 distribuciones uniformes y poste
 La Figura \ref{fig:gauss_aprox} muestra un análisis estadístico del método de muestreo implementado. En el gráfico Q-Q se aprecia como los cuantiles del conjunto de muestras son muy parecidos a los cuantiles teóricos, mostrando desviaciones en las colas como es de esperar de esta aproximación. En el histograma se aprecia como las muestras se ajustan bastante bien a la distribución teórica.
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=\textwidth]{root/Imagenes/4_bnn_riscv/gaus_aprox.png}
-    \caption{Análisis estadístico de $10^5$ muestras del GRNG implementado (azul) con respecto a $\mathcal{N}(0,1)$ (rojo). A la izquierda se muestra un gráfico Q-Q. A la derecha se muestra un histograma.}
-    \label{fig:gauss_aprox}
+	\centering
+	\includegraphics[width=\textwidth]{root/Imagenes/bnn_lib/gaus_aprox.png}
+	\caption{Análisis estadístico de $10^5$ muestras del GRNG implementado (azul) con respecto a $\mathcal{N}(0,1)$ (rojo). A la izquierda se muestra un gráfico Q-Q. A la derecha se muestra un histograma.}
+	\label{fig:gauss_aprox}
 \end{figure}
 
 Además de las gráficas mostradas también se han utilizado los test de bondad de ajuste de D’Agostino \emph{et. al.} \cite{normaltest_1, normaltest_2} y el de Kolmogorov-Smirnov \cite{kstest}.
@@ -76,39 +76,39 @@ Generar muestras de distribuciones uniformes es una parte del algoritmo para gen
 La Figura \ref{fig:figure_example} muestra un ejemplo de las gráficas utilizadas para validar las métricas de incertidumbre y propiedades estadísticas. Estas gráficas se han creado utilizando las predicciones para el conjunto de datos de píxeles hiperespectrales KSC. \ref{fig:example_hist} muestra un histograma de la incertidumbre agrupada por aciertos y fallos. \ref{fig:example_class} muestra la incertidumbre media, separada en epistémica y aleatoria, de las predicciones de cada clase. \ref{fig:example_acc_unc} muestra la precisión con respecto a la incertidumbre junto con un histograma de los datos agrupados también con respecto a la incertidumbre. \ref{fig:example_calibration} muestra la recta de calibración del modelo.
 
 \begin{figure}[h]
-     \centering
-     \begin{subfigure}[b]{0.48\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{root/Imagenes/4_bnn_riscv/hist_predictions.pdf}
-         \caption{Histogramas de incertidumbre divididos en predicciones correctas (azul) y predicciones incorrectas (rojo).}
-         \label{fig:example_hist}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.48\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{root/Imagenes/4_bnn_riscv/class_uncertainty.pdf}
-         \caption{Incertidumbre predictiva ($\mathbb{H}$) y aleatoria ($\mathbb{E}p$) agrupada por clases.\\}
-         \label{fig:example_class}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.48\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{root/Imagenes/4_bnn_riscv/acc_vs_unc.pdf}
-         \caption{Precisión y porcentaje de predicciones agrupadas por incertidumbre.\\}
-         \label{fig:example_acc_unc}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.48\textwidth}
-         \centering
-         \includegraphics[width=\textwidth]{root/Imagenes/4_bnn_riscv/calibration.pdf}
-         \caption{Recta de calibración del modelo, muestra probabilidades observadas con respecto a las probabilidades predichas por el modelo.}
-         \label{fig:example_calibration}
-     \end{subfigure}
-        \caption{Ejemplos de gráficas para analizar la incertidumbre y propiedades estadísticas de un modelo BNN. En \ref{fig:example_class}, \ref{fig:example_acc_unc} y \ref{fig:example_calibration} los colores amarillos representan los resultados obtenidos con TensorFlow y los colores azules los obtenidos con el motor de inferencia desarrollado. Predicciones del conjunto de prueba de píxeles hiperespectrales KSC.}
-        \label{fig:figure_example}
+ 	\centering
+ 	\begin{subfigure}[b]{0.48\textwidth}
+     	\centering
+     	\includegraphics[width=\textwidth]{root/Imagenes/bnn_lib/hist_predictions.pdf}
+     	\caption{Histogramas de incertidumbre divididos en predicciones correctas (azul) y predicciones incorrectas (rojo).}
+     	\label{fig:example_hist}
+ 	\end{subfigure}
+ 	\hfill
+ 	\begin{subfigure}[b]{0.48\textwidth}
+     	\centering
+     	\includegraphics[width=\textwidth]{root/Imagenes/bnn_lib/class_uncertainty.pdf}
+     	\caption{Incertidumbre predictiva ($\mathbb{H}$) y aleatoria ($\mathbb{E}p$) agrupada por clases.\\}
+     	\label{fig:example_class}
+ 	\end{subfigure}
+ 	\hfill
+ 	\begin{subfigure}[b]{0.48\textwidth}
+     	\centering
+     	\includegraphics[width=\textwidth]{root/Imagenes/bnn_lib/acc_vs_unc.pdf}
+     	\caption{Precisión y porcentaje de predicciones agrupadas por incertidumbre.\\}
+     	\label{fig:example_acc_unc}
+ 	\end{subfigure}
+ 	\hfill
+ 	\begin{subfigure}[b]{0.48\textwidth}
+     	\centering
+     	\includegraphics[width=\textwidth]{root/Imagenes/bnn_lib/calibration.pdf}
+     	\caption{Recta de calibración del modelo, muestra probabilidades observadas con respecto a las probabilidades predichas por el modelo.}
+     	\label{fig:example_calibration}
+ 	\end{subfigure}
+    	\caption{Ejemplos de gráficas para analizar la incertidumbre y propiedades estadísticas de un modelo BNN. En \ref{fig:example_class}, \ref{fig:example_acc_unc} y \ref{fig:example_calibration} los colores amarillos representan los resultados obtenidos con TensorFlow y los colores azules los obtenidos con el motor de inferencia desarrollado. Predicciones del conjunto de prueba de píxeles hiperespectrales KSC.}
+    	\label{fig:figure_example}
 \end{figure}
 
-Como se muestra en el ejemplo se obtienen resultados muy similares en todas las gráficas. Las únicas diferencias notables se aprecian en las rectas de precisión de la Figura \ref{fig:example_acc_unc}, pero estas diferencias ocurren en predicciones con incertidumbre alta de las que además hay muy pocas. El modelo al reportar una incertidumbre elevada ya esta avisando de la baja fiabilidad de la predicción con lo que diferencias en este tipo de predicciones son esperables y aceptables. Para el resto de modelos se obtienen resultados con las mismas similitudes entre motores de inferencia, se pueden consultar todos en el Anexo \ref{}. \todo
+Como se muestra en el ejemplo se obtienen resultados muy similares en todas las gráficas. Las únicas diferencias notables se aprecian en las rectas de precisión de la Figura \ref{fig:example_acc_unc}, pero estas diferencias ocurren en predicciones con incertidumbre alta de las que además hay muy pocas. El modelo al reportar una incertidumbre elevada ya está avisando de la baja fiabilidad de la predicción con lo que las diferencias en este tipo de predicciones son esperables y aceptables. Para el resto de modelos se obtienen resultados con las mismas similitudes entre motores de inferencia, se pueden consultar todos en el Anexo \ref{}. \todo
 
 La Tabla \ref{tab:engine_acc} muestra la precisión obtenida con los diferentes modelos utilizando ambos motores de inferencia. Al tratarse de modelos probabilísticos pequeñas fluctuaciones son esperables, especialmente en las predicciones con mucha incertidumbre.
 
@@ -125,10 +125,10 @@ La Tabla \ref{tab:engine_acc} muestra la precisión obtenida con los diferentes 
  Hiperespectral KSC  & 0.9256 & 0.9217 \\
  Hiperespectral PU   & 0.9017 & 0.9021 \\
  Hiperespectral SV   & 0.9257 & 0.9275 \\
- Lenet-5 MNIST      & 0.9836 & 0.9830 \\
- Lenet-5 CIFAR10    & 0.6351 & 0.6229 \\
- B2N2 MNIST         & 0.9872 & 0.9854 \\
- B2N2 CIFAR10       & 0.7295 & 0.7134 \\\hline
+ Lenet-5 MNIST  	& 0.9836 & 0.9830 \\
+ Lenet-5 CIFAR10	& 0.6351 & 0.6229 \\
+ B2N2 MNIST     	& 0.9872 & 0.9854 \\
+ B2N2 CIFAR10   	& 0.7295 & 0.7134 \\\hline
 \end{tabular}
 \end{table}
 
@@ -149,10 +149,10 @@ b + \sum_{i=0}^N Sample(\mu_i, \sigma_i)\ x_i
 El procesador RISC-V tiene un contador de ciclos disponible llamado \texttt{mcycle}, lo que permite medir prestaciones con precisión a nivel de ciclo. Se ha utilizado este contador para crear un perfil de la carga de trabajo del motor de inferencia, el cual se muestra en la Figura \ref{fig:cycle_profile}.
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.9\textwidth]{root/Imagenes/4_bnn_riscv/cycles.pdf}
-    \caption{Ratio de ciclos de ejecución dedicados al muestreo de distribuciones gaussianas (amarillo) y al del resto de operaciones (azul) en las diferentes arquitecturas de modelos utilizadas.}
-    \label{fig:cycle_profile}
+	\centering
+	\includegraphics[width=0.9\textwidth]{root/Imagenes/bnn_lib/cycles.pdf}
+	\caption{Ratio de ciclos de ejecución dedicados al muestreo de distribuciones gaussianas (amarillo) y al del resto de operaciones (azul) en las diferentes arquitecturas de modelos utilizadas.}
+	\label{fig:cycle_profile}
 \end{figure}
 
-La operación de muestreo es la más costosa con diferencia, ocupando mas del 80\% de los ciclos en los 3 modelos diferentes. Por ello, uno de los objetivos principales de este trabajo y de otros relacionados ha sido optimizar esta sección.
+La operación de muestreo es la más costosa con diferencia, ocupando más del 80\% de los ciclos en los 3 modelos diferentes. Por ello, uno de los objetivos principales de este trabajo y de otros relacionados ha sido optimizar esta sección.
