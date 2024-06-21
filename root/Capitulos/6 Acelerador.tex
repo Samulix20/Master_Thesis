@@ -108,11 +108,11 @@ Utilizando la extensión desarrollada no degrada la precisión ni las métricas 
 
 \section{Análisis de coste}
 
-Para analizar el coste de añadir la extensión a la CPU base se ha utilizado una FPGA. Una FPGA es un componente que permite implementar en hardware real circuitos lógicos definidos en un lenguaje de alto nivel como VHDL. Las FPGA estan compuestas por distintos tipos de bloques, las herramientas de síntesis transforman el diseño a estos bloques y configuran la red de interconexión de los mismos. Algunos tipos de bloques son LUT, registros (\textit{\textbf{F}lip-\textbf{F}lops}), memorias RAM (BRAM) o bloques para procesado de señal (\textit{\textbf{D}igital \textbf{S}ignal \textbf{P}rocessor}), que se pueden utilizar para realizar operaciones matemáticas complejas como la multiplicación. Utilizando una herramienta de síntesis se han obtenido los costes descritos en la Tabla \ref{tab:riscv_fpga_utilization}.
+Para analizar el coste de añadir la extensión a la CPU base se ha utilizado la FPGA Xilinx ZCU104. Una FPGA es un componente que permite implementar en hardware real circuitos lógicos definidos en un lenguaje de alto nivel como VHDL. Las FPGA estan compuestas por distintos tipos de bloques, las herramientas de síntesis transforman el diseño a estos bloques y configuran la red de interconexión de los mismos. Algunos tipos de bloques son LUT, registros (\textit{\textbf{F}lip-\textbf{F}lops}), memorias RAM (BRAM) o bloques para procesado de señal (\textit{\textbf{D}igital \textbf{S}ignal \textbf{P}rocessor}), que se pueden utilizar para realizar operaciones matemáticas complejas como la multiplicación. Utilizando una herramienta de síntesis se han obtenido los costes descritos en la Tabla \ref{tab:riscv_fpga_utilization}.
 
 \begin{table}[h]
 \centering
-\caption{Utilización de recursos de la FPGA de la CPU base y la extensión.}
+\caption{Utilización de recursos de la FPGA Xilinx ZCU104 por la CPU base y la extensión.}
 \label{tab:riscv_fpga_utilization}
 \begin{tabular}{lrrr}
 \hline
@@ -131,7 +131,7 @@ La herramienta de síntesis también calcula estimaciones del consumo energétic
 
 \begin{table}[h]
 \centering
-\caption{Estimación del consumo energético de la CPU base y extendida.}
+\caption{Estimación del consumo energético en la FPGA Xilinx ZCU104 de la CPU base y extendida.}
 \label{tab:riscv_fpga_power}
 \begin{tabular}{lccc}
 \hline

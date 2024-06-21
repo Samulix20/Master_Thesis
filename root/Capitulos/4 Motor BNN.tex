@@ -10,12 +10,14 @@ Para calcular las métricas de incertidumbre se necesita la función logaritmo p
 
 \subsection{Aproximación de la función SoftMax}
 
-Mientras que calcular la función ReLU es trivial la función SoftMax no, por lo que una de las contribuciones de este trabajo ha sido crear una aproximación de esta función, explicada a continuación. La función toma un vector de componentes $x \in X$ de tamaño $N$ como entrada y devuelve otro del mismo tamaño cuyos componentes $y\in Y$ se calculan según la Ecuación \ref{eq:softmax}.
+Mientras que calcular la función ReLU es trivial, la función SoftMax no, por lo que una de las contribuciones de este trabajo ha sido crear una aproximación de esta función, explicada a continuación. La función toma un vector de componentes $x \in X$ de tamaño $N$ como entrada y devuelve otro del mismo tamaño cuyos componentes $y\in Y$ se calculan según la Ecuación \ref{eq:softmax}.
+
 \begin{equation} \label{eq:softmax}
 y_i = \dfrac{e^{x_i}}{\sum_{j = 0}^N e^{x_j}}
 \end{equation}
 
 Para calcular esta función utilizando coma fija es necesario calcular la función exponencial en dicho formato. Para evitar desbordamientos de la función exponencial se va a utilizar la función SoftMax equivalente mostrada en la Ecuación \ref{eq:softmax_neg}.
+
 \begin{equation} \label{eq:softmax_neg}
 y_i = \dfrac{e^{x_i - \max(X)}}{\sum_{j = 0}^N e^{x_j - \max(X)}}
 \end{equation}
@@ -73,7 +75,7 @@ Generar muestras de distribuciones uniformes es una parte del algoritmo para gen
 
 \section{Análisis de resultados} \label{sec:uncertainty_example}
 
-La Figura \ref{fig:figure_example} muestra un ejemplo de las gráficas utilizadas para validar las métricas de incertidumbre y propiedades estadísticas. Estas gráficas se han creado utilizando las predicciones para el conjunto de datos de píxeles hiperespectrales KSC. \ref{fig:example_hist} muestra un histograma de la incertidumbre agrupada por aciertos y fallos. \ref{fig:example_class} muestra la incertidumbre media, separada en epistémica y aleatoria, de las predicciones de cada clase. \ref{fig:example_acc_unc} muestra la precisión con respecto a la incertidumbre junto con un histograma de los datos agrupados también con respecto a la incertidumbre. \ref{fig:example_calibration} muestra la recta de calibración del modelo.
+La Figura \ref{fig:figure_example} muestra un ejemplo de las gráficas utilizadas para validar las métricas de incertidumbre y propiedades estadísticas. Estas gráficas se han creado utilizando las predicciones para el conjunto de datos de píxeles hiperespectrales KSC. La Subfigura~\ref{fig:example_hist} muestra un histograma de la incertidumbre agrupada por aciertos y fallos. La Subfigura~\ref{fig:example_class} muestra la incertidumbre media, separada en epistémica y aleatoria, de las predicciones de cada clase. La Subfigura~\ref{fig:example_acc_unc} muestra la precisión con respecto a la incertidumbre junto con un histograma de los datos agrupados también con respecto a la incertidumbre. Y finalmente, la Subfigura~ \ref{fig:example_calibration} muestra la recta de calibración del modelo.
 
 \begin{figure}[h]
  	\centering
