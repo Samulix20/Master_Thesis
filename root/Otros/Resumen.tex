@@ -6,15 +6,10 @@
 \vspace{2.5cm}
 \end{center}
 
-\todo
+Las redes neuronales son modelos de aprendizaje automático muy populares para tareas de clasificación. La combinación del internet de las cosas y el aprendizaje automático es un paradigma que también esta creciendo en popularidad y cada vez mas redes neuronales se están ejecutando en dispositivos de bajo consumo y prestaciones. La fiabilidad de las predicciones de los modelos de aprendizaje automático es algo crucial en aplicaciones relacionadas con la seguridad y las redes neuronales tradicionales no son capaces de proveer esta fiabilidad. 
 
-\boxtext{
-\textbf{Paper abstract}\\
-Neural Networks (NNs) are a very popular solution for classification tasks. As the combination of Internet of Things (IoT) with Machine Learning (ML), also known as TinyML, grows in popularity, more NN are being executed on low-end edge systems. The reliability of the predictions is crucial for safety-critical applications. Bayesian Neural Networks (BNNs) address this issue by calculating uncertainty metrics with their predictions at the cost of increasing computing requirements. This work addresses the challenges of executing BNNs inference on low-end systems. BNNs require multiple forward passes in which the weights are sampled from distributions. This sampling process can take up to 85,13\% of execution time. This work optimizes the weight sampling and integrates it within a low cost custom extension for a RISC-V CPU, improving speedup up to $\times$8,10 and similar energy savings.
-}
+Las redes neuronales bayesianas afrontan este problema de la fiabilidad calculando métricas de incertidumbre de las predicciones que producen a costa de aumentar sus requisitos computacionales. Este trabajo busca soluciones a los desafíos de ejecutar este tipo de redes en dispositivos de bajas prestaciones desarrollando una biblioteca para la inferencia de redes neuronales bayesianas en dispositivos de bajas prestaciones. 
 
-\begin{itemize}
-    \item RISC-V y extensiones
-    \item Redes Bayesianas
-    \item FPGA
-\end{itemize}
+Estas redes requieren ejecutar múltiples propagaciones de la entrada en las que los pesos se muestrean distribuciones estadísticas, normalmente Gaussianas. El proceso de muestreo de distribuciones puede llegar a ocupar el 85.13\% del tiempo de ejecución. Otra de las aportaciones de este trabajo es optimizar este muestreo, integrando estas optimizaciones en la biblioteca desarrollada, obteniendo un speedup promedio de ×4.57. 
+
+Además en este trabajo se ha desarrollado una extensión del conjunto de instrucciones RISC-V de bajo coste para acelerar la inferencia de redes neuronales bayesianas. Esta extensión se ha implementado en un procesador y se ha estudiado su coste energético y hardware en una FPGA. Esta extensión añade instrucciones nuevas que optimizan el muestreo de pesos mediante un generador de números pseudoaleatorios Gaussianos hardware obteniendo un speedup de hasta ×7.65 y un ahorro energético similar.

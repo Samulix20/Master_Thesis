@@ -2,15 +2,15 @@
 
 \section{Biblioteca desarrollada en C}
 
-Se ha desarrollado una biblioteca de funciones que ejecutan la inferencia de capas BNN estándar y convolucionales con funciones de activación ReLU o exponenciales normalizadas (SoftMax) utilizando precisión de coma fija, ya que los paquetes standard como TensorFlow o pytorch no ofrecen esta funcionalidad para dispositivos IoT. Esta biblioteca se ha desarrollado en C y se muestra en la Figura \ref{fig:experiment_pipeline} como el componente número 3.
+Como las bibliotecas estándar no ofrecen soporte para la inferencia de BNN en plataformas de bajas prestaciones, en consecuencia, se ha desarrollado una biblioteca de funciones que ejecutan la inferencia de capas BNN estándar y convolucionales con funciones de activación ReLU o exponenciales normalizadas (SoftMax) utilizando precisión de coma fija. Esta biblioteca se ha desarrollado en C y se muestra en la Figura \ref{fig:experiment_pipeline} como el componente número 3.
 
 \subsection{Aproximación de la función logaritmo}
 
-Para calcular las métricas de incertidumbre se necesita la función logaritmo por lo que se ha implementado una versión del algoritmo desarrollado por Turner para calcular el logaritmo de un número en coma fija~\cite{binary_log}.
+Para calcular las métricas de incertidumbre se utiliza la función logaritmo por lo que se ha implementado una versión del algoritmo desarrollado por Turner para calcular el logaritmo de un número en coma fija \cite{binary_log}.
 
 \subsection{Aproximación de la función SoftMax}
 
-Mientras que calcular la función ReLU es trivial, la función SoftMax no, por lo que una de las contribuciones de este trabajo ha sido crear una aproximación de esta función, explicada a continuación. La función toma un vector de componentes $x \in X$ de tamaño $N$ como entrada y devuelve otro del mismo tamaño cuyos componentes $y\in Y$ se calculan según la Ecuación \ref{eq:softmax}.
+La función de activación SoftMax se utiliza en la última capa de una NN para transformar su vector de salida de forma que la suma de todos sus componentes sea 1, lo que facilita su interpretación. Mientras que calcular la función de activación ReLU es trivial, la función SoftMax no, por lo que una de las contribuciones de este trabajo ha sido crear una aproximación de esta función, explicada a continuación. La función toma un vector de componentes $x \in X$ de tamaño $N$ como entrada y devuelve otro del mismo tamaño cuyos componentes $y\in Y$ se calculan según la Ecuación \ref{eq:softmax}.
 
 \begin{equation} \label{eq:softmax}
 y_i = \dfrac{e^{x_i}}{\sum_{j = 0}^N e^{x_j}}
@@ -27,12 +27,12 @@ En esta versión de la función se cumple que $x_i \in (-\infty, 0]$ por lo que 
 e^{x_i} = e^{a_i+b_i} = e^{a_i} e^{b_i}
 \end{equation}
 
-La parte entera $e^{a_i}$ se calcula mediante una LUT de 20 entradas para el rango $[e^{-19}, e^{0}]$. A partir de $e^{-19}$ los valores son demasiado pequeños como para representarlos con la precisión disponible por lo que siempre valen $0$. La parte decimal $e^{b_i}$ se aproxima mediante los 8 primeros términos de la serie de Taylor mostrada en la Ecuación \ref{eq:exp_taylor}. Para optimizar y evitar las divisiones los valores de $\dfrac{1}{n!}$ para $n \in [2,7]$ se han almacenado en una LUT.
+La parte entera $e^{a_i}$ se calcula mediante una LUT de 20 entradas para el rango $[e^{-19}, e^{0}]$. A partir de $e^{-19}$ los valores son demasiado pequeños como para representarlos con la precisión disponible por lo que siempre toman el valor $0$. La parte decimal $e^{b_i}$ se aproxima mediante los 8 primeros términos de la serie de Taylor mostrada en la Ecuación \ref{eq:exp_taylor}. Para optimizar su cálculo evitando las instrucciones de división no soportadas por la CPU los valores de $\dfrac{1}{n!}$ para $n \in [2,7]$ se han almacenado en una LUT.
 \begin{equation} \label{eq:exp_taylor}
 e^{b_i} \approx \sum_{n=0}^{7} \dfrac{{b_i}^n}{n!}
 \end{equation}
 
-La Figura \ref{fig:exp_aprox} muestra un estudio de la precisión de la aproximación. Se comparan sus resultados con los de la implementación de la función exponencial de la biblioteca estándar en punto flotante. Como medida cuantitativa del error se ha utilizado el error cuadrático medio (\textit{\textbf{M}ean \textbf{S}quared \textbf{E}rror}). Se aprecia cómo se obtiene una buena aproximación en el rango deseado.
+La Figura \ref{fig:exp_aprox} muestra un estudio de la precisión de la aproximación. Se comparan sus resultados con los de la implementación de la función exponencial de la biblioteca estándar en punto flotante. Como medida cuantitativa del error se ha utilizado el error cuadrático medio (\textit{\textbf{M}ean \textbf{S}quared \textbf{E}rror}). Se aprecia cómo se obtiene un MSE muy bajo en el rango deseado, lo que implica que es una buena aproximación.
 
 \begin{figure}[h]
 	\centering
@@ -43,7 +43,7 @@ La Figura \ref{fig:exp_aprox} muestra un estudio de la precisión de la aproxima
 
 \subsection{Muestreo de distribuciones Gaussianas}
 
-Como se ha explicado previamente, las BNN necesitan muestrear distribuciones gaussianas. Como método de muestreo base se ha utilizado un algoritmo basado en la suma de distribuciones uniformes, dicha suma se aproxima a una distribución gaussiana debido al TCL, como se muestra en la Ecuación \ref{eq:tcl_unif}.
+Como se ha explicado previamente, las BNN necesitan muestrear distribuciones Gaussianas. Como método de muestreo base se ha utilizado un algoritmo basado en la suma de distribuciones uniformes, dicha suma se aproxima a una distribución gaussiana debido al TCL, como se muestra en la Ecuación \ref{eq:tcl_unif}.
 \begin{equation} \label{eq:tcl_unif}
 \sum_{n=0}^{N} \mathcal{U}_n(0,1) \sim \mathcal{N} \left( \dfrac{N}{2}, \sqrt{\dfrac{N}{12}} \right)
 \end{equation}
@@ -67,11 +67,11 @@ La Figura \ref{fig:gauss_aprox} muestra un análisis estadístico del método de
 	\label{fig:gauss_aprox}
 \end{figure}
 
-Además de las gráficas mostradas también se han utilizado los test de bondad de ajuste de D’Agostino \emph{et. al.} \cite{normaltest_1, normaltest_2} y el de Kolmogorov-Smirnov \cite{kstest}.
+Además de las gráficas mostradas también se han utilizado el test de bondad de ajuste de D’Agostino \emph{et. al.} \cite{normaltest_1, normaltest_2} y el de Kolmogorov-Smirnov \cite{kstest}.
 
 \subsection{Muestreo de distribuciones Uniformes}
 
-Generar muestras de distribuciones uniformes es una parte del algoritmo para generar muestras de una distribución gaussiana explicado previamente. Para hacerlo se utiliza una versión del algoritmo Xorshift de 32 bits \cite{xorshift}. Es un algoritmo sencillo para generar números pseudoaleatorios solamente con instrucciones \texttt{xor} y \texttt{shift}.
+Generar muestras de distribuciones uniformes es una parte del algoritmo para generar muestras de una distribución gaussiana explicado previamente. Para hacerlo se utiliza una versión del algoritmo Xorshift de 32 bits \cite{xorshift}. Es un algoritmo sencillo para generar números pseudoaleatorios solamente mediante instrucciones \texttt{xor} y \texttt{shift}.
 
 \section{Análisis de resultados} \label{sec:uncertainty_example}
 
@@ -110,7 +110,7 @@ La Figura \ref{fig:figure_example} muestra un ejemplo de las gráficas utilizada
     	\label{fig:figure_example}
 \end{figure}
 
-Como se muestra en el ejemplo se obtienen resultados muy similares en todas las gráficas. Las únicas diferencias notables se aprecian en las rectas de precisión de la Figura \ref{fig:example_acc_unc}, pero estas diferencias ocurren en predicciones con incertidumbre alta de las que además hay muy pocas. El modelo al reportar una incertidumbre elevada ya está avisando de la baja fiabilidad de la predicción con lo que las diferencias en este tipo de predicciones son esperables y aceptables. Para el resto de modelos se obtienen resultados con las mismas similitudes entre motores de inferencia, se pueden consultar todos en el Anexo \ref{}. \todo
+Como se muestra en el ejemplo se obtienen resultados muy similares en todas las gráficas. Las únicas diferencias notables se aprecian en las rectas de precisión de la Figura \ref{fig:example_acc_unc}, pero estas diferencias ocurren en predicciones con incertidumbre alta de las que además hay muy pocas. El modelo al reportar una incertidumbre elevada ya está avisando de la baja fiabilidad de la predicción con lo que las diferencias en este tipo de predicciones son esperables y aceptables. Para el resto de modelos se obtienen resultados con las mismas similitudes entre motores de inferencia, se pueden consultar todos en el Anexo \ref{anx:motor}.
 
 La Tabla \ref{tab:engine_acc} muestra la precisión obtenida con los diferentes modelos utilizando ambos motores de inferencia. Al tratarse de modelos probabilísticos pequeñas fluctuaciones son esperables, especialmente en las predicciones con mucha incertidumbre.
 
@@ -143,12 +143,12 @@ La principal operación en la inferencia de NN es \textit{\textbf{M}ultiply–\t
 b + \sum_{i=0}^N w_i x_i
 \end{equation}
 
-En el caso de las BNN estas operaciones MAC además requieren muestrear una distribución gaussiana, como se muestra en la Ecuación \ref{eq:bnn_mac}.
+En el caso de las BNN estas operaciones MAC además requieren muestrear una distribución Gaussiana, como se muestra en la Ecuación \ref{eq:bnn_mac}.
 \begin{equation} \label{eq:bnn_mac}
 b + \sum_{i=0}^N Sample(\mu_i, \sigma_i)\ x_i
 \end{equation}
 
-El procesador RISC-V tiene un contador de ciclos disponible llamado \texttt{mcycle}, lo que permite medir prestaciones con precisión a nivel de ciclo. Se ha utilizado este contador para crear un perfil de la carga de trabajo del motor de inferencia, el cual se muestra en la Figura \ref{fig:cycle_profile}.
+El procesador RISC-V dispone de un contador de ciclos llamado \texttt{mcycle}, lo que permite medir prestaciones con precisión a nivel de ciclo. Se ha utilizado este contador para crear un perfil de la carga de trabajo del motor de inferencia, el cual se muestra en la Figura \ref{fig:cycle_profile}.
 
 \begin{figure}[h]
 	\centering
@@ -157,4 +157,4 @@ El procesador RISC-V tiene un contador de ciclos disponible llamado \texttt{mcyc
 	\label{fig:cycle_profile}
 \end{figure}
 
-La operación de muestreo es la más costosa con diferencia, ocupando más del 80\% de los ciclos en los 3 modelos diferentes. Por ello, uno de los objetivos principales de este trabajo y de otros relacionados ha sido optimizar esta sección.
+La operación de muestreo es la más costosa con diferencia, ocupando más del 80\% de los ciclos en los 3 modelos diferentes. Por ello, uno de los objetivos principales de este trabajo y de otros relacionados ha sido optimizar esta operación.
