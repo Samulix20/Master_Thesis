@@ -1,6 +1,8 @@
-\chapter{Optimizaciones software} \label{ch:optimizaciones}
+\chapter{Optimizaciones software para acelerar el muestreo de distribuciones} \label{ch:optimizaciones}
 
-\section{Optimización mediante distribuciones Bernoulli}
+A continuación se presentan 2 propuestas de aceleración software con distribuciones Bernoulli y Uniformes como candidatas a sustituir a distribuciones Gaussianas, ya que muestrear estas últimas es más costoso.
+
+\section{Distribuciones Bernoulli}
 
 Awano \emph{et al.} propusieron muestrear distribuciones Bernoulli en vez de distribuciones Gaussianas para aumentar la eficiencia del algoritmo en un acelerador para inferencia \cite{bnn_clt_approx}. Los parámetros de estas nuevas distribuciones se obtienen mediante una transformación de los parámetros de las distribuciones originales. En este trabajo se ha implementado esta optimización mediante software y se ha analizado su impacto en la precisión, métricas de incertidumbre y rendimiento. A continuación se explican los fundamentos teóricos de la optimización.
 
@@ -12,7 +14,7 @@ E\left[ b + \sum_{i=0}^N w_i x_i \right]  = b + \sum_{i=0}^N ( E[w_i] E[x_i] )
 V\left[ b + \sum_{i=0}^N w_i x_i \right] = \sum_{i=0}^N ( V[w_i]V[x_i] + V[w_i]E[x_i]^2 + V[x_i]E[w_i]^2 )
 \end{equation}
 
-La optimización consiste en utilizar un nuevo peso $w'$ que cumpla $E[w'] = E[w]$ y $V[w'] = V[w]$, de forma que no altere los resultados de la BNN. $w' = qb$, siendo $b$ una muestra de una distribución Bernoulli $\mathcal{B}(p)$, esta distribuciones toma el valor 1 con probabilidad $p$ y el valor 0 con probabilidad $1-p$. Las constantes $p$ y $q$ se calculan a partir de la media $\mu$ y desviación típica $\sigma$ de las distribuciones originales mediante el sistema de ecuaciones mostrado en la Ecuación \ref{eq:bernoulli_opt}.
+La optimización consiste en utilizar un nuevo peso $w'$ que cumpla $E[w'] = E[w]$ y $V[w'] = V[w]$, de forma que no altere los resultados de la BNN. Se define $w' = qb$, siendo $b$ una muestra de una distribución Bernoulli $\mathcal{B}(p)$, esta distribución toma el valor 1 con probabilidad $p$ y el valor 0 con probabilidad $1-p$. Las constantes $p$ y $q$ se calculan a partir de la media $\mu$ y desviación típica $\sigma$ de las distribuciones originales mediante el sistema de ecuaciones mostrado en la Ecuación \ref{eq:bernoulli_opt}.
 \begin{equation}\label{eq:bernoulli_opt}
 \begin{cases}
 \mu = pq\\ \\
@@ -25,9 +27,9 @@ q = \dfrac{\mu^2 + \sigma^2}{\mu}
 \end{cases}
 \end{equation}
 
-Esta optimización no aumenta el tamaño de los modelos y no necesita muestrear distribuciones gaussianas sino Bernoulli, cuyo algoritmo de muestreo es mucho mas sencillo. Dicho algoritmo de muestreo incluye una instrucción de salto, este tipo de instrucciones puede tener un coste muy elevado en algunas arquitecturas hardware. Por lo que este trabajo ha desarrollado otra optimización que utiliza una distribución que no requiere este tipo de instrucciones, explicada a continuación.
+Esta optimización no aumenta el tamaño de los modelos y no necesita muestrear distribuciones gaussianas sino Bernoulli, cuyo algoritmo de muestreo es mucho más sencillo. Dicho algoritmo de muestreo incluye una instrucción de salto, este tipo de instrucciones puede tener un coste muy elevado en algunas arquitecturas hardware. Por lo que este trabajo ha desarrollado otra optimización que utiliza una distribución que no requiere este tipo de instrucciones, explicada a continuación.
 
-\section{Optimización mediante distribuciones Uniformes}
+\section{Distribuciones Uniformes}
 
 Partiendo de Awano \emph{et al.} este trabajo propone un nuevo método que utiliza distribuciones Uniformes en vez de distribuciones Bernoulli. En este caso el nuevo peso se define como $w' = bu + a$, siendo $u$ una muestra de una distribución Uniforme $\mathcal{U}(0,1)$. $a$ y $b$ siendo constantes que se pueden calcular a partir de la media $\mu$ y desviación típica $\sigma$ de los pesos originales utilizando el sistema de ecuaciones mostrado en la Ecuación \ref{eq:uniform_opt}.
 \begin{equation}\label{eq:uniform_opt}
@@ -74,7 +76,10 @@ La Tabla \ref{tab:uniform_opt} muestra los resultados de precisión y aceleraci�
 
 Ninguna de las optimizaciones tiene un efecto negativo en la precisión de los modelos utilizados para verificación. Si el muestreo de la distribución Bernoulli devuelve 0 se pueden ignorar el resto de instrucciones de la operación MAC de dicho operando, ya que acumularía 0. Esto lo hace el compilador de forma automática en la fase de optimización de eliminación de código muerto. En el caso del procesador RISC-V utilizado la penalización de las instrucciones de salto es solamente de 2 ciclos, por lo que debido a esto junto con la eliminación de código la optimización Bernoulli obtiene un \textit{speedup} mayor que la Uniforme.
 
-Con respecto a las modificaciones a las métricas de incertidumbre, ambas optimizaciones producen pequeñas alteraciones. La magnitud de estas alteraciones es dependiente de la optimización y del modelo, en algunos casos la optimización Bernoulli produce alteraciones menores y en otros la Uniforme. La Figura \ref{fig:comp_lenet_cifar} muestra un caso en el que la optimización Bernoulli produce menos alteraciones que la Uniforme y la Figura \ref{fig:comp_bo} un caso en el que ocurre lo contrario. En el Anexo \ref{anx:bernoulli} se pueden encontrar los resultados obtenidos con todos los modelos y conjuntos de datos utilizando la optimización Bernoulli y en el Anexo \ref{anx:uniforme} utilizando la optimización Uniforme.
+Con respecto a la preservación de las métricas de incertidumbre, ambas optimizaciones producen pequeñas alteraciones. La magnitud de estas alteraciones es dependiente de la optimización y del modelo, en algunos casos la optimización Bernoulli produce alteraciones menores y en otros la Uniforme. La Figura \ref{fig:comp_lenet_cifar} muestra un caso en el que la optimización Bernoulli produce menos alteraciones que la Uniforme y la Figura \ref{fig:comp_bo} un caso en el que ocurre lo contrario. Se ha considerado que estas variaciones son pequeñas y no llegan a tener un efecto negativo en la utilidad de las métricas.
+
+En el Anexo \ref{anx:bernoulli} se pueden encontrar los resultados obtenidos con todos los modelos y conjuntos de datos utilizando la optimización Bernoulli y en el Anexo \ref{anx:uniforme} utilizando la optimización Uniforme.
+
 
 \begin{figure}[h]
     \begin{subfigure}[b]{0.49\textwidth}

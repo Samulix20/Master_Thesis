@@ -2,7 +2,7 @@
 
 \section{Biblioteca desarrollada en C}
 
-Como las bibliotecas estándar no ofrecen soporte para la inferencia de BNN en plataformas de bajas prestaciones, en consecuencia, se ha desarrollado una biblioteca de funciones que ejecutan la inferencia de capas BNN estándar y convolucionales con funciones de activación ReLU o exponenciales normalizadas (SoftMax) utilizando precisión de coma fija. Esta biblioteca se ha desarrollado en C y se muestra en la Figura \ref{fig:experiment_pipeline} como el componente número 3.
+Cómo las bibliotecas estándar no ofrecen soporte para la inferencia de BNN en plataformas de bajas prestaciones, en consecuencia, se ha desarrollado una biblioteca de funciones que ejecutan la inferencia de capas BNN estándar y convolucionales con funciones de activación ReLU o exponenciales normalizadas (SoftMax) utilizando precisión de coma fija. Esta biblioteca se ha desarrollado en C y se muestra en la Figura \ref{fig:experiment_pipeline} como el componente número 3. A continuación, se describe brevemente las principales decisiones de diseño.
 
 \subsection{Aproximación de la función logaritmo}
 
@@ -10,7 +10,7 @@ Para calcular las métricas de incertidumbre se utiliza la función logaritmo po
 
 \subsection{Aproximación de la función SoftMax}
 
-La función de activación SoftMax se utiliza en la última capa de una NN para transformar su vector de salida de forma que la suma de todos sus componentes sea 1, lo que facilita su interpretación. Mientras que calcular la función de activación ReLU es trivial, la función SoftMax no, por lo que una de las contribuciones de este trabajo ha sido crear una aproximación de esta función, explicada a continuación. La función toma un vector de componentes $x \in X$ de tamaño $N$ como entrada y devuelve otro del mismo tamaño cuyos componentes $y\in Y$ se calculan según la Ecuación \ref{eq:softmax}.
+La función de activación SoftMax se utiliza en la última capa de una NN para transformar su vector de salida de forma que la suma de todos sus componentes sea 1, lo que facilita su interpretación. Mientras que calcular la función de activación ReLU es trivial, la función SoftMax no, por lo que una de las contribuciones de este trabajo ha sido crear una aproximación de esta función. La función SoftMax toma un vector de componentes $x \in X$ de tamaño $N$ como entrada y devuelve otro del mismo tamaño cuyos componentes $y\in Y$ se calculan según la Ecuación \ref{eq:softmax}.
 
 \begin{equation} \label{eq:softmax}
 y_i = \dfrac{e^{x_i}}{\sum_{j = 0}^N e^{x_j}}
@@ -22,12 +22,12 @@ Para calcular esta función utilizando coma fija es necesario calcular la funci�
 y_i = \dfrac{e^{x_i - \max(X)}}{\sum_{j = 0}^N e^{x_j - \max(X)}}
 \end{equation}
 
-En esta versión de la función se cumple que $x_i \in (-\infty, 0]$ por lo que $e^{x_i} \in (0,1]$. Para calcular la función exponencial se va a utilizar la Ecuación \ref{eq:split_exp}, dividiendo la entrada $x_i$ en su parte entera $a_i$ y su parte decimal $b_i$.
+Como se cumple que $x_i - \max(X) \in (-\infty, 0]$ entonces se cumple que $e^{x_i} \in (0,1]$. Para calcular la función exponencial en dicho rango se va a utilizar la Ecuación \ref{eq:split_exp}, dividiendo la entrada $x_i$ en su parte entera $a_i$ y su parte decimal $b_i$.
 \begin{equation} \label{eq:split_exp}
 e^{x_i} = e^{a_i+b_i} = e^{a_i} e^{b_i}
 \end{equation}
 
-La parte entera $e^{a_i}$ se calcula mediante una LUT de 20 entradas para el rango $[e^{-19}, e^{0}]$. A partir de $e^{-19}$ los valores son demasiado pequeños como para representarlos con la precisión disponible por lo que siempre toman el valor $0$. La parte decimal $e^{b_i}$ se aproxima mediante los 8 primeros términos de la serie de Taylor mostrada en la Ecuación \ref{eq:exp_taylor}. Para optimizar su cálculo evitando las instrucciones de división no soportadas por la CPU los valores de $\dfrac{1}{n!}$ para $n \in [2,7]$ se han almacenado en una LUT.
+La parte entera $e^{a_i}$ se calcula mediante una LUT de 20 entradas para el rango $[e^{-19}, e^{0}]$. A partir de $e^{-19}$ los valores son demasiado pequeños como para representarlos con la precisión disponible por lo que siempre toman el valor $0$. La parte decimal $e^{b_i}$ se aproxima mediante los 8 primeros términos de la serie de Taylor mostrada en la Ecuación \ref{eq:exp_taylor}. Para optimizar su cálculo evitando las instrucciones de división, los valores de $\dfrac{1}{n!}$ para $n \in [2,7]$ se han almacenado en una LUT.
 \begin{equation} \label{eq:exp_taylor}
 e^{b_i} \approx \sum_{n=0}^{7} \dfrac{{b_i}^n}{n!}
 \end{equation}
@@ -53,12 +53,12 @@ El algoritmo implementado genera muestras de $\mathcal{N}(0,1)$ para luego trans
 \mathcal{N}(\mu, \sigma) = \sigma \mathcal{N}(0,1) + \mu
 \end{equation}
 
-La aproximación empleada utiliza la suma de 12 distribuciones uniformes y posteriormente centra la distribución como muestra la Ecuación \ref{eq:tcl_12center}.
+La aproximación empleada utiliza la suma de 12 distribuciones uniformes de forma que la desviación típica de la distribución resultante sea 1, lo que permite centrar la distribución como muestra la Ecuación \ref{eq:tcl_12center}.
 \begin{equation} \label{eq:tcl_12center}
 \sum_{n=0}^{12} \mathcal{U}_n(0,1) - 6 \sim \mathcal{N}(0,1)
 \end{equation}
 
-La Figura \ref{fig:gauss_aprox} muestra un análisis estadístico del método de muestreo implementado. En el gráfico Q-Q se aprecia como los cuantiles del conjunto de muestras son muy parecidos a los cuantiles teóricos, mostrando desviaciones en las colas como es de esperar de esta aproximación. En el histograma se aprecia como las muestras se ajustan bastante bien a la distribución teórica.
+La Figura \ref{fig:gauss_aprox} muestra un análisis estadístico del método de muestreo implementado. En el gráfico Q-Q se aprecia cómo los cuantiles del conjunto de muestras son muy parecidos a los cuantiles teóricos, mostrando desviaciones en las colas cómo es de esperar de esta aproximación. En el histograma se aprecia cómo las muestras se ajustan bien a la distribución teórica.
 
 \begin{figure}[h]
 	\centering
@@ -67,54 +67,15 @@ La Figura \ref{fig:gauss_aprox} muestra un análisis estadístico del método de
 	\label{fig:gauss_aprox}
 \end{figure}
 
-Además de las gráficas mostradas también se han utilizado el test de bondad de ajuste de D’Agostino \emph{et. al.} \cite{normaltest_1, normaltest_2} y el de Kolmogorov-Smirnov \cite{kstest}.
-
 \subsection{Muestreo de distribuciones Uniformes}
 
-Generar muestras de distribuciones uniformes es una parte del algoritmo para generar muestras de una distribución gaussiana explicado previamente. Para hacerlo se utiliza una versión del algoritmo Xorshift de 32 bits \cite{xorshift}. Es un algoritmo sencillo para generar números pseudoaleatorios solamente mediante instrucciones \texttt{xor} y \texttt{shift}.
+Generar muestras de distribuciones uniformes es una parte del algoritmo para generar muestras de una distribución gaussiana explicado previamente. Para hacerlo se utiliza una versión del algoritmo Xorshift de 32 bits \cite{xorshift}. Es un algoritmo sencillo y de bajo coste para generar números pseudoaleatorios uniformes solamente mediante instrucciones \texttt{xor} y \texttt{shift}.
 
 \section{Análisis de resultados} \label{sec:uncertainty_example}
 
-La Figura \ref{fig:figure_example} muestra un ejemplo de las gráficas utilizadas para validar las métricas de incertidumbre y propiedades estadísticas. Estas gráficas se han creado utilizando las predicciones para el conjunto de datos de píxeles hiperespectrales KSC. La Subfigura~\ref{fig:example_hist} muestra un histograma de la incertidumbre agrupada por aciertos y fallos. La Subfigura~\ref{fig:example_class} muestra la incertidumbre media, separada en epistémica y aleatoria, de las predicciones de cada clase. La Subfigura~\ref{fig:example_acc_unc} muestra la precisión con respecto a la incertidumbre junto con un histograma de los datos agrupados también con respecto a la incertidumbre. Y finalmente, la Subfigura~ \ref{fig:example_calibration} muestra la recta de calibración del modelo.
-
-\begin{figure}[h]
- 	\centering
- 	\begin{subfigure}[b]{0.48\textwidth}
-     	\centering
-     	\includegraphics[width=\textwidth]{root/Imagenes/bnn_lib/hist_predictions.pdf}
-     	\caption{Histogramas de incertidumbre divididos en predicciones correctas (azul) y predicciones incorrectas (rojo).}
-     	\label{fig:example_hist}
- 	\end{subfigure}
- 	\hfill
- 	\begin{subfigure}[b]{0.48\textwidth}
-     	\centering
-     	\includegraphics[width=\textwidth]{root/Imagenes/bnn_lib/class_uncertainty.pdf}
-     	\caption{Incertidumbre predictiva ($\mathbb{H}$) y aleatoria ($\mathbb{E}p$) agrupada por clases.\\}
-     	\label{fig:example_class}
- 	\end{subfigure}
- 	\hfill
- 	\begin{subfigure}[b]{0.48\textwidth}
-     	\centering
-     	\includegraphics[width=\textwidth]{root/Imagenes/bnn_lib/acc_vs_unc.pdf}
-     	\caption{Precisión y porcentaje de predicciones agrupadas por incertidumbre.\\}
-     	\label{fig:example_acc_unc}
- 	\end{subfigure}
- 	\hfill
- 	\begin{subfigure}[b]{0.48\textwidth}
-     	\centering
-     	\includegraphics[width=\textwidth]{root/Imagenes/bnn_lib/calibration.pdf}
-     	\caption{Recta de calibración del modelo, muestra probabilidades observadas con respecto a las probabilidades predichas por el modelo.}
-     	\label{fig:example_calibration}
- 	\end{subfigure}
-    	\caption{Ejemplos de gráficas para analizar la incertidumbre y propiedades estadísticas de un modelo BNN. En \ref{fig:example_class}, \ref{fig:example_acc_unc} y \ref{fig:example_calibration} los colores amarillos representan los resultados obtenidos con TensorFlow y los colores azules los obtenidos con el motor de inferencia desarrollado. Predicciones del conjunto de prueba de píxeles hiperespectrales KSC.}
-    	\label{fig:figure_example}
-\end{figure}
-
-Como se muestra en el ejemplo se obtienen resultados muy similares en todas las gráficas. Las únicas diferencias notables se aprecian en las rectas de precisión de la Figura \ref{fig:example_acc_unc}, pero estas diferencias ocurren en predicciones con incertidumbre alta de las que además hay muy pocas. El modelo al reportar una incertidumbre elevada ya está avisando de la baja fiabilidad de la predicción con lo que las diferencias en este tipo de predicciones son esperables y aceptables. Para el resto de modelos se obtienen resultados con las mismas similitudes entre motores de inferencia, se pueden consultar todos en el Anexo \ref{anx:motor}.
-
 La Tabla \ref{tab:engine_acc} muestra la precisión obtenida con los diferentes modelos utilizando ambos motores de inferencia. Al tratarse de modelos probabilísticos pequeñas fluctuaciones son esperables, especialmente en las predicciones con mucha incertidumbre.
 
-\begin{table}[ht]
+\begin{table}[h]
 \centering
 \caption{Comparación de precisión obtenida con el motor de inferencia implementado con respecto a resultados obtenidos con TensorFlow}
 \label{tab:engine_acc}
@@ -134,7 +95,47 @@ La Tabla \ref{tab:engine_acc} muestra la precisión obtenida con los diferentes 
 \end{tabular}
 \end{table}
 
-Los resultados demuestran que el motor de inferencia desarrollado incluso tras transformar los datos a coma fija y perder precisión en la representación no perjudica a las métricas de incertidumbre ni a la precisión.
+La Figura \ref{fig:figure_example} muestra un ejemplo de las gráficas utilizadas para validar las métricas de incertidumbre y propiedades estadísticas. Estas gráficas se han creado utilizando las predicciones para el conjunto de datos de píxeles hiperespectrales KSC.
+
+La Subfigura~\ref{fig:example_hist} muestra un histograma de la incertidumbre agrupada por aciertos y fallos. La Subfigura~\ref{fig:example_class} muestra la incertidumbre media, separada en epistémica y aleatoria, de las predicciones de cada clase. La Subfigura~\ref{fig:example_acc_unc} muestra la precisión con respecto a la incertidumbre junto con un histograma de los datos agrupados también con respecto a la incertidumbre. Y finalmente, la Subfigura~ \ref{fig:example_calibration} muestra la recta de calibración del modelo.
+
+Como se muestra en el ejemplo se obtienen resultados muy similares en todas las gráficas. Las únicas diferencias notables se aprecian en las rectas de precisión de la Figura \ref{fig:example_acc_unc}, pero estas diferencias ocurren en predicciones con incertidumbre alta de las que además hay muy pocas. El modelo al reportar una incertidumbre elevada ya está avisando de la baja fiabilidad de la predicción con lo que las diferencias en este tipo de predicciones son esperables y aceptables. Para el resto de modelos se obtienen resultados con las mismas similitudes entre motores de inferencia, se pueden consultar todos en el Anexo \ref{anx:motor}.
+
+En conjunto, los resultados demuestran que el motor de inferencia desarrollado no perjudica ni las métricas de incertidumbre ni la precisión de los modelos incluso tras transformar los datos a coma fija perdiendo precisión en la representación.
+
+% La pongo aqui para evitar errores de formato de las páginas
+\begin{figure}[h]
+ 	\centering
+ 	\begin{subfigure}[b]{0.48\textwidth}
+     	\centering
+     	\includegraphics[width=\textwidth]{root/Imagenes/bnn_lib/hist_predictions.pdf}
+     	\caption{Histogramas de incertidumbre divididos en predicciones incorrectas (rojo) y predicciones correctas (azul).}
+     	\label{fig:example_hist}
+ 	\end{subfigure}
+ 	\hfill
+ 	\begin{subfigure}[b]{0.48\textwidth}
+     	\centering
+     	\includegraphics[width=\textwidth]{root/Imagenes/bnn_lib/class_uncertainty.pdf}
+     	\caption{Incertidumbre predictiva ($\mathbb{H}$) y aleatoria ($\mathbb{E}p$) agrupada por clases.\\}
+     	\label{fig:example_class}
+ 	\end{subfigure}
+ 	\hfill
+ 	\begin{subfigure}[b]{0.48\textwidth}
+     	\centering
+     	\includegraphics[width=\textwidth]{root/Imagenes/bnn_lib/acc_vs_unc.pdf}
+     	\caption{Precisión (líneas) y porcentaje de predicciones (barras) agrupadas por incertidumbre.}
+     	\label{fig:example_acc_unc}
+ 	\end{subfigure}
+ 	\hfill
+ 	\begin{subfigure}[b]{0.48\textwidth}
+     	\centering
+     	\includegraphics[width=\textwidth]{root/Imagenes/bnn_lib/calibration.pdf}
+     	\caption{Recta de calibración del modelo, muestra probabilidades observadas con respecto a las probabilidades predichas por el modelo.}
+     	\label{fig:example_calibration}
+ 	\end{subfigure}
+    	\caption{Ejemplos de gráficas para analizar la incertidumbre y propiedades estadísticas de un modelo BNN. En \ref{fig:example_class}, \ref{fig:example_acc_unc} y \ref{fig:example_calibration} los colores amarillos representan los resultados obtenidos con TensorFlow y los colores azules los obtenidos con el motor de inferencia desarrollado. Predicciones del conjunto de prueba de píxeles hiperespectrales KSC.}
+    	\label{fig:figure_example}
+\end{figure}
 
 \section{Análisis de la carga de trabajo}
 
@@ -157,4 +158,4 @@ El procesador RISC-V dispone de un contador de ciclos llamado \texttt{mcycle}, l
 	\label{fig:cycle_profile}
 \end{figure}
 
-La operación de muestreo es la más costosa con diferencia, ocupando más del 80\% de los ciclos en los 3 modelos diferentes. Por ello, uno de los objetivos principales de este trabajo y de otros relacionados ha sido optimizar esta operación.
+La operación de muestreo es la más costosa con diferencia, ocupando más del 80\% de los ciclos de ejecución en los 3 modelos diferentes. Por ello, uno de los objetivos principales de este trabajo y de otros relacionados ha sido optimizar esta operación.

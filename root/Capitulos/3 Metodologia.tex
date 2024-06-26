@@ -2,23 +2,43 @@
 
 \section{Herramientas utilizadas}
 
-El diseño del procesador base utilizado se encuentra en el repositorio riscv-vhdl \cite{base_riscv_cpu_git}. Para definir la extensión del procesador RISC-V se ha utilizado el lenguaje de especificación hardware VHDL. Para simular el comportamiento del procesador se ha utilizado el simulador GHDL \cite{ghdl} junto con el visor de ondas GTKWave \cite{gtkwave}. Los programas que se han ejecutado en los procesadores simulados se han desarrollado en C y para compilarlos se ha utilizado el conjunto de herramientas GNU RISC-V Compiler Toolchain \cite{gcc_riscv}.
+La Tabla \ref{tab:herramientas} muestra un listado de todas las herramientas utilizadas para el desarrollo de este trabajo junto con sus versiones y descripciones de uso.
 
-Para entrenar BNNs se ha utilizado la biblioteca de Python TensorFlow Probability \cite{tfprob} junto al repositorio BNN\_for\_hyperspectral\_datasets\_analysis \cite{bnn_hyper_git}. El proceso de compilación y pruebas se han automatizado todo lo posible mediante la herramienta Make y \textit{scripts} en Bash y Python. Para manejar ficheros ELF desde Python se ha utilizado la biblioteca pyelftools \cite{pyelftools}. Para crear gráficas se ha utilizado la biblioteca de Python Matplotlib \cite{matplotlib}. Se han utilizado los test estadísticos de la biblioteca de Python SciPy \cite{scipy}.
-
-Se ha utilizado la plataforma de desarrollo Xilinx ZCU104 FPGA \cite{fpga_board} junto a Vivado Design Suite \cite{vivado} para implementar los diseños hardware sobre una FPGA y analizar sus costes.
-
-Para redactar este documento se ha utilizado el editor de \LaTeX\ en línea Overleaf \cite{overleaf} y para crear los diagramas se utilizado el editor en línea draw.io \cite{drawio} junto al editor de gráficos vectoriales Inkscape \cite{inkscape}.
-
-Como programa de control de versiones se ha utilizado Git \cite{git} junto con GitHub \cite{github} como repositorio en línea.
+\begin{center}
+\begin{longtable}{|p{0.25\textwidth}|p{0.1\textwidth}|p{0.56\textwidth}|}
+\caption{Herramientas utilizadas junto con sus versiones y descripciones de uso.} \label{tab:herramientas} \\\hline
+\textbf{Nombre}                         & \textbf{Versión}                                                                                                                             & \textbf{Descripción}                                                                                                                             \\\hline
+Git \cite{git}& 2.45.1                                                                                                                                       & Herramienta de control de versiones                                                                                                              \\\hline
+GitHub \cite{github}& -                                                                                                                                            & Repositorio de código en línea                                                                                                                   \\\hline
+riscv vhdl \cite{base_riscv_cpu_git}                             & \href{https://github.com/Samulix20/riscv-vhdl/tree/8c2e89691ab1f7f0a55ca16d24f282f337c6c5aa}{Commit}                                         & Repositorio de código del procesador RISC-V base                                                                                                 \\\hline
+BNN for hyperspectral datasets analysis \cite{bnn_hyper_git}& \href{https://github.com/universidad-zaragoza/BNN_for_hyperspectral_datasets_analysis/tree/be44f2b7f82efa1772938e87819a7f861ca3e449}{Commit} & Repositorio de código para entrenar y utilizar BNN para clasificar píxeles hiperespectrales                                                      \\\hline
+VHDL                                    & 2008                                                                                                                                         & Lenguaje de descripción hardware utilizado para definir el procesador RISC-V y su extensión                                                       \\\hline
+GDHL LLVM \cite{ghdl}& 5.0.0                                                                                                                                        & Simulador de VHDL con backend de LLVM                                                                                                            \\\hline
+GTKWave \cite{gtkwave}& 3.3.118                                                                                                                                      & Visor de ondas utilizado para depurar los circuitos diseñados en VHDL                                                                                                                                  \\\hline
+C                                       & C11                                                                                                                                          & Lenguaje de programación utilizado para desarrollar los programas que se han ejecutado en los procesadores simulados                             \\\hline
+GNU RISC-V Compiler Toolchain \cite{gcc_riscv}& 12.2.0                                                                                                                                       & Conjunto de herramientas para compilar programas C para plataformas RISC-V                                                                       \\\hline
+Python                                  & 3.11.9& Lenguaje de \textit{scripting} utilizado para desarrollar varios componentes de este trabajo además de para automatizar procesos de compilación y pruebas \\\hline
+TensorFlow Probability \cite{tfprob}& 0.20.1                                                                                                                                       & Biblioteca de Python para trabajar con BNN\\\hline
+pyelftools \cite{pyelftools}& 0.31                                                                                                                                         & Biblioteca de Python para trabajar con ficheros ELF\\\hline
+Matplotlib \cite{matplotlib}& 3.7.1                                                                                                                                        & Biblioteca de Python para crear gráficos\\\hline
+SciPy \cite{scipy}& 1.10.1                                                                                                                                       & Biblioteca de Python con utilidades estadísticas\\\hline
+Make                                    & 4.4.1                                                                                                                                        & Herramienta de automatización de compilación y pruebas                                                                                           \\\hline
+Bash                                    & 5.2.26                                                                                                                                       & Herramienta de automatización de compilación y pruebas                                                                                           \\\hline
+Xilinx ZCU104 \cite{fpga_board}& -                                                                                                                                            & Plataforma de desarrollo FPGA utilizada\\\hline
+Vivado Design Suite \cite{vivado}& 2023                                                                                                                                         & Conjunto de herramientas para implementar diseños hardware descritos en VHDL en FPGA y analizar su coste                                         \\\hline
+Overleaf \cite{overleaf}& -                                                                                                                                            & Editor de \LaTeX\ en línea utilizado para la redacción de este documento\\\hline
+draw.io \cite{drawio}& -                                                                                                                                            & Editor de diagramas en línea                                                                                                                     \\\hline
+Inkscape \cite{inkscape}& 1.3.2                                                                                                                                        & Editor de gráficos vectoriales \\\hline                                                                           
+\end{longtable}
+\end{center}
 
 \section{Modelos utilizados}
 
-Durante el proceso de verificación se han utilizado tres arquitecturas de modelos diferentes. Estos modelos se han elegido por que han sido utilizados por otros trabajos recientes o por que son arquitecturas estándar muy conocidas. La Tabla \ref{tab:hyper_models} muestra la arquitectura de los modelos para clasificación de píxeles hiperespectrales \cite{bnn_hyper_uncertainty}. Los conjuntos de datos utilizados para este modelo son diferentes imágenes hiperespectrales obtenidas mediante satélite denominadas BO, IP, KSC, PU y SV.
+Durante el proceso de verificación se han utilizado tres arquitecturas de modelos diferentes. Estos modelos se han elegido porque han sido utilizados por otros trabajos recientes o porque son arquitecturas estándar muy conocidas. La Tabla \ref{tab:hyper_models} muestra la arquitectura de los modelos para clasificación de píxeles hiperespectrales \cite{bnn_hyper_uncertainty}. Los conjuntos de datos utilizados para este modelo son diferentes imágenes hiperespectrales obtenidas mediante satélite denominadas BO, IP, KSC, PU y SV.
 
 %%%%
 
-\begin{table}[h]
+\begin{table}[H]
 	\centering
 	\caption{Arquitectura de los modelos para clasificación de píxeles hiperespectrales.}
 	\label{tab:hyper_models}
@@ -33,7 +53,7 @@ Durante el proceso de verificación se han utilizado tres arquitecturas de model
 
 La Tabla \ref{tab:cnn_models} muestra una arquitectura LeNet-5 bayesiana. LeNet-5 es una arquitectura de red neuronal convolucional (\textit{\textbf{C}onvolutional \textbf{N}eural \textbf{N}etwork}) simple \cite{lenet}. Se ha entrenado un modelo con la misma arquitectura para reconocer el conjunto de datos MNIST \cite{MNIST_dataset} y CIFAR-10 \cite{CIFAR_dataset} pero utilizando capas bayesianas.
 
-\begin{table}[h]
+\begin{table}[H]
 	\centering
 	\caption{Arquitectura LeNet-5 bayesiana.}
 	\label{tab:cnn_models}
@@ -52,7 +72,7 @@ La Tabla \ref{tab:cnn_models} muestra una arquitectura LeNet-5 bayesiana. LeNet-
 
 La Tabla \ref{tab:b2n2_model} muestra la arquitectura B2N2, propuesta por Awano \emph{et al.} junto a su acelerador para BNN \cite{bnn_clt_approx}. También se ha entrenado para reconocer los conjuntos de datos MNIST y CIFAR-10.
 
-\begin{table}[h]
+\begin{table}[H]
 	\centering
 	\caption{Arquitectura B2N2.}
 	\label{tab:b2n2_model}
@@ -76,7 +96,7 @@ La Tabla \ref{tab:b2n2_model} muestra la arquitectura B2N2, propuesta por Awano 
 
 La Figura \ref{fig:experiment_pipeline} muestra el proceso y componentes para ejecutar inferencia de BNN de manera eficiente en un procesador RISC-V con soporte único para precisión entera que se han utilizado para obtener los resultados de este trabajo.
 
-\begin{figure}[h]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=\textwidth]{root/Imagenes/metodologia/experiment_pipeline.pdf}
 	\caption{Diagrama de componentes necesarios para ejecutar la inferencia de BNN en un procesador RISC-V simulado. Los componentes marcados con un número son contribuciones de este trabajo.}
@@ -94,7 +114,7 @@ Se ha desarrollado una herramienta en Python, marcada en la Figura \ref{fig:expe
 	\label{fig:model_converter}
 \end{figure}
 
-Primero aplica transformaciones a los pesos requeridas por las optimizaciones detalladas en el Capítulo \ref{ch:optimizaciones} utilizando coma flotante para tener la máxima precisión posible, tras ello codifica los valores en coma fija utilizando una escala constante previamente definida. A continuación analiza el número de bits necesarios para almacenar los datos y selecciona los datos nativos de C con los bits necesarios, seguidamente almacena todos los pesos en vectores de C. Finalmente analiza la función de inferencia del modelo y crea una versión en C utilizando las funciones proporcionadas por el motor de inferencia.
+Primero aplica transformaciones a los pesos requeridas por las optimizaciones detalladas en el Capítulo \ref{ch:optimizaciones} utilizando coma flotante para mantener la máxima precisión posible, tras ello codifica los valores en coma fija utilizando una escala constante previamente definida. A continuación analiza el número de bits necesarios para almacenar los datos y selecciona los datos nativos de C con los bits necesarios, seguidamente almacena todos los pesos en vectores de C. Finalmente analiza la función de inferencia del modelo y crea una versión en C utilizando las funciones proporcionadas por el motor de inferencia.
 
 \subsubsection{Precisión en coma fija}
 
@@ -111,7 +131,7 @@ Para mejorar el rendimiento, se ha adoptado el formato de coma fija para la repr
 
 \subsection{Actualización del Board Support Package}
 
-El \textit{\textbf{B}oard \textbf{S}upport \textbf{P}ackage} (BSP) de una plataforma es una capa de software intermedia entre la aplicación y el hardware que contiene código específico para crear un entorno de ejecución estable en dicha plataforma. Además puede proveer de los ficheros de configuración y un sistema de compilación. En la Figura \ref{fig:experiment_pipeline} aparece componente 2. En la Figura \ref{fig:bsp} se muestra un diagrama con más detalle sobre este componente.
+El \textit{\textbf{B}oard \textbf{S}upport \textbf{P}ackage} (BSP) de una plataforma es una capa de software intermedia entre la aplicación y el hardware que contiene código específico para crear un entorno de ejecución estable en dicha plataforma. Además puede proveer de los ficheros de configuración y un sistema de compilación. En la Figura \ref{fig:experiment_pipeline} aparece como componente 2. En la Figura \ref{fig:bsp} se muestra un diagrama con más detalle sobre este componente.
 
 \begin{figure}[h]
 	\centering

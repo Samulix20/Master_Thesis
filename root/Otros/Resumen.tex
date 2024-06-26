@@ -3,13 +3,15 @@
 \vspace{1cm}
 {\Large \bfseries RESUMEN}
 
-\vspace{2.5cm}
+\vspace{2cm}
 \end{center}
 
-Las redes neuronales son modelos de aprendizaje automático muy populares para tareas de clasificación. La combinación del internet de las cosas y el aprendizaje automático es un paradigma que también esta creciendo en popularidad y cada vez mas redes neuronales se están ejecutando en dispositivos de bajo consumo y prestaciones. La fiabilidad de las predicciones de los modelos de aprendizaje automático es algo crucial en aplicaciones relacionadas con la seguridad y las redes neuronales tradicionales no son capaces de proveer esta fiabilidad. 
+Las redes neuronales son modelos de aprendizaje automático muy populares para tareas de clasificación. La combinación del internet de las cosas y el aprendizaje automático es un paradigma que también está creciendo en popularidad y cada vez más redes neuronales se están ejecutando en dispositivos de bajo consumo y prestaciones. La fiabilidad de las predicciones de los modelos de aprendizaje automático es algo crucial en aplicaciones relacionadas con la seguridad y las redes neuronales tradicionales no son capaces de proveer esta fiabilidad.
 
-Las redes neuronales bayesianas afrontan este problema de la fiabilidad calculando métricas de incertidumbre de las predicciones que producen a costa de aumentar sus requisitos computacionales. Este trabajo busca soluciones a los desafíos de ejecutar este tipo de redes en dispositivos de bajas prestaciones desarrollando una biblioteca para la inferencia de redes neuronales bayesianas en dispositivos de bajas prestaciones. 
+Las redes neuronales bayesianas mejoran su fiabilidad calculando métricas de incertidumbre asociadas a sus predicciones. Sin embargo, generar estas métricas aumenta sus requisitos computacionales. Este trabajo busca soluciones a los desafíos de ejecutar este tipo de redes en dispositivos de bajas prestaciones.
 
-Estas redes requieren ejecutar múltiples propagaciones de la entrada en las que los pesos se muestrean distribuciones estadísticas, normalmente Gaussianas. El proceso de muestreo de distribuciones puede llegar a ocupar el 85.13\% del tiempo de ejecución. Otra de las aportaciones de este trabajo es optimizar este muestreo, integrando estas optimizaciones en la biblioteca desarrollada, obteniendo un speedup promedio de ×4.57. 
+En primer lugar, se ha desarrollado una biblioteca para la inferencia de redes neuronales bayesianas en dispositivos de bajas prestaciones.
 
-Además en este trabajo se ha desarrollado una extensión del conjunto de instrucciones RISC-V de bajo coste para acelerar la inferencia de redes neuronales bayesianas. Esta extensión se ha implementado en un procesador y se ha estudiado su coste energético y hardware en una FPGA. Esta extensión añade instrucciones nuevas que optimizan el muestreo de pesos mediante un generador de números pseudoaleatorios Gaussianos hardware obteniendo un speedup de hasta ×7.65 y un ahorro energético similar.
+En segundo lugar, se han desarrollado técnicas software para optimizar la ejecución. Estas redes requieren ejecutar múltiples propagaciones de la entrada en las que los pesos se muestrean a partir de distribuciones estadísticas, normalmente Gaussianas. Este proceso de muestreo puede llegar a ocupar el 85.13\% del tiempo de ejecución. Por ello, se han desarrollado distintas técnicas para optimizar este muestreo, integrando estas optimizaciones en la biblioteca desarrollada, obteniendo tiempos de ejecución en promedio 4.57 veces menores.
+
+Finalmente, en este trabajo se ha desarrollado una extensión del conjunto de instrucciones RISC-V de bajo coste para acelerar la inferencia de redes neuronales bayesianas. Esta extensión se ha implementado en un procesador y se ha estudiado su coste energético y hardware en una FPGA. Esta extensión añade instrucciones nuevas que optimizan el muestreo de pesos mediante un generador de números pseudoaleatorios Gaussianos hardware, obteniendo tiempos de ejecución hasta 7.65 veces menores provocando un ahorro energético en un factor similar.
